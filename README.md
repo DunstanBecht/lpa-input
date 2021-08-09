@@ -4,7 +4,7 @@
 
 # Project
 
-This repository is related to the analysis of crystals containing dislocations by X-ray diffraction. It is part of a larger project conducted during a research internship at the laboratory of material and structural sciences of the *École Nationale Supérieure des Mines de Saint-Étienne*.
+This repository is related to the analysis of crystals containing dislocations by X-ray diffraction. It is part of a project conducted during a research internship at the laboratory of material and structural sciences of the *École Nationale Supérieure des Mines de Saint-Étienne*.
 
 # Features
 
@@ -48,23 +48,26 @@ Some abbreviations are used in the program:
 * **pbcr**: periodic boundary conditions applied when runnning the simulation
 * **idbc**: image dislocations boundary conditions
 
-# Content of the repository
+# User guide
 
-The **disldist** directory is the python package containing the distribution generation and analysis tools. The directory **exported** contains the exported files. The directory **maths** provides the LaTeX code of the functions implemented in **disldist**. The **remote.py** script simplifies the remote management of calculations on a supercomputer. The script **run.py** is used as hello world and can be executed as is. The script **settings.py** gathers the standard parameters of the generated distributions. The files **slurm.job** and **slurm.py** are to be used only on a supercomputer.
+### Installation
 
-# Examples of use
+The project is indexed on [PyPI](https://pypi.org/project/lpa-input/) and installable directly via pip.
+```bash
+pip install lpa-input
+```
 
 ### Generation
 To create a uniformly random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
-from disldist import sets
+from lpa.input import sets
 r = {'density': 0.03, 'variant': 'e'}
 d = sets.Distribution('circle', 1000, 'urdd', r)
 ```
 
 To create a sample of 100 uniformly random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
-from disldist import sets
+from lpa.input import sets
 r = {'density': 0.03, 'variant': 'e'}
 s = sets.Sample(500, 'circle', 1000, 'urdd', r)
 ```
@@ -73,22 +76,18 @@ s = sets.Sample(500, 'circle', 1000, 'urdd', r)
 
 To export a dislocation map of a distribution `d`.
 ```python
-from disldist import maps
+from lpa.input import maps
 maps.export(d)
 ```
 
 To make standardized files for input to an X-ray diffraction simulation program from a sample `s`:
 ```python
-from disldist import data
+from lpa.input import data
 data.export(s)
 ```
 
 To make a spatial analysis of a sample `s`:
 ```python
-from disldist import analyze
+from lpa.input import analyze
 analyze.export(s)
 ```
-
-# License
-
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
