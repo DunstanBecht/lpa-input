@@ -66,7 +66,7 @@ def contrast_factor(
 def export_distribution(
     d: sets.Distribution,
     i: Scalar,
-    p: str = "exported/data/",
+    p: str = "",
     n: Optional[str] = None,
     g: Vector = np.array([2, 0, 0]),
     b: Vector = np.array([1, 1, 0]),
@@ -88,7 +88,8 @@ def export_distribution(
     Complexity:
         O( len(d) )
     """
-    # file name
+    if p!="" and p[-1]!="/":
+        p += "/"
     if n == None:
         n = d.fileName()
     # parameters
@@ -138,7 +139,7 @@ def export_distribution(
 @beartype
 def export_sample(
     s: sets.Sample,
-    p: str = "exported/data/",
+    p: str = "",
     n: Optional[str] = None,
 ) -> None:
     """
@@ -152,7 +153,8 @@ def export_sample(
     Complexity:
         O( len(s) * complexity(export_distribution) )
     """
-    # directory name
+    if p!="" and p[-1]!="/":
+        p += "/"
     e = p+s.fileName()
     # export
     m = len(str(len(s)))
@@ -171,7 +173,7 @@ def export_sample(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    p: str = "exported/data/",
+    p: str = "",
     n: Optional[str] = None,
 ) -> None:
     """

@@ -12,7 +12,7 @@ from . import sets
 @beartype
 def export(
     d: sets.Distribution,
-    p: str = "exported/maps/",
+    p: str = "",
     n: Optional[str] = None,
     t: Optional[str] = None,
 ) -> None:
@@ -28,6 +28,8 @@ def export(
     Complexity:
         O( len(d) )
     """
+    if p!="" and p[-1]!="/":
+        p += "/"
     if n == None:
         n = d.fileName(t=False)
     if t == None:

@@ -453,7 +453,7 @@ def intervals(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    p: str = "exported/analyze/",
+    p: str = "",
     n: Optional[str] = None,
     t: Optional[str] = None,
 ) -> None:
@@ -469,6 +469,8 @@ def export(
     Complexity:
         O( complexity(calculate) )
     """
+    if p!="" and p[-1]!="/":
+        p += "/"
     r, iK = intervals(o.i, o.s)
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
     n = o.fileName(t=False)
