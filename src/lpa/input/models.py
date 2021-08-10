@@ -91,7 +91,7 @@ def ticks(
     s: int,
 ) -> ScalarList:
     """
-    Standardize the construction of a grid of subareas.
+    Standardize the construction of a grid of subareas or cells.
 
     Input:
         g: geometry

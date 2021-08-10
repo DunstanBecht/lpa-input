@@ -15,17 +15,17 @@ to an X-ray diffraction simulation program. Finally it is possible to
 make a spatial analysis of a model by means of statistical functions
 on a sample of distributions.
 
-In this package, Burgers vectors are represented only by a direction
+In this package, Burgers vectors are represented only by their sense
 (positive: +1, or negative: -1). Their direction is only determined in
-the header of the exported input files. It is parallel to the
+the header of the exported input data files. It is parallel to the
 dislocation line for the 'screw' type or perpendicular for the 'edge'
-type. The superposition principle allows to fix and study the
-diffraction only for a unique direction for all the dislocations.
+type. The superposition principle simplifies the analysis by allowing
+to study only one direction at a time.
 
 To obtain relevant statistical results, the spatial analysis must be
 averaged over a large number of distributions. To reduce the
 computation time it is possible to parallelize the calculations. The
-MPI library is used for this purpose. A sample of distributions is
+MPI library can be used for this purpose. A sample of distributions is
 generated and analyzed on each core, then the results are averaged
 over the cores.
 """

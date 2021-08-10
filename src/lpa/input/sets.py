@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-Tools for managing distributions and samples of distributions.
+Tools for representing distributions and samples of distributions.
 """
 
 from . import *
@@ -16,7 +16,7 @@ def images(
     b: ScalarList,
 ) -> Tuple[VectorList, ScalarList]:
     """
-    Return the image dislocations for a circle of radius s.
+    Return the image dislocations of (p, b) for a circle of radius s.
 
     Input:
         s: radius of the region of interest [nm]
@@ -45,12 +45,12 @@ def replications(
     r: int,
 ) -> Tuple[VectorList, ScalarList]:
     """
-    Return replications dislocations for a square of side s.
+    Return the replicated dislocations of (p, b) for a square of side s.
 
     Input:
-        s: radius of the region of interest [nm]
+        s: side of the region of interest [nm]
         p: dislocation positions [nm]
-        b: dislocation Burgers vectors sens [1]
+        b: dislocation Burgers vectors sense [1]
         r: number of replications at the boundaries
 
     Output:
@@ -73,8 +73,8 @@ class Distribution:
     Represent a distribution of dislocations.
 
     When the geometry is of type 'circle' the characteristic size is
-    its radius. When it is of type 'square' the characteristic size
-    is its side.
+    its radius. When it is of type 'square' the characteristic size is
+    its side.
 
     The dislocations can be of type 'screw' or type 'edge'. If the type
     is not specified, type 'screw' is chosen by default.
@@ -94,7 +94,7 @@ class Distribution:
         g (str): geometry of the region of interest
         s (int): size of the region of interest [nm]
         n (int): dimension of space of the region of interest
-        v (Scalar): n-dimensional volume of the region of interest [nm^n]
+        v (Scalar): n-volume of the region of interest [nm^n]
         m (GenerationFunction): function of the random model used
         r (dict): parameters of the random model
         t (str): dislocations type
@@ -120,7 +120,7 @@ class Distribution:
         Input:
             g: geometry of the region of interest
             s: size of the region of interest [nm]
-            m: name of the random model used to generate the dislocations
+            m: name of the random model
             r: parameters of the random model
             t: dislocations type
             c: conditions at the boundaries
@@ -168,13 +168,23 @@ class Distribution:
 
     @beartype
     def __repr__(self) -> str:
-        """Return the representation of the distribution."""
+        """
+        Return the representation of the distribution.
+
+        Output:
+            r: string that can be evaluated
+        """
         args = [self.g, self.s, self.str_m, self.r, self.t, self.c]
         return "Distribution("+", ".join([repr(a) for a in args])+")"
 
     @beartype
     def __str__(self) -> str:
-        """Return a str version of the distribution."""
+        """
+        Return a textual description of the distribution.
+
+        Output:
+            s: distribution information
+        """
         r = ", ".join([k+"="+str(self.r[k]) for k in self.r])
         s = ("Distribution: "+self.fileName()
             + "\n- geometry: "+self.g
@@ -192,7 +202,12 @@ class Distribution:
 
     @beartype
     def __len__(self) -> int:
-        """Return the number of dislocations in the distribution."""
+        """
+        Return the number of dislocations in the distribution.
+
+        Output:
+            n: number of Burgers vectors
+        """
         return len(self.b)
 
     @beartype
@@ -219,7 +234,12 @@ class Distribution:
 
     @beartype
     def plotTitle(self) -> str:
-        """Return a name that can be used as a title for a plot."""
+        """
+        Return a name that can be used as a title in a plot.
+
+        Output:
+            t: title containing LaTeX code
+        """
         s = "in a "+self.g
         m = self.str_m.upper()
         if 'variant' in self.r:
@@ -239,10 +259,10 @@ class Distribution:
         r2: ScalarList,
     ) -> ScalarList:
         """
-        Return the edge correction coefficients of the region of interest.
+        Return the edge correction coefficients of the shape.
 
         Input:
-            a: point around which neighborhoods are formed [nm]
+            a: position around which neighborhoods are formed [nm]
             r: radius of the neighborhoods [nm]
             r2: squared radius of neighborhoods [nm^2]
 
@@ -267,20 +287,20 @@ class Sample:
     Represent a sample of distributions.
 
     Except for l, the attributes have the same meaning as for the
-    Distribution class. The density and the inter dislocation
-    distance are averaged over all distributions.
+    Distribution class. The density and the inter dislocation distance
+    are averaged over all distributions.
 
     Attributes:
         l (Tuple[Distribution, ...]): sampled distributions
         g (str): geometry of the region of interest
         s (int): size of the region of interest [nm]
         n (int): dimension of space of the region of interest
-        v (Scalar): n-dimensional volume of the region of interest [nm^n]
+        v (Scalar): n-volume of the region of interest [nm^n]
         m (str): name of the random model function
         r (dict): parameters of the random model
         t (str): dislocations type
         d (Scalar): averaged density of dislocations [nm^-n]
-        i (Scalar): inter dislocation distance [nm]
+        i (Scalar): averaged inter dislocation distance [nm]
         c (str|None): conditions at the boundaries
     """
 
@@ -332,13 +352,23 @@ class Sample:
 
     @beartype
     def __repr__(self) -> str:
-        """Return the representation of the sample of distributions."""
+        """
+        Return the representation of the sample of distributions.
+
+        Output:
+            r: string that can be evaluated
+        """
         args = [len(self), self.g, self.s, self.m, self.r, self.t, self.c]
         return "Sample("+", ".join([repr(a) for a in args])+")"
 
     @beartype
     def __str__(self) -> str:
-        """Return a str version of the sample of distributions."""
+        """
+        Return a textual description of the distribution.
+
+        Output:
+            s: distribution information
+        """
         r = ", ".join([k+"="+str(self.r[k]) for k in self.r])
         s = ("Sample: "+self.fileName()
             + "\n- population: "+str(len(self))+" distributions"
@@ -354,22 +384,48 @@ class Sample:
 
     @beartype
     def __getitem__(self, k: int) -> Distribution:
-        """Return the k th distribution of the sample."""
+        """
+        Return the k-th distribution stored in the sample.
+
+        Input:
+            k: index of the distribution
+
+        Output:
+            d: k-th distribution
+        """
         return self.l[k]
 
     @beartype
     def __len__(self) -> int:
-        """Return the number of distributions in the sample."""
+        """
+        Return the number of distributions stored in the sample.
+
+        Output:
+            n: number of stored distributions
+        """
         return len(self.l)
 
     @beartype
     def fileName(self, **kwargs) -> str:
-        """Return a name that can be used to export the sample."""
+        """
+        Return a name that can be used to export the sample.
+
+        The keyword arguments are passed to the equivalent function in
+        the Distribution class.
+
+        Output:
+            n: file name of the samplee
+        """
         return str(len(self))+'_'+self[0].fileName(**kwargs)
 
     @beartype
     def plotTitle(self) -> str:
-        """Return a name that can be used as a title for a plot."""
+        """
+        Return a name that can be used as a title in a plot.
+
+        Output:
+            t: title containing LaTeX code
+        """
         return "sample of "+str(len(self))+" "+self[0].plotTitle()
 
     @beartype

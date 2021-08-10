@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-Tools for calculating the overlapping n-volume of two geometric objects.
+Tools for calculating the overlapping of two geometric objects.
 """
 
 from . import *

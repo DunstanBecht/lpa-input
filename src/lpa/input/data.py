@@ -72,10 +72,10 @@ def export_distribution(
     b: Vector = np.array([1, 1, 0]),
 ) -> None:
     """
-    Export the dislocations of d to a text file.
+    Export the dislocations of d to a standardized input data file.
 
-    The inter-dislocation distance must be specified because it may
-    be different from d.i when averaged over several distributions.
+    The inter-dislocation distance must be specified because it may be
+    different from d.i when averaged over several distributions.
 
     Input:
         d: distribution to be exported
@@ -143,7 +143,7 @@ def export_sample(
     n: Optional[str] = None,
 ) -> None:
     """
-    Export a file for each distributions of s.
+    Export a standardized input data file for each distributions of s.
 
     Input:
         s: sample of distributions to be exported
@@ -177,7 +177,7 @@ def export(
     n: Optional[str] = None,
 ) -> None:
     """
-    Convenient function for exporting a distribution or a sample.
+    Convenient function for exporting a standardized data file.
 
     Input:
         o: distribution or sample of distributions to export

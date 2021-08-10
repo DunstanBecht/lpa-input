@@ -16,7 +16,7 @@ def N(
     r2: ScalarList,
 ) -> ScalarList:
     """
-    Return the number of points of B in the neighborhoods of the point a.
+    Return the number of points of B in the neighborhoods of a.
 
     The function does not use the notion of dislocation. It allows only
     a spatial analysis of a distribution of points in space. If a point
@@ -24,7 +24,7 @@ def N(
 
     Input:
         a: point around which the neighborhoods are formed
-        B: observed points that are counted when in the neighborhood of a
+        B: observed points that are counted when in the neighborhoods
         r2: squared radius of the neighborhoods in ascending order
 
     Output:
@@ -84,23 +84,23 @@ def MMMM_cp_cm(
     Return M++, M-+, M+-, M-- and the number of + and - dislocations.
 
     M++ is the average number of dislocations with positive Burgers
-    vector sense around dislocations with positive Burgers vector sense.
-    The dislocation in the center of the neighborhood is not counted.
+    vector sense around dislocations with positive sense. The
+    dislocation in the center of the neighborhood is not counted.
 
     M-+ is the average number of dislocations with positive Burgers
-    vector sense around dislocations with negative Burgers vector sense.
+    vector sense around dislocations with negative sense.
 
     M+- is the average number of dislocations with negative Burgers
-    vector sense around dislocations with positive Burgers vector sense.
+    vector sense around dislocations with positive sense.
 
     M-- is the average number of dislocations with negative Burgers
-    vector sense around dislocations with negative Burgers vector sense.
-    The dislocation in the center of the neighborhood is not counted.
+    vector sense around dislocations with negative sense. The
+    dislocation in the center of the neighborhood is not counted.
 
     Input:
         d: distribution of dislocations to analyze
         r: radius of the neighborhoods in ascending order [nm]
-        r2: squared radius of the neighborhoods in ascending order [nm^2]
+        r2: squared radius of the neighborhoods [nm^2]
 
     Output:
         MMMM: stacked values of M++, M-+, M+-, M-- [1]
@@ -158,7 +158,7 @@ def gggg_dVvdr(
     n: int,
 ) -> Tuple[ScalarListList, ScalarList]:
     """
-    Return g++, g-+, g+-, g-- and the derivative of the neighborhood volume.
+    Return g++, g-+, g+-, g-- and derivative of neighborhood volume.
 
     This function is incremental. It uses pre-calculated KKKK values
     to avoid unnecessary repetition of calculations common to spatial
@@ -224,7 +224,7 @@ def calculate(
     r2: Optional[ScalarList] = None,
 ) -> AnalysisOutput:
     """
-    Return the values of the quantities in q calculated incrementally on o.
+    Return the values of the quantities in q calculated incrementally.
 
     The following quantities can be requested:
         'MMMM': stacked values of M++, M-+, M+-, M-- [1]

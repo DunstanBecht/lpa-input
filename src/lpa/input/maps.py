@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-Tools to export the dislocation map of a distribution.
+Tools for exporting the dislocation map of a distribution.
 """
 
 import matplotlib.pyplot as plt

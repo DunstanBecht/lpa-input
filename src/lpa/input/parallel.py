@@ -24,14 +24,14 @@ def average_on_cores(
     Return the average value of w ​​over the cores.
 
     When b is True, all cores get the average value. When b is False,
-    the workers get None and the root get the average value.
+    the workers get None and the root gets the average value.
 
     Input:
         w: worker value
         b: broadcast the result to all cores
 
     Output:
-        m: average value of w over the cores
+        m: averaged value of w over the cores
     """
     if not isinstance(w, np.ndarray):
         w = np.array(w)
@@ -53,12 +53,12 @@ def export(
     t: Optional[str] = None,
 ) -> None:
     """
-    Convenient function for a pooled analysis of the object o of each core.
+    Export a complete pooled analysis of the object o of each core.
 
     Function similar to the export function of the analyze module.
 
     Input:
-        o: distribution or sample of distributions to analyze on the core
+        o: distribution or sample to analyze on the core
         p: path where to export the file
         n: name of the exported file
         t: title of the plot
