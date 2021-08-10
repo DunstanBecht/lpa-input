@@ -72,7 +72,7 @@ r = {'density': 0.03, 'variant': 'e'}
 s = sets.Sample(500, 'circle', 1000, 'urdd', r)
 ```
 
-### Export
+### Exportation
 
 To export a dislocation map of a distribution `d`.
 ```python
@@ -90,4 +90,101 @@ To make a spatial analysis of a sample `s`:
 ```python
 from lpa.input import analyze
 analyze.export(s)
+```
+
+### Parallelization
+
+To parallelize the spatial analysis of distributions on a supercomputer equipped with Slurm Workload Manager, it is necessary to create two files. The first one is the python script that will be executed on each core.
+
+`slurm.py`
+```python
+#!/usr/bin/env python
+# coding: utf-8
+
+"""
+This script is executed on each core during a parallel analysis.
+"""
+
+import time
+from lpa.input import sets
+from lpa.input import parallel
+import settings
+
+n = 1 # number of distribution per core
+
+p = [
+    [n, *settings.circle, *settings.urdde14],
+    [n, *settings.circle, *settings.rrdde14],
+]
+
+if parallel.rank == parallel.root:
+    t1 = time.time()
+for args in p:
+    s = sets.Sample(*args)
+    if parallel.rank == parallel.root:
+        print("- analysis of "+s.fileName()+" ", end="")
+        t2 = time.time()
+    parallel.export(s)
+    if parallel.rank == parallel.root:
+        print("("+str(round((time.time()-t2)/60))+" mn)")
+if parallel.rank == parallel.root:
+    print("total time: "+str(round((time.time()-t1)/60))+" mn")
+```
+
+The second file is used to submit the task to Slurm.
+
+`slurm.job`
+```bash
+#!/bin/bash
+#SBATCH --job-name=disldist
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --time=10:00:00
+#SBATCH --partition=intensive.q
+ulimit -l unlimited
+###unset SLURM_GTIDS
+
+SCRIPT=slurm.py
+echo ------------------------------------------------------
+echo number of nodes in the job resource allocation: $SLURM_NNODES
+echo nodes allocated to the job: $SLURM_JOB_NODELIST
+echo directory from which sbatch was invoked: $SLURM_SUBMIT_DIR
+echo hostname of the computer from which sbatch was invoked: $SLURM_SUBMIT_HOST
+echo id of the job allocation: $SLURM_JOB_ID
+echo name of the job: $SLURM_JOB_NAME
+echo name of the partition in which the job is running: $SLURM_JOB_PARTITION
+echo number of nodes requested: $SLURM_JOB_NUM_NODES
+echo number of tasks requested per node: $SLURM_NTASKS_PER_NODE
+echo ------------------------------------------------------
+echo generating hostname list
+COMPUTEHOSTLIST=$( scontrol show hostnames $SLURM_JOB_NODELIST |paste -d, -s )
+echo ------------------------------------------------------
+echo creating scratch directories on nodes $SLURM_JOB_NODELIST
+SCRATCH=/scratch/$USER-$SLURM_JOB_ID
+srun -n$SLURM_NNODES mkdir -m 770 -p $SCRATCH || exit $?
+echo ------------------------------------------------------
+echo transferring files from frontend to compute nodes $SLURM_JOB_NODELIST
+srun -n$SLURM_NNODES cp -rvf $SLURM_SUBMIT_DIR/$SCRIPT $SCRATCH || exit $?
+echo ------------------------------------------------------
+echo load packages
+module load anaconda/python3
+python3 -m pip install -U lpa-input
+echo ------------------------------------------------------
+echo run -mpi program
+cd $SCRATCH
+mpirun --version
+mpirun -np $SLURM_NTASKS -npernode $SLURM_NTASKS_PER_NODE -host $COMPUTEHOSTLIST python3 $SLURM_SUBMIT_DIR/$SCRIPT
+echo ------------------------------------------------------
+echo transferring result files from compute nodes to frontend
+srun -n$SLURM_NNODES cp -rvf $SCRATCH $SLURM_SUBMIT_DIR || exit $?
+echo ------------------------------------------------------
+echo deleting scratch from nodes $SLURM_JOB_NODELIST
+srun -n$SLURM_NNODES rm -rvf $SCRATCH || exit 0
+echo ------------------------------------------------------
+```
+
+Finally, to start the simulation enter the following command.
+
+```bash
+sbatch slurm.job
 ```
