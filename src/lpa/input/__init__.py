@@ -31,7 +31,7 @@ over the cores.
 """
 
 __author__ = "Dunstan Becht"
-__version__ = "0.8.3"
+__version__ = "0.9.0"
 
 import sys
 import numpy as np
