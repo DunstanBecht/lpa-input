@@ -8,6 +8,7 @@ Tools for representing distributions and samples of distributions.
 from . import *
 from . import models
 from . import overlap
+from . import notation
 
 @beartype
 def images(
@@ -102,7 +103,7 @@ class Distribution:
 
     Attributes:
         g (str): geometry of the region of interest
-        s (int): size of the region of interest [nm]
+        s (Scalar): size of the region of interest [nm]
         n (int): dimension of space of the region of interest
         v (Scalar): n-volume of the region of interest [nm^n]
         m (GenerationFunction): function of the random model used
@@ -118,7 +119,7 @@ class Distribution:
     @beartype
     def __init__(self,
         g: str,
-        s: int,
+        s: Scalar,
         m: str,
         r: dict,
         t: str = 'screw',
@@ -167,13 +168,11 @@ class Distribution:
             self.p = np.concatenate((self.p, cp))
             self.b = np.concatenate((self.b, cb))
         # printable attributes
-        def fmt(x):
-            return format(round(x), '1.0e').replace("+", "").replace("0", "")
-        self.str_s = fmt(self.s) # [nm]
+        self.str_s = notation.number(self.s) # [nm]
         self.str_n = str(self.n)
-        self.str_v = fmt(self.v) # [nm^n]
+        self.str_v = notation.number(self.v) # [nm^n]
         self.str_m = m
-        self.str_d = fmt(self.d*1e9**self.n) # [m^-n]
+        self.str_d = notation.number(self.d*1e9**self.n) # [m^-n]
         self.str_i = format(self.i, '1.1f') # [nm]
 
     @beartype
@@ -233,9 +232,9 @@ class Distribution:
         Output:
             n: file name of the distribution
         """
-        n = (self.g+"_"+self.str_s+"nm"+"_"
-            + self.str_m+self.r['variant']+"_"
-            + self.str_d+"m-"+self.str_n)
+        n = (self.str_d+"m-"+self.str_n+"_"
+            + self.g+"_"+self.str_s+"nm"+"_"
+            + self.str_m+notation.parameters(self.r))
         if t:
             n += "_"+self.t
         if not self.c is None:
@@ -251,9 +250,7 @@ class Distribution:
             t: title containing LaTeX code
         """
         s = "in a "+self.g
-        m = self.str_m.upper()
-        if 'variant' in self.r:
-            m += self.r['variant'].upper()
+        m = self.str_m.upper()+notation.parameters(self.r).capitalize()
         e = self.str_d.split("e") # mantissa and exponent of the density
         d = e[0]+"\\times 10^{"+str(int(e[1]))+"} m^{-2}" # density in LaTeX
         d = r"$ \left( \rho \sim "+d+r" \right) $"

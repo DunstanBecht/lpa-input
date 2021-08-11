@@ -42,7 +42,7 @@ def export(
     if d.str_m in ["rrdd", "rcdd"] and d.c is None:
         from . import models
         ax.grid(True, zorder=0) # subareas grid
-        ticks = models.ticks(d.g, d.s, d.r['subarea'])
+        ticks = models.ticks(d.g, d.s, d.r['s'])
         ax.set_xticks(ticks)
         ax.set_yticks(ticks)
     if d.g == 'circle':
