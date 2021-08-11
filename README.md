@@ -34,7 +34,7 @@ A distribution is characterized by the following elements:
 Some abbreviations are used in the program:
 
 ### Models
-* **urdd**: uniformly random dislocation distribution
+* **rdd**: random dislocation distribution
 * **rrdd**: restrictedly random dislocation distribution
 * **rcdd**: random cell dislocation distribution
 
@@ -45,7 +45,7 @@ Some abbreviations are used in the program:
 
 ### Boundary conditions
 * **pbcg**: periodic boundary conditions applied when generating the distribution
-* **pbcr**: periodic boundary conditions applied when runnning the simulation
+* **pbcr**: periodic boundary conditions applied when running the simulation
 * **idbc**: image dislocations boundary conditions
 
 # User guide
@@ -58,18 +58,18 @@ pip install lpa-input
 ```
 
 ### Generation
-To create a uniformly random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
+To create a random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
 from lpa.input import sets
 r = {'density': 0.03, 'variant': 'e'}
-d = sets.Distribution('circle', 1000, 'urdd', r)
+d = sets.Distribution('circle', 1000, 'rdd', r)
 ```
 
-To create a sample of 100 uniformly random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
+To create a sample of 100 random dislocation distributions with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
 from lpa.input import sets
 r = {'density': 0.03, 'variant': 'e'}
-s = sets.Sample(500, 'circle', 1000, 'urdd', r)
+s = sets.Sample(500, 'circle', 1000, 'rdd', r)
 ```
 
 ### Exportation
@@ -113,7 +113,7 @@ import settings
 n = 1 # number of distribution per core
 
 p = [
-    [n, *settings.circle, *settings.urdde14],
+    [n, *settings.circle, *settings.rrdde13],
     [n, *settings.circle, *settings.rrdde14],
 ]
 

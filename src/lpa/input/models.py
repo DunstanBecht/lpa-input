@@ -30,16 +30,16 @@ def seed(
     np.random.seed(r['seed'])
 
 @beartype
-def urdd(
+def rdd(
     g: str,
     s: Scalar,
     a: Scalar,
     r: dict,
 ) -> Tuple[VectorList, VectorList]:
     """
-    Return the positions and Burgers vector generated with urdd model.
+    Return the positions and Burgers vector generated with rdd model.
 
-    "urdd" means: "uniformly random dislocation distribution"
+    "rdd" means: "random dislocation distribution"
 
     Input:
         g: geometry of the region of interest
@@ -53,13 +53,9 @@ def urdd(
 
     The following parameters can be specified in r:
         'seed' (int): random seed
-        'variant' (str): 'r' or 'e'
         'density' (Scalar): density of dislocations [nm^-2]
 
-    When 'variant' equals 'r', the Burgers vectors are randomly
-    distributed. When 'variant' equals 'e', the Burgers vectors are
-    evenly distributed. When 'seed' is not specified, the random seed
-    is chosen randomly.
+    When 'seed' is not specified, the random seed is chosen randomly.
 
     Complexity:
         O( r['density'] * a )
@@ -74,14 +70,11 @@ def urdd(
     elif g == 'square':
         p = s*np.random.random([n, 2])
     # dislocation Burgers vectors
-    if r['variant'] == 'r':
-        b = np.random.choice([1, -1], size=n)
-    elif r['variant'] == 'e':
-        c = n//2
-        l = [np.ones(c), -np.ones(c)]
-        if n%2 == 1:
-            l.append(np.random.choice([1, -1], size=1))
-        b = np.concatenate(l)
+    c = n//2
+    l = [np.ones(c), -np.ones(c)]
+    if n%2 == 1:
+        l.append(np.random.choice([1, -1], size=1))
+    b = np.concatenate(l)
     return p, b
 
 @beartype
