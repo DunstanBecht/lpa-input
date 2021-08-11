@@ -29,8 +29,8 @@ def parameters(
     Output:
         n: model parameters description
     """
-    #if 'name' in r:
-    #    return r['name']
+    if 'name' in r:
+        return r['name']
     n = ""
     if 'v' in r:
         n += r['v']
