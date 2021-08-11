@@ -14,14 +14,21 @@ def images(
     s: Scalar,
     p: VectorList,
     b: ScalarList,
+    t: str,
 ) -> Tuple[VectorList, ScalarList]:
     """
     Return the image dislocations of (p, b) for a circle of radius s.
+
+    Adding the image dislocations allows to simulate correctly the
+    complete diffraction profile (and not only for the asymptotic
+    values of the Fourier variable). However, the formula used here
+    only applies to dislocations of type 'screw'.
 
     Input:
         s: radius of the region of interest [nm]
         p: dislocation positions [nm]
         b: dislocation Burgers vectors sense [1]
+        t: dislocation type
 
     Output:
         cp: image dislocation positions [nm]
@@ -30,12 +37,15 @@ def images(
     Complexity:
         O( len(p) )
     """
-    n = np.linalg.norm(p, axis=1)
-    m = n != 0
-    v = p[m]
-    t = np.arctan2(v[:,1], v[:,0])
-    r = s**2/n[m]
-    return np.stack((r*np.cos(t), r*np.sin(t)), axis=1), -b
+    if t == 'screw':
+        n = np.linalg.norm(p, axis=1)
+        m = n != 0
+        v = p[m]
+        t = np.arctan2(v[:,1], v[:,0])
+        r = s**2/n[m]
+        return np.stack((r*np.cos(t), r*np.sin(t)), axis=1), -b
+    else:
+        raise ValueError("cannot calculate images of edge dislocations")
 
 @beartype
 def replications(
@@ -149,7 +159,7 @@ class Distribution:
         self.c = c
         if not (self.c is None or c[:4]=='pbcr' and self.g=='square'):
             if self.g=='circle' and c=='idbc':
-                cp, cb = images(self.s, self.p, self.b)
+                cp, cb = images(self.s, self.p, self.b, self.t)
             elif self.g=='square' and c[:4]=='pbcg':
                 cp, cb = replications(self.s, self.p, self.b, int(c[4:]))
             else:
