@@ -8,6 +8,7 @@ Tools for exporting the dislocation map of a distribution.
 import matplotlib.pyplot as plt
 from . import *
 from . import sets
+from . import models
 
 @beartype
 def export(
@@ -39,12 +40,16 @@ def export(
     ax.set_aspect(1)
     b = d.s * 0.05 # borders width
     s, w = 100, 0.2 # marker size and line width
-    if d.str_m in ["rrdd", "rcdd"] and d.c is None:
-        from . import models
+    if d.str_m in ["rrdd", "rcdd"] and (d.c is None or 'pbcr' in d.c):
         ax.grid(True, zorder=0) # subareas grid
         ticks = models.ticks(d.g, d.s, d.r['s'])
         ax.set_xticks(ticks)
         ax.set_yticks(ticks)
+        if len(ticks) > 10:
+            labels = ["" for i in range(len(ticks))]
+            labels[0], labels[-1] = round(ticks[0]), round(ticks[-1])
+            ax.set_xticklabels(labels)
+            ax.set_yticklabels(labels)
     if d.g == 'circle':
         g = plt.Circle((0,0), d.s, color='k', fill=False, zorder=50)
         if d.c is None:
