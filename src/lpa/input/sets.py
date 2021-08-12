@@ -300,7 +300,7 @@ class Sample:
     Attributes:
         l (Tuple[Distribution, ...]): sampled distributions
         g (str): geometry of the region of interest
-        s (int): size of the region of interest [nm]
+        s (Scalar): size of the region of interest [nm]
         n (int): dimension of space of the region of interest
         v (Scalar): n-volume of the region of interest [nm^n]
         m (str): name of the random model function
@@ -315,7 +315,7 @@ class Sample:
     def __init__(self,
         n: int,
         g: str,
-        s: int,
+        s: Scalar,
         m: str,
         r: dict,
         t: str = 'screw',
