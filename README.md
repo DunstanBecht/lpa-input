@@ -34,19 +34,19 @@ A distribution is characterized by the following elements:
 Some abbreviations are used in the program:
 
 ### Models
-* **rdd**: random dislocation distribution
-* **rrdd**: restrictedly random dislocation distribution
-* **rcdd**: random cell dislocation distribution
+* **RDD**: random dislocation distribution
+* **RRDD**: restrictedly random dislocation distribution
+* **RCDD**: random cell dislocation distribution
 
 ### Model variants
-* **r**: randomly distributed Burgers vectors
-* **e**: evenly distributed Burgers vectors
-* **d**: dipolar Burgers vectors
+* **R**: randomly distributed Burgers vectors
+* **E**: evenly distributed Burgers vectors
+* **D**: dipolar Burgers vectors
 
 ### Boundary conditions
-* **pbcg**: periodic boundary conditions applied when generating the distribution
-* **pbcr**: periodic boundary conditions applied when running the simulation
-* **idbc**: image dislocations boundary conditions
+* **PBCG**: periodic boundary conditions applied when generating the distribution
+* **PBCR**: periodic boundary conditions applied when running the simulation
+* **IDBC**: image dislocations boundary conditions
 
 # User guide
 
@@ -61,15 +61,17 @@ pip install lpa-input
 To create a random dislocation distribution with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
 from lpa.input import sets
-r = {'density': 0.03, 'variant': 'e'}
-d = sets.Distribution('circle', 1000, 'rdd', r)
+from lpa.input.models import RDD
+r = {'d': 0.03, 'v': 'E'}
+d = sets.Distribution('circle', 1000, RDD, r)
 ```
 
 To create a sample of 100 random dislocation distributions with evenly distributed Burgers vectors in a cylindrical geometry with a radius of 1000 nm:
 ```python
 from lpa.input import sets
-r = {'density': 0.03, 'variant': 'e'}
-s = sets.Sample(500, 'circle', 1000, 'rdd', r)
+from lpa.input.models import RDD
+r = {'d': 0.03, 'v': 'E'}
+s = sets.Sample(500, 'circle', 1000, RDD, r)
 ```
 
 ### Exportation

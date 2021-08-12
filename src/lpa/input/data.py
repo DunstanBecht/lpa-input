@@ -113,7 +113,7 @@ def export_distribution(
     if d.g == 'circle':
         str_g = "Cylinder radius"
     if d.g == 'square':
-        if d.c!=None and 'pbcr' in d.c:
+        if d.c!=None and 'PBCR' in d.c:
             str_g = "Square_"+d.c[4:]+" side"
         else:
             str_g = "Square side"

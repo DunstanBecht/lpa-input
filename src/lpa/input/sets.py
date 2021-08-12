@@ -90,13 +90,13 @@ class Distribution:
     The dislocations can be of type 'screw' or type 'edge'. If the type
     is not specified, type 'screw' is chosen by default.
 
-    For circle geometry, if the parameter c is set to 'idbc', image
+    For circle geometry, if the parameter c is set to 'IDBC', image
     dislocations are added to the distribution.
 
-    For square geometry, the parameter c can be set to 'pbcg<r>' or
-    'pbcr<r>' where <r> is the number of replicates of the region of
-    interest around the boundaries. With 'pbcg<r>' the replicated
-    dislocations are added to the distribution. With 'pbcr<r>' the
+    For square geometry, the parameter c can be set to 'PBCG<r>' or
+    'PBCR<r>' where <r> is the number of replicates of the region of
+    interest around the boundaries. With 'PBCG<r>' the replicated
+    dislocations are added to the distribution. With 'PBCR<r>' the
     replicated dislocations are not added to the distribution but the
     X-ray diffraction simulation program is warned to replicate the
     region of interest.
@@ -120,7 +120,7 @@ class Distribution:
     def __init__(self,
         g: str,
         s: Scalar,
-        m: str,
+        m: GenerationFunction,
         r: dict,
         t: str = 'screw',
         c: Optional[str] = None,
@@ -151,17 +151,17 @@ class Distribution:
         else:
             raise Exception('unknown geometry')
         # dislocations
-        self.m = eval('models.' + m)
+        self.m = m
         self.r = r.copy()
         self.t = t
         self.p, self.b = self.m(self.g, self.s, self.v, self.r)
         self.d = len(self)/self.v # [nm^-n]
         self.i = 1/np.sqrt(self.d) # [nm]
         self.c = c
-        if not (self.c is None or c[:4]=='pbcr' and self.g=='square'):
-            if self.g=='circle' and c=='idbc':
+        if not (self.c is None or c[:4]=='PBCR' and self.g=='square'):
+            if self.g=='circle' and c=='IDBC':
                 cp, cb = images(self.s, self.p, self.b, self.t)
-            elif self.g=='square' and c[:4]=='pbcg':
+            elif self.g=='square' and c[:4]=='PBCG':
                 cp, cb = replications(self.s, self.p, self.b, int(c[4:]))
             else:
                 raise Exception('invalid boundary conditions')
@@ -171,7 +171,7 @@ class Distribution:
         self.str_s = notation.number(self.s) # [nm]
         self.str_n = str(self.n)
         self.str_v = notation.number(self.v) # [nm^n]
-        self.str_m = m
+        self.str_m = m.__name__
         self.str_d = notation.number(self.d*1e9**self.n) # [m^-n]
         self.str_i = format(self.i, '1.1f') # [nm]
 
@@ -194,13 +194,12 @@ class Distribution:
         Output:
             s: distribution information
         """
-        r = ", ".join([k+"="+str(self.r[k]) for k in self.r])
         s = ("Distribution: "+self.fileName()
             + "\n- geometry: "+self.g
             + "\n- size: "+self.str_s+" nm"
             + "\n- n-volume: "+self.str_v+" nm^"+self.str_n
             + "\n- dislocations type: "+self.t
-            + "\n- model: "+self.str_m+" ("+r+")"
+            + "\n- model: "+self.str_m+notation.parameters(self.r, 'console')
             + "\n- population: "+str(len(self))+" dislocations"
             + "\n- dislocation density: "+self.str_d+" m^-"+self.str_n
             + "\n- inter dislocation distance: "+self.str_i+" nm"
@@ -249,16 +248,12 @@ class Distribution:
         Output:
             t: title containing LaTeX code
         """
-        s = "in a "+self.g
-        m = self.str_m.upper()
-        if 'v' in self.r:
-            m += "-"+self.r['v'].upper()
-        e = self.str_d.split("e") # mantissa and exponent of the density
-        d = e[0]+"\\times 10^{"+str(int(e[1]))+"} m^{-2}" # density in LaTeX
-        d = r"$ \left( \rho \sim "+d+r" \right) $"
-        t = m+" "+d+" "+s
-        if not self.c is None and not 'pbcr' in self.c:
-            t += " with "+self.c.upper()
+        m = self.str_m+notation.parameters(self.r, 'title')
+        d = notation.number(self.d*1e18, 'title')
+        d = r"$ \rho \sim "+d+r" m^{-2}$"
+        t = m+" "+d
+        if not self.c is None and not 'PBCR' in self.c:
+            t += " with "+self.c
         return t
 
     @beartype

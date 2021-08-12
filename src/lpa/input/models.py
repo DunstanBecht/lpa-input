@@ -5,13 +5,13 @@
 Models for the random generation of dislocations.
 
 The following parameters can be used in the model parameters:
-    r: random seed (rdd, rrdd, rcdd)
-    v: variant (rrdd, rcdd)
-    d: density (rdd, rrdd, rcdd)
-    s: side of the subarea (rrdd) or the cell (rcdd)
-    f: filling of the subareas (rrdd)
-    l: dipole length (rcdd)
-    name: parameters set nickname (rdd, rrdd, rcdd)
+    r: random seed (RDD, RRDD, RCDD)
+    v: variant (RRDD, RCDD)
+    d: density (RDD, RRDD, RCDD)
+    s: side of the subarea (RRDD) or the cell (RCDD)
+    f: filling of the subareas (RRDD)
+    l: dipole length (RCDD)
+    name: parameters set nickname (RDD, RRDD, RCDD)
 """
 
 import math
@@ -39,16 +39,16 @@ def seed(
     np.random.seed(r['r'])
 
 @beartype
-def rdd(
+def RDD(
     g: str,
     s: Scalar,
     a: Scalar,
     r: dict,
 ) -> Tuple[VectorList, ScalarList]:
     """
-    Return the positions and Burgers vector generated with rdd model.
+    Return the positions and Burgers vector generated with RDD model.
 
-    "rdd" means: "random dislocation distribution"
+    "RDD" means: "Random Dislocation Distribution"
 
     Input:
         g: geometry of the region of interest
@@ -161,16 +161,16 @@ def even_senses(
     return b
 
 @beartype
-def rrdd(
+def RRDD(
     g: str,
     s: Scalar,
     a: Scalar,
     r: dict,
 ) -> Tuple[VectorList, ScalarList]:
     """
-    Return the positions and Burgers vector generated with rrdd model.
+    Return the positions and Burgers vector generated with RRDD model.
 
-    "rrdd" means: "restrictedly random dislocation distribution"
+    "RRDD" means: "Restrictedly Random Dislocation Distribution"
 
     Input:
         g: geometry of the region of interest
@@ -184,7 +184,7 @@ def rrdd(
 
     The following parameters can be specified in r:
         'r': (int): random seed
-        'v' (str): variant ('r' or 'e')
+        'v' (str): variant ('R' or 'E')
         's' (int): side of the subareas [nm]
         'f' (int): number of dislocations per subarea
         'd' (Scalar): density of dislocations [nm^-2]
@@ -193,8 +193,8 @@ def rrdd(
     randomly and added to the parameters dictionary. The parameter 'd'
     is considered only if the parameter 'f' is not specified.
 
-    When the parameter 'v' is set to 'r', the Burgers vectors are
-    randomly distributed. When it is set to 'e', the Burgers vectors
+    When the parameter 'v' is set to 'R', the Burgers vectors are
+    randomly distributed. When it is set to 'E', the Burgers vectors
     are evenly distributed in each subarea.
 
     Complexity:
@@ -216,9 +216,9 @@ def rrdd(
     x, y = even_positions(t, rf)
     p = np.stack((x,y), axis=1) + rs*np.random.random((n, 2))
     # dislocation Burgers vector
-    if rv == 'r':
+    if rv == 'R':
         b = np.random.choice([1, -1], size=n)
-    elif rv == 'e':
+    elif rv == 'E':
         b = even_senses(t, rf)
     if g == 'circle':
         mask = np.sum(np.square(p), axis=1) < s**2
@@ -227,16 +227,16 @@ def rrdd(
     return p[mask], b[mask]
 
 @beartype
-def rcdd(
+def RCDD(
     g: str,
     s: Scalar,
     a: Scalar,
     r: dict,
 ) -> Tuple[VectorList, ScalarList]:
     """
-    Return the positions and Burgers vector generated with rcdd model.
+    Return the positions and Burgers vector generated with RCDD model.
 
-    "rcdd" means: "random cell dislocation distribution"
+    "RCDD" means: "Random Cell Dislocation Distribution"
 
     Input:
         g: geometry of the region of interest
@@ -250,7 +250,7 @@ def rcdd(
 
     The following parameters can be specified in r:
         'r': (int): random seed
-        'v' (str): variant ('r', 'e' or 'd')
+        'v' (str): variant ('R', 'E' or 'D')
         'd' (Scalar): density of dislocations [nm^-2]
         's' (int): side of the subareas [nm]
         't' (int): thickness of the cell walls [nm]
@@ -259,9 +259,9 @@ def rcdd(
     When the parameter 'r' is not specified, the random seed is chosen
     randomly and added to the parameters dictionary.
 
-    When the parameter 'v' is set to 'r', the Burgers vectors are
-    randomly distributed. When 'v' is set to 'e', the Burgers vectors
-    are evenly distributed in each cell. When 'v' is set to 'd', the
+    When the parameter 'v' is set to 'R', the Burgers vectors are
+    randomly distributed. When 'v' is set to 'E', the Burgers vectors
+    are evenly distributed in each cell. When 'v' is set to 'D', the
     Burgers vectors with positive sense and negative sense are spaced
     by a distance defined by 'l'.
 
@@ -274,26 +274,26 @@ def rcdd(
     rd = r['d'] # density of dislocations
     rs = r['s'] # side of the subareas
     rt = r['t'] # thickness of the cell walls
-    if rv == 'd':
+    if rv == 'D':
         rl = r['l'] # length of the dipoles
         if rt > rs/2:
             raise ValueError('inconsistent sizes')
     t = ticks(g, s, rs)[:-1] # left or bottom location of subareas
     n = round(rd*rs**2*len(t)**2) # number of dislocations
     # dislocation or dipole positions
-    if rv == 'd':
+    if rv == 'D':
         c = n//2 # 1 random point for 1 dipole of 2 dislocations
-    elif rv == 'r':
+    elif rv == 'R':
         c = n # 1 random point for 1 dislocation
-    elif rv == 'e':
+    elif rv == 'E':
         rf = round(r['d']*rs**2) # deduced filling
         if rf%2 != 0:
             raise ValueError('odd number of dislocations per subarea')
         c = rf * len(t)**2 # 1 random point for 1 dislocation
-    if rv in ['r', 'd']:
+    if rv in ['R', 'D']:
         x = 1.0*np.random.choice(t, size=c)
         y = 1.0*np.random.choice(t, size=c)
-    elif rv == 'e':
+    elif rv == 'E':
         x, y = even_positions(t, rf)
     l1 = rt/2
     l2 = rs - l1
@@ -309,11 +309,11 @@ def rcdd(
     np.add(x, l2 + rx*l1, x, where=m==3)
     np.add(y, l1 + ry*l2, y, where=m==3)
     # Burgers vector
-    if rv == 'r':
+    if rv == 'R':
         b = np.random.choice([1, -1], size=c)
-    elif rv == 'e':
+    elif rv == 'E':
         b = even_senses(t, rf)
-    elif rv == 'd':
+    elif rv == 'D':
         b = np.concatenate((np.ones(c), -np.ones(c)))
         theta = 2*np.pi*np.random.random(c)
         ux = rl/2 * np.cos(theta)

@@ -40,7 +40,7 @@ def export(
     ax.set_aspect(1)
     b = d.s * 0.05 # borders width
     s, w = 100, 0.2 # marker size and line width
-    if d.str_m in ["rrdd", "rcdd"] and (d.c is None or 'pbcr' in d.c):
+    if d.str_m in ["RRDD", "RCDD"] and (d.c is None or 'PBCR' in d.c):
         ax.grid(True, zorder=0) # subareas grid
         ticks = models.ticks(d.g, d.s, d.r['s'])
         ax.set_xticks(ticks)
@@ -67,7 +67,7 @@ def export(
         if d.c is None:
             ax.set_xlim([-b, d.s+b])
             ax.set_ylim([-b, d.s+b])
-        elif 'pbcg' in d.c:
+        elif 'PBCG' in d.c:
             r = int(d.c[4:])
             ax.set_xlim([-b-r*d.s, d.s+b+r*d.s])
             ax.set_ylim([-b-r*d.s, d.s+b+r*d.s])
