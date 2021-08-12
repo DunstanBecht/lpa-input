@@ -38,7 +38,7 @@ def export(
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.set_aspect(1)
     b = d.s * 0.05 # borders width
-    s, w = 100, 1.5 # marker size and line width
+    s, w = 100, 0.2 # marker size and line width
     if d.str_m in ["rrdd", "rcdd"] and d.c is None:
         from . import models
         ax.grid(True, zorder=0) # subareas grid
@@ -74,8 +74,8 @@ def export(
     ax.set_ylabel(r"$y \ (nm)$")
     plt.title(t)
     t = [ # partition of Burgers vectors set
-        ('2', "Burgers vector sense $+$", d.p[d.b>0]),
-        ('1', "Burgers vector sense $-$", d.p[d.b<0]),
+        (r"$\bot$", "Burgers vector sense $+$", d.p[d.b>0]),
+        (r"$\top$", "Burgers vector sense $-$", d.p[d.b<0]),
     ]
     for k in t:
         x, y = k[2][:,0], k[2][:,1]
