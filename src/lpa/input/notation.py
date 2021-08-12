@@ -38,6 +38,8 @@ def parameters(
         n += "_s"+number(r['s'])+"nm"
     if 'f' in r:
         n += "_f"+str(r['f'])
+    if 't' in r:
+        n += "_t"+number(r['t'])+"nm"
     if 'l' in r:
         n += "_l"+number(r['l'])+"nm"
     return n

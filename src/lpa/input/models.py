@@ -44,7 +44,7 @@ def rdd(
     s: Scalar,
     a: Scalar,
     r: dict,
-) -> Tuple[VectorList, VectorList]:
+) -> Tuple[VectorList, ScalarList]:
     """
     Return the positions and Burgers vector generated with rdd model.
 
@@ -70,8 +70,9 @@ def rdd(
     Complexity:
         O( r['d'] * a )
     """
-    seed(r)
-    rd = r['d']
+    # parameters
+    seed(r) # random seed
+    rd = r['d'] # density of dislocations
     n = round(rd*a) # number of dislocations
     # dislocation positions
     if g == 'circle':
@@ -82,10 +83,9 @@ def rdd(
         p = s*np.random.random([n, 2])
     # dislocation Burgers vectors
     bp = np.ones(n//2, dtype=int)
-    l = [bp, -bp]
+    b = np.concatenate((bp, -bp))
     if n%2 == 1:
-        l.append(np.random.choice([1, -1], size=1))
-    b = np.concatenate(l)
+        b = np.concatenate((p, np.random.choice([1, -1], size=1)))
     return p, b
 
 @beartype
@@ -115,12 +115,58 @@ def ticks(
         return s*np.arange(m+1)
 
 @beartype
+def even_positions(
+    t: VectorList,
+    f: int,
+) -> Tuple[ScalarList, ScalarList]:
+    """
+    Return the positions with a number of points f in each case.
+
+    Input:
+        t: ticks along an axis
+        f: number of points in each case
+
+    Output:
+        x: x coordinates of points
+        y: y coordinates of points
+
+    Example for t=[0, 1] and f=4:
+        x = [0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1]
+        y = [0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1]
+    """
+    x = np.repeat(np.tile(t, len(t)), f)
+    y = np.repeat(t, f*len(t))
+    return x, y
+
+@beartype
+def even_senses(
+    t: VectorList,
+    f: int,
+) -> ScalarList:
+    """
+    Return the evenly distributed Burgers senses for even_positions.
+
+    Input:
+        t: ticks
+        f: number of points in each case
+
+    Output:
+        b: Burgers vector senses
+
+    Example for t=[0, 1] and f=4:
+        b = [- - + + - - + + - - + + - - + +]
+    """
+    bp = np.ones(f//2, dtype=int)
+    b = np.tile(np.concatenate((bp, -bp)), len(t)**2)
+    return b
+
+@beartype
 def rrdd(
     g: str,
     s: Scalar,
     a: Scalar,
     r: dict,
-) -> Tuple[VectorList, VectorList]:
+) -> Tuple[VectorList, ScalarList]:
     """
     Return the positions and Burgers vector generated with rrdd model.
 
@@ -139,7 +185,7 @@ def rrdd(
     The following parameters can be specified in r:
         'r': (int): random seed
         'v' (str): variant ('r' or 'e')
-        's' (int): size of the subareas [nm]
+        's' (int): side of the subareas [nm]
         'f' (int): number of dislocations per subarea
         'd' (Scalar): density of dislocations [nm^-2]
 
@@ -154,34 +200,31 @@ def rrdd(
     Complexity:
         O( r['f'] * s^2/r['s']^2 )
     """
-    seed(r)
-    rv = r['v']
-    rs = r['s']
-    if 'filling' in r:
-        rf = r['f']
+    # parameters
+    seed(r) # random seed
+    rv = r['v'] # model variant
+    rs = r['s'] # size of the subareas
+    if 'f' in r:
+        rf = r['f'] # specified filling
     else:
-        rf = round(r['d']*rs**2)
-    # division of the space in subareas
-    t = ticks(g, s, rs)[:-1] # left or bottom location of subareas
+        rf = round(r['d']*rs**2) # deduced filling
     if rf%2 != 0:
         raise ValueError('odd number of dislocations per subarea')
+    t = ticks(g, s, rs)[:-1] # left or bottom location of subareas
     n = rf * len(t)**2 # number of dislocations
-    x = np.repeat(np.tile(t, len(t)), rf)
-    # x=[0,0,0,1,1,1,0,0,0,1,1,1] with t=[0,1], f=3
-    y = np.repeat(t, rf*len(t))
-    # y=[0,0,0,0,0,0,1,1,1,1,1,1] with t=[0,1], f=3
+    # dislocation positions
+    x, y = even_positions(t, rf)
     p = np.stack((x,y), axis=1) + rs*np.random.random((n, 2))
     # dislocation Burgers vector
     if rv == 'r':
         b = np.random.choice([1, -1], size=n)
     elif rv == 'e':
-        bp = np.ones(rf//2, dtype=int)
-        b = np.tile(np.concatenate((bp, -bp)), len(t)**2)
+        b = even_senses(t, rf)
     if g == 'circle':
         mask = np.sum(np.square(p), axis=1) < s**2
-        p = p[mask]
-        b = b[mask]
-    return p, b
+    elif g == 'square':
+        mask = (p[:,0]<s) & (p[:,1]<s)
+    return p[mask], b[mask]
 
 @beartype
 def rcdd(
@@ -189,7 +232,7 @@ def rcdd(
     s: Scalar,
     a: Scalar,
     r: dict,
-) -> Tuple[VectorList, VectorList]:
+) -> Tuple[VectorList, ScalarList]:
     """
     Return the positions and Burgers vector generated with rcdd model.
 
@@ -207,10 +250,10 @@ def rcdd(
 
     The following parameters can be specified in r:
         'r': (int): random seed
-        'v' (str): 'r', 'e' or 'd'
+        'v' (str): variant ('r', 'e' or 'd')
         'd' (Scalar): density of dislocations [nm^-2]
-        's' (int): size of the subareas [nm]
-        't' (int): thickness of the border [nm]
+        's' (int): side of the subareas [nm]
+        't' (int): thickness of the cell walls [nm]
         'l' (int): length of the dipoles [nm]
 
     When the parameter 'r' is not specified, the random seed is chosen
@@ -225,27 +268,35 @@ def rcdd(
     Complexity:
         O( r['d'] * a )
     """
+    # parameters
     seed(r)
-    rv = r['v']
-    rd = r['d']
-    rs = r['s']
-    rt = r['t']
-    if rv=='d' and r['l']>rt:
-        raise ValueError('inconsistent sizes')
-    # positions
+    rv = r['v'] # variant
+    rd = r['d'] # density of dislocations
+    rs = r['s'] # side of the subareas
+    rt = r['t'] # thickness of the cell walls
+    if rv == 'd':
+        rl = r['l'] # length of the dipoles
+        if rt > rs/2:
+            raise ValueError('inconsistent sizes')
     t = ticks(g, s, rs)[:-1] # left or bottom location of subareas
     n = round(rd*rs**2*len(t)**2) # number of dislocations
+    # dislocation or dipole positions
     if rv == 'd':
-        c = n//2 # 1 random point for 1 dislocation
-    else:
-        c = n # 1 random point for 1 dipole of 2 dislocations
-    if rv == 'd':
-        l1 = (rt-r['l'])/2
-    else:
-        l1 = rt/2
+        c = n//2 # 1 random point for 1 dipole of 2 dislocations
+    elif rv == 'r':
+        c = n # 1 random point for 1 dislocation
+    elif rv == 'e':
+        rf = round(r['d']*rs**2) # deduced filling
+        if rf%2 != 0:
+            raise ValueError('odd number of dislocations per subarea')
+        c = rf * len(t)**2 # 1 random point for 1 dislocation
+    if rv in ['r', 'd']:
+        x = 1.0*np.random.choice(t, size=c)
+        y = 1.0*np.random.choice(t, size=c)
+    elif rv == 'e':
+        x, y = even_positions(t, rf)
+    l1 = rt/2
     l2 = rs - l1
-    x = 1.0*np.random.choice(t, size=c)
-    y = 1.0*np.random.choice(t, size=c)
     m = np.random.randint(4, size=c)
     rx = np.random.random(c)
     ry = np.random.random(c)
@@ -257,18 +308,16 @@ def rcdd(
     np.add(y,      ry*l2, y, where=m==2)
     np.add(x, l2 + rx*l1, x, where=m==3)
     np.add(y, l1 + ry*l2, y, where=m==3)
+    # Burgers vector
     if rv == 'r':
         b = np.random.choice([1, -1], size=c)
     elif rv == 'e':
-        l = [np.ones(c//2), -np.ones(c//2)]
-        if c%2 == 1:
-            l.append(np.random.choice([1, -1], size=1))
-        b = np.concatenate(l)
+        b = even_senses(t, rf)
     elif rv == 'd':
         b = np.concatenate((np.ones(c), -np.ones(c)))
         theta = 2*np.pi*np.random.random(c)
-        ux = r['l']/2 * np.cos(theta)
-        uy = r['l']/2 * np.sin(theta)
+        ux = rl/2 * np.cos(theta)
+        uy = rl/2 * np.sin(theta)
         x = np.concatenate((x+ux, x-ux))
         y = np.concatenate((y+uy, y-uy))
     p = np.stack((x,y), axis=1)
