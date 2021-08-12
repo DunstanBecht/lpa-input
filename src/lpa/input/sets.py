@@ -250,12 +250,14 @@ class Distribution:
             t: title containing LaTeX code
         """
         s = "in a "+self.g
-        m = self.str_m.upper()+notation.parameters(self.r).capitalize()
+        m = self.str_m.upper()
+        if 'v' in self.r:
+            m += "-"+self.r['v'].upper()
         e = self.str_d.split("e") # mantissa and exponent of the density
         d = e[0]+"\\times 10^{"+str(int(e[1]))+"} m^{-2}" # density in LaTeX
         d = r"$ \left( \rho \sim "+d+r" \right) $"
         t = m+" "+d+" "+s
-        if not self.c is None:
+        if not self.c is None and not 'pbcr' in self.c:
             t += " with "+self.c.upper()
         return t
 

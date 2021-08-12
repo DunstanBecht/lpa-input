@@ -12,8 +12,16 @@ def number(
     x: Scalar,
 ) -> str:
     """
+    Return a notation of x that can be used in a file name.
+
+    Input:
+        x: number
+
+    Output:
+        s: string of x
     """
-    return format(round(x), '1.0e').replace("+", "").replace("0", "")
+    s = format(round(x), '1.0e').replace("+", "")
+    return s.replace("0", "").strip("e")
 
 
 @beartype
@@ -33,7 +41,7 @@ def parameters(
         return r['name']
     n = ""
     if 'v' in r:
-        n += r['v']
+        n += "-"+r['v']
     if 's' in r:
         n += "_s"+number(r['s'])+"nm"
     if 'f' in r:
