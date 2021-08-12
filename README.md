@@ -54,7 +54,7 @@ Some abbreviations are used in the program:
 
 The project is indexed on [PyPI](https://pypi.org/project/lpa-input/) and installable directly via pip.
 ```bash
-pip install lpa-input
+pip install -U lpa-input
 ```
 
 ### Generation
