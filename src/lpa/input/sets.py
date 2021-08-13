@@ -39,12 +39,14 @@ def images(
         O( len(p) )
     """
     if t == 'screw':
-        n = np.linalg.norm(p, axis=1)
-        m = n != 0
-        v = p[m]
-        t = np.arctan2(v[:,1], v[:,0])
-        r = s**2/n[m]
-        return np.stack((r*np.cos(t), r*np.sin(t)), axis=1), -b
+        n = np.linalg.norm(p, axis=1) # distance to the origin
+        m = n != 0 # mask to avoid division by zero
+        v = p[m] # points different from (0, 0)
+        t = np.arctan2(v[:,1], v[:,0]) # angles of the image dislocations
+        r = s**2/n[m] # radii of the image dislocations
+        cp = np.stack((r*np.cos(t), r*np.sin(t)), axis=1) # image positions
+        cb = -b # image Burgers vector senses
+        return cp, -cb
     else:
         raise ValueError("cannot calculate images of edge dislocations")
 
@@ -71,13 +73,15 @@ def replications(
     Complexity:
         O( len(p) * r^2 )
     """
-    u = []
+    u = [] # list containing translated positions
     for i in range(1, r+1):
         for j in range(2*i):
-            for k in [1, -1]:
+            for k in (1, -1):
                 u.append(np.array((-i*k, (i-j)*k)))
                 u.append(np.array(((i-j)*k,  i*k)))
-    return np.concatenate([p + s*d for d in u]), np.tile(b, len(u))
+    cp = np.concatenate([p + s*d for d in u]) # replicated positions
+    cb = np.tile(b, len(u)) # replicated Burgers vector senses
+    return cp, cb
 
 class Distribution:
     """
@@ -116,6 +120,8 @@ class Distribution:
         c (str|None): conditions at the boundaries
     """
 
+    geometries = ('square', 'circle') # available geometries
+
     @beartype
     def __init__(self,
         g: str,
@@ -131,7 +137,7 @@ class Distribution:
         Input:
             g: geometry of the region of interest
             s: size of the region of interest [nm]
-            m: name of the random model
+            m: model generating function
             r: parameters of the random model
             t: dislocations type
             c: conditions at the boundaries
@@ -139,41 +145,40 @@ class Distribution:
         Complexity:
             O( complexity(m) )
         """
-        # shape
-        self.g = g
+        # shape size
         if s <= 0:
-            raise ValueError("s must be strictly positive")
-        self.s = s # [nm]
+            raise ValueError("incorrect size: "+str(s))
+        self.s = s # characteristic size of the region of interest [nm]
+        # shape geometry
+        if not g in Distribution.geometries:
+            raise ValueError("unknown geometry: "+str(g))
+        self.g = g # geometry of the region of interest
+        # shape n-volume
         if self.g == 'circle': # centered at the origin
-            self.n, self.v = 2, np.pi*self.s**2 # [nm^2]
-        elif self.g == 'square': # corner at the origin
-            self.n, self.v = 2, self.s**2 # [nm^2]
-        else:
-            raise Exception('unknown geometry')
+            self.n = 2 # dimension of space
+            self.v = np.pi*self.s**2 # surface [nm^2]
+        elif self.g == 'square': # bottom left corner at the origin
+            self.n = 2 # dimension of space
+            self.v = self.s**2 # surface [nm^2]
+        # model
+        self.m = m # model generating function
+        self.r = r.copy() # model parameters
         # dislocations
-        self.m = m
-        self.r = r.copy()
-        self.t = t
-        self.p, self.b = self.m(self.g, self.s, self.v, self.r)
-        self.d = len(self)/self.v # [nm^-n]
-        self.i = 1/np.sqrt(self.d) # [nm]
-        self.c = c
+        self.t = t # dislocation type
+        self.p, self.b = self.m(self.g, self.s, self.v, self.r) # generate
+        self.d = len(self)/self.v # density of dislocations [nm^-n]
+        self.i = 1/np.sqrt(self.d) # inter dislocation distance [nm]
+        # boundary conditions
+        self.c = c # boundary conditions code
         if not (self.c is None or c[:4]=='PBCR' and self.g=='square'):
             if self.g=='circle' and c=='IDBC':
                 cp, cb = images(self.s, self.p, self.b, self.t)
             elif self.g=='square' and c[:4]=='PBCG':
                 cp, cb = replications(self.s, self.p, self.b, int(c[4:]))
             else:
-                raise Exception('invalid boundary conditions')
+                raise Exception("invalid boundary conditions: "+str(c))
             self.p = np.concatenate((self.p, cp))
             self.b = np.concatenate((self.b, cb))
-        # printable attributes
-        self.str_s = notation.number(self.s) # [nm]
-        self.str_n = str(self.n)
-        self.str_v = notation.number(self.v) # [nm^n]
-        self.str_m = m.__name__
-        self.str_d = notation.number(self.d*1e9**self.n) # [m^-n]
-        self.str_i = format(self.i, '1.1f') # [nm]
 
     @beartype
     def __repr__(self) -> str:
@@ -183,8 +188,15 @@ class Distribution:
         Output:
             r: string that can be evaluated
         """
-        args = [self.g, self.s, self.str_m, self.r, self.t, self.c]
-        return "Distribution("+", ".join([repr(a) for a in args])+")"
+        args = [
+            repr(self.g), # geometry
+            str(self.s), # size
+            self.m.__name__, # model generating function
+            repr(self.r), # model parameters
+            repr(self.t), # dislocations type
+            repr(self.c), # bondary conditions
+        ]
+        return "Distribution("+", ".join(args)+")"
 
     @beartype
     def __str__(self) -> str:
@@ -194,18 +206,25 @@ class Distribution:
         Output:
             s: distribution information
         """
-        s = ("Distribution: "+self.fileName()
+        s = (
+            "Distribution: "+self.fileName()
             + "\n- geometry: "+self.g
-            + "\n- size: "+self.str_s+" nm"
-            + "\n- n-volume: "+self.str_v+" nm^"+self.str_n
+            + "\n- size: "+notation.number(self.s, 'console')+" nm"
+            + "\n- n-volume: "+notation.number(self.v, 'console')
+            + " nm^"+str(self.n)
             + "\n- dislocations type: "+self.t
-            + "\n- model: "+self.str_m+notation.parameters(self.r, 'console')
+            + "\n- model: "+self.m.__name__
+            + notation.parameters(self.r, 'console')
             + "\n- population: "+str(len(self))+" dislocations"
-            + "\n- dislocation density: "+self.str_d+" m^-"+self.str_n
-            + "\n- inter dislocation distance: "+self.str_i+" nm"
+            + "\n- dislocation density: "
+            + notation.number(self.d*1e9**self.n, 'console')
+            + " m^-"+str(self.n)
+            + "\n- inter dislocation distance: "
+            + notation.number(self.i, 'console')+" nm"
             + "\n- boundary conditions: "+str(self.c)
             + "\n- b+: "+str(len(self.b[self.b>0]))+" dislocations"
-            + "\n- b-: "+str(len(self.b[self.b<0]))+" dislocations")
+            + "\n- b-: "+str(len(self.b[self.b<0]))+" dislocations"
+        )
         return s
 
     @beartype
@@ -231,13 +250,15 @@ class Distribution:
         Output:
             n: file name of the distribution
         """
-        n = (self.str_d+"m-"+self.str_n+"_"
-            + self.g+"_"+self.str_s+"nm"+"_"
-            + self.str_m+notation.parameters(self.r))
+        n = (
+            notation.number(self.d*1e9**self.n)+"m-"+str(self.n) # density
+            + "_"+self.g+"_"+notation.number(self.s)+"nm" # geometry
+            + "_"+self.m.__name__+notation.parameters(self.r) # model
+        )
         if t:
-            n += "_"+self.t
-        if not self.c is None:
-            n += "_"+self.c
+            n += "_"+self.t # add dislocation type information
+        if self.c:
+            n += "_"+self.c # add bondary conditions information
         return n
 
     @beartype
@@ -248,12 +269,11 @@ class Distribution:
         Output:
             t: title containing LaTeX code
         """
-        m = self.str_m+notation.parameters(self.r, 'title')
-        d = notation.number(self.d*1e18, 'title')
-        d = r"$ \rho \sim "+d+r" m^{-2}$"
-        t = m+" "+d
-        if not self.c is None and not 'PBCR' in self.c:
-            t += " with "+self.c
+        m = self.m.__name__+notation.parameters(self.r, 'title') # model
+        d = notation.number(self.d*1e9**self.n, 'title') # density
+        t = m+r" $ \rho \sim "+d+r" m^{-2} $" # title
+        if self.c and self.c[:4]!='PBCR':
+            t += " "+self.c # boundary conditions
         return t
 
     @beartype
@@ -276,15 +296,18 @@ class Distribution:
         Complexity:
             O( len(r) )
         """
+        # vo: n-volumes of the overlappings (for each value of r)
+        # vv: n-volumes of the vicinities of a (for each value of r)
         if self.g == 'circle':
-            d2 = np.sum(np.square(a))
-            d = np.sqrt(d2)
+            d2 = np.sum(np.square(a)) # squared distance to the origin of a
+            d = np.sqrt(d2) # distance to the origin of a
             vo = overlap.circle_circle(r, self.s, d, r2, self.s**2, d2)
             vv = np.pi*r2
         elif self.g == 'square':
             vo = overlap.circle_square(a[0], a[1], r, r2, self.s)
             vv = np.pi*r2
-        return 1/np.divide(vo, vv, np.ones(vo.size), where=r2>0)
+        w = 1/np.divide(vo, vv, np.ones(vo.size), where=r2>0) # ratio
+        return w
 
 class Sample:
     """
@@ -300,7 +323,7 @@ class Sample:
         s (Scalar): size of the region of interest [nm]
         n (int): dimension of space of the region of interest
         v (Scalar): n-volume of the region of interest [nm^n]
-        m (str): name of the random model function
+        m (GenerationFunction): function of the random model used
         r (dict): parameters of the random model
         t (str): dislocations type
         d (Scalar): averaged density of dislocations [nm^-n]
@@ -313,7 +336,7 @@ class Sample:
         n: int,
         g: str,
         s: Scalar,
-        m: str,
+        m: GenerationFunction,
         r: dict,
         t: str = 'screw',
         c: Optional[str] = None,
@@ -325,7 +348,7 @@ class Sample:
             n: number of distributions to generate
             g: geometry of the region of interest
             s: size of the region of interest [nm]
-            m: name of the random model function
+            m: model generating function
             r: parameters of the random model
             t: dislocations type
             c: conditions at the boundaries
@@ -334,25 +357,18 @@ class Sample:
             O( c * complexity(Distribution) )
         """
         if n <= 0:
-            raise ValueError("n must be strictly positive")
+            raise ValueError("incorrect number of distribution: "+str(n))
         self.l = tuple([Distribution(g, s, m, r, t, c) for i in range(n)])
-        self.g = g
-        self.s = s
-        self.n = self[0].n
-        self.v = self[0].v
-        self.m = m
-        self.r = r
-        self.t = t
-        self.d = self.average(lambda d : d.d)
-        self.i = self.average(lambda d : d.i)
-        self.c = c
-        def fmt(x):
-            return format(round(x), '1.0e').replace("+", "")
-        self.str_s = fmt(self.s) # [nm]
-        self.str_n = str(self.n)
-        self.str_v = fmt(self.v) # [nm^n]
-        self.str_d = fmt(self.d*1e9**self.n) # [m^-n]
-        self.str_i = format(self.i, '1.1f') # [nm]
+        self.g = g # geometry of the region of interest
+        self.s = s # size of the region of interest
+        self.n = self[0].n # dimension of space
+        self.v = self[0].v # n-volume of the region of interest
+        self.m = m # model function
+        self.r = r # model parameters
+        self.t = t # dislocation type
+        self.d = self.average(lambda d : d.d) # averaged dislocation density
+        self.i = self.average(lambda d : d.i) # averaged inter disl. dist.
+        self.c = c # boundary conditions
 
     @beartype
     def __repr__(self) -> str:
@@ -362,8 +378,16 @@ class Sample:
         Output:
             r: string that can be evaluated
         """
-        args = [len(self), self.g, self.s, self.m, self.r, self.t, self.c]
-        return "Sample("+", ".join([repr(a) for a in args])+")"
+        args = [
+            str(len(self)), # number of distributions
+            repr(self.g), # geometry
+            str(self.s), # size
+            self.m.__name__, # model function
+            repr(self.r), # model parameters
+            repr(self.t), # dislocation type
+            repr(self.c), # boundary conditions
+        ]
+        return "Sample("+", ".join(args)+")"
 
     @beartype
     def __str__(self) -> str:
@@ -373,17 +397,22 @@ class Sample:
         Output:
             s: distribution information
         """
-        r = ", ".join([k+"="+str(self.r[k]) for k in self.r])
-        s = ("Sample: "+self.fileName()
+        s = (
+            "Sample: "+self.fileName()
             + "\n- population: "+str(len(self))+" distributions"
             + "\n- geometry: "+self.g
-            + "\n- size: "+self.str_s+" nm"
-            + "\n- n-volume: "+self.str_v+" nm^"+self.str_n
+            + "\n- size: "+notation.number(self.s, 'console')+" nm"
+            + "\n- n-volume: "+notation.number(self.v, 'console')
+            + " nm^"+str(self.n)
             + "\n- dislocations type: "+self.t
-            + "\n- model: "+self.m+" ("+r+")"
-            + "\n- dislocation density: "+self.str_d+" m^-"+self.str_n
-            + "\n- inter dislocation distance: "+self.str_i+" nm"
-            + "\n- boundary conditions: "+str(self.c))
+            + "\n- model: "+self.m.__name__
+            + notation.parameters(self.r, 'console')
+            + "\n- dislocation density: "
+            + notation.number(self.d*1e9**self.n, 'console')
+            + "\n- inter dislocation distance: "
+            + notation.number(self.i, 'console')+" nm"
+            + "\n- boundary conditions: "+str(self.c)
+        )
         return s
 
     @beartype
@@ -430,7 +459,7 @@ class Sample:
         Output:
             t: title containing LaTeX code
         """
-        return "sample of "+str(len(self))+" "+self[0].plotTitle()
+        return str(len(self))+" "+self[0].plotTitle()
 
     @beartype
     def average(self,
@@ -455,12 +484,12 @@ class Sample:
         Complexity:
             O( len(self) * complexity(f) )
         """
-        r = f(self[0], *args)
+        r = f(self[0], *args) # result of f on the first distribution
         if isinstance(r, tuple):
             r = list(r)
             n = len(r)
             for i in range(1, len(self)):
-                ri = f(self[i], *args)
+                ri = f(self[i], *args) # result of f on the ith distribution
                 for j in range(n):
                     r[j] += ri[j]
             for j in range(n):

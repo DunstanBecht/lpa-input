@@ -82,9 +82,9 @@ def RDD(
     elif g == 'square':
         p = s*np.random.random([n, 2])
     # dislocation Burgers vectors
-    bp = np.ones(n//2, dtype=int)
-    b = np.concatenate((bp, -bp))
-    if n%2 == 1:
+    bp = np.ones(n//2, dtype=int) # positive Burgers vectors
+    b = np.concatenate((bp, -bp)) # add negative Burgers vectors
+    if n%2 == 1: # add a random burger vector
         b = np.concatenate((p, np.random.choice([1, -1], size=1)))
     return p, b
 
@@ -110,9 +110,9 @@ def ticks(
     """
     m = math.ceil(l/s)
     if g == 'circle':
-        return s*np.arange(-m, m+1)
+        return s*np.arange(-m, m+1) # [-2s, -s, 0, s, 2s] with m=2
     if g == 'square':
-        return s*np.arange(m+1)
+        return s*np.arange(m+1) # [0, s, 2s] with m=2
 
 @beartype
 def even_positions(
@@ -220,6 +220,7 @@ def RRDD(
         b = np.random.choice([1, -1], size=n)
     elif rv == 'E':
         b = even_senses(t, rf)
+    # masking
     if g == 'circle':
         mask = np.sum(np.square(p), axis=1) < s**2
     elif g == 'square':
@@ -272,12 +273,12 @@ def RCDD(
     seed(r)
     rv = r['v'] # variant
     rd = r['d'] # density of dislocations
-    rs = r['s'] # side of the subareas
+    rs = r['s'] # side of the cells
     rt = r['t'] # thickness of the cell walls
+    if rt > rs/2:
+        raise ValueError("inconsistent thickness and cell side")
     if rv == 'D':
         rl = r['l'] # length of the dipoles
-        if rt > rs/2:
-            raise ValueError('inconsistent sizes')
     t = ticks(g, s, rs)[:-1] # left or bottom location of subareas
     n = round(rd*rs**2*len(t)**2) # number of dislocations
     # dislocation or dipole positions
@@ -288,13 +289,15 @@ def RCDD(
     elif rv == 'E':
         rf = round(r['d']*rs**2) # deduced filling
         if rf%2 != 0:
-            raise ValueError('odd number of dislocations per subarea')
+            raise ValueError("odd number of dislocations per cell")
         c = rf * len(t)**2 # 1 random point for 1 dislocation
+    # choice of cells
     if rv in ['R', 'D']:
         x = 1.0*np.random.choice(t, size=c)
         y = 1.0*np.random.choice(t, size=c)
     elif rv == 'E':
         x, y = even_positions(t, rf)
+    # choice of position in the cells
     l1 = rt/2
     l2 = rs - l1
     m = np.random.randint(4, size=c)
@@ -321,6 +324,7 @@ def RCDD(
         x = np.concatenate((x+ux, x-ux))
         y = np.concatenate((y+uy, y-uy))
     p = np.stack((x,y), axis=1)
+    # masking
     if g == 'circle':
         mask = np.sum(np.square(p), axis=1) < s**2
         p = p[mask]

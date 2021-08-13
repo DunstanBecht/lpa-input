@@ -36,11 +36,7 @@ __version__ = "0.9.1"
 import sys
 import numpy as np
 from typing import Union, Optional, NewType, Any
-try:
-    from beartype import beartype
-except:
-    def beartype(function):
-        return function
+from beartype import beartype
 
 if sys.version_info[0]>=3 and sys.version_info[1]>=9:
     from collections.abc import Callable

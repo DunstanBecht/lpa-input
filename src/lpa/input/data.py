@@ -46,17 +46,17 @@ def contrast_factor(
     Output:
         C: dislocation contrast factor [1]
     """
-    ng = np.linalg.norm(g)
-    nl = np.linalg.norm(l)
-    psi = np.arccos(np.dot(g, l)/(ng*nl))
+    ng = np.linalg.norm(g) # diffraction vector norm to normalize
+    nl = np.linalg.norm(l) # dislocation line vector norm to normalize
+    psi = np.arccos(np.dot(g, l)/(ng*nl)) # angle between g and l
     if t == 'screw':
         C = np.sin(psi)**2 * np.cos(psi)**2
     elif t == 'edge':
-        pg = g - (np.dot(g, l)/nl**2)*l
-        pb = b - (np.dot(b, l)/nl**2)*l
-        npg = np.linalg.norm(pg)
-        npb = np.linalg.norm(pb)
-        gamma = np.arccos(np.dot(pg, pb)/(npg*npb))
+        pg = g - (np.dot(g, l)/nl**2)*l # projection of g
+        pb = b - (np.dot(b, l)/nl**2)*l # projection of b
+        npg = np.linalg.norm(pg) # norm of the projection of g
+        npb = np.linalg.norm(pb) # norm of the projection of b
+        gamma = np.arccos(np.dot(pg, pb)/(npg*npb)) # angle betw. projections
         C = (np.sin(psi)**4
             / (8*(1-nu)**2)
             * (1-4*nu+8*nu**2+4*(1-2*nu)*np.cos(gamma)**2))
@@ -113,12 +113,11 @@ def export_distribution(
     if d.g == 'circle':
         str_g = "Cylinder radius"
     if d.g == 'square':
-        if d.c!=None and 'PBCR' in d.c:
+        if d.c and d.c[:4]=='PBCR':
             str_g = "Square_"+d.c[4:]+" side"
         else:
             str_g = "Square side"
-
-    # export
+    # write
     with open(p+n+".dat", "w") as f:
         h = ("# please keep the structure of this file unchanged\n"
             + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
@@ -155,20 +154,16 @@ def export_sample(
     """
     if p!="" and p[-1]!="/":
         p += "/"
-    e = p+s.fileName()
+    e = p+s.fileName()+"/" # folder where to export the distributions
     # export
-    m = len(str(len(s)))
-    @beartype
-    def fmt(i: int) -> str:
-        str_i = str(i+1)
-        return "0"*(m-len(str_i))+str_i
+    w = len(str(len(s))) # number of characters in file names
     if os.path.exists(e):
         for f in os.listdir(e):
-            os.remove(e+"/"+f)
+            os.remove(e+f) # delete the existing distributions
     else:
         os.mkdir(e)
     for i in range(len(s)):
-        export_distribution(s[i], s.i, e+"/", fmt(i))
+        export_distribution(s[i], s.i, e, str(i+1).zfill(w))
 
 @beartype
 def export(

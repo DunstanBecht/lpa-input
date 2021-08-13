@@ -33,8 +33,8 @@ def N(
     Complexity:
         O( len(B)*log(len(B)) + len(r2) )
     """
-    d2 = np.sum(np.square(np.subtract(B, a)), axis=1)
-    d2 = np.sort(d2[(d2<=r2[-1]) & (d2>0)])
+    d2 = np.sum(np.square(np.subtract(B, a)), axis=1) # squared distances to a
+    d2 = np.sort(d2[(d2<=r2[-1]) & (d2>0)]) # sorted squared distances to a
     j, dn = 0, np.zeros(len(r2), dtype=np.int64)
     for i in range(len(d2)):
         while d2[i]>r2[j]:
@@ -321,7 +321,7 @@ def plot_KKKK(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ K_{ab} $ on "+t, fontsize=16)
+    fig.suptitle(r"$ K_{ab} $ of "+t, fontsize=16)
     # ax1
     ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $")
     ax1.plot(r, KKKK[0], label=r"$K_{++}(r)$")
@@ -365,7 +365,7 @@ def plot_gggg(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ g_{ab} $ on "+t, fontsize=16)
+    fig.suptitle(r"$ g_{ab} $ of "+t, fontsize=16)
     ymin = min(np.nanmin(gggg)*0.95, 0.9)
     ymax = max(np.nanmax(gggg)*1.05, 1.1)
     # ax1
@@ -410,7 +410,7 @@ def plot_GaGs(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ G^a $ and $ G^s $ on "+t, fontsize=16)
+    fig.suptitle(r"$ G^a $ and $ G^s $ of "+t, fontsize=16)
     # ax1
     ax1.plot(r, GaGs[0], label=r"$G^a(r)$")
     ax1.legend()
@@ -447,7 +447,7 @@ def intervals(
         iK: index of the maximum value for the plot of K
     """
     a, b, c = 0, 4*i, s/2
-    n = 100
+    n = 100 # number of points between a and b
     return np.linspace(a, c, int((c-a)*n/(b-a))), n
 
 @beartype
@@ -471,7 +471,7 @@ def export(
     """
     if p!="" and p[-1]!="/":
         p += "/"
-    r, iK = intervals(o.i, o.s)
+    r, iK = intervals(o.i, o.s) # intervals to display
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
     n = o.fileName(t=False)
     t = o.plotTitle()

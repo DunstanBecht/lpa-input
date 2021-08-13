@@ -30,10 +30,11 @@ def circle_circle(
     Complexity:
         O( max(rA.size, rB.size, d.size) )
     """
-    m0 = rA + rB <= d # zero intersection
-    mA = d + rA <= rB # A is inside B
-    mB = d + rB <= rA # B is inside A
+    m0 = rA + rB <= d # mask: zero intersection
+    mA = d + rA <= rB # mask: A is inside B
+    mB = d + rB <= rA # mask: B is inside A
     m = np.logical_not(m0) & np.logical_not(mA) & np.logical_not(mB)
+    # m is true for non-trivial cases
     o = np.subtract(
         np.add(
             np.multiply(
@@ -94,16 +95,18 @@ def circle_square(
     Complexity:
         O( max(x.size, r.size, s.size) )
     """
-    e = []
-    dA = s - x
-    dB = s - y
-    dC = x
-    dD = y
+    e = [] # list of areas of the circle outside the square for each frame
+    dA = s - x # width of the right quadrant
+    dB = s - y # height of the upper quadrant
+    dC = x # width of the left quadrant
+    dD = y # height of the lower quadrant
+    # loop on the four quadrants and add their contributions to E
     for d1, d2 in [[dA, dB], [dB, dC], [dC, dD], [dD, dA]]:
         mq = d1**2 + d2**2 > r2
         m1 = mq & (d1 < r)
         m2 = mq & (d2 < r)
         mr = np.logical_not(mq)
+        # area of the circle outside the square in the current quadrant
         eq = np.where(mr, np.subtract(np.pi*r2/4, d1*d2, where=mr), 0)
         for a in [[m1, d1], [m2, d2]]:
             np.add(
@@ -131,4 +134,4 @@ def circle_square(
                 eq,
                 where=a[0])
         e.append(eq)
-    return  np.pi*r2 - e[0] - e[1] - e[2] - e[3]
+    return np.pi*r2 - sum(e)
