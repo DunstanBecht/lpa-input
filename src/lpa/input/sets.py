@@ -219,8 +219,7 @@ class Distribution:
             + "\n- dislocation density: "
             + notation.number(self.d*1e9**self.n, 'console')
             + " m^-"+str(self.n)
-            + "\n- inter dislocation distance: "
-            + notation.number(self.i, 'console')+" nm"
+            + "\n- inter dislocation distance: "+str(round(self.i))+" nm"
             + "\n- boundary conditions: "+str(self.c)
             + "\n- b+: "+str(len(self.b[self.b>0]))+" dislocations"
             + "\n- b-: "+str(len(self.b[self.b<0]))+" dislocations"
@@ -409,8 +408,7 @@ class Sample:
             + notation.parameters(self.r, 'console')
             + "\n- dislocation density: "
             + notation.number(self.d*1e9**self.n, 'console')
-            + "\n- inter dislocation distance: "
-            + notation.number(self.i, 'console')+" nm"
+            + "\n- inter dislocation distance: "+str(round(self.i))+" nm"
             + "\n- boundary conditions: "+str(self.c)
         )
         return s
