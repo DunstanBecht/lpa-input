@@ -65,38 +65,40 @@ def parameters(
     Output:
         n: model parameters description
     """
-    if 'name' in r: # return the name chosen for the parameter set
+    # user-defined name for the set of parameters
+    if 'name' in r:
         return r['name']
-    if t == 'file':
-        sep = "_" # separator
-        weq = lambda a, b: a+b # writing of equalities
-    elif t == 'console':
-        sep = ", " # separator
-        weq = lambda a, b: a+"="+b # writing of equalities
-    elif t == 'title':
-        sep = ", \ " #separator
-        weq = lambda a, b: a+r" = "+b # writing of equalities
     n = ""
+    # writing of equalities
+    if t == 'file':
+        weq = lambda a, b: a+b
+    elif t == 'console':
+        weq = lambda a, b: a+"="+b
+    elif t == 'title':
+        weq = lambda a, b: a+r" = "+b
+    # version
     if 'v' in r:
-        n += "-"+r['v'] # model version
-    if t == 'title':
-        n += r" $ \left("
-    elif t == 'console':
-        n += " ("
-    else:
-        n += sep
+        n += "-"+r['v']
+    # parameter list
+    p = []
     if 'd' in r:
-        n += weq('d', number(r['d'], t)) # density
+        p.append(weq('d', number(r['d'], t))) # density
     if 's' in r:
-        n += sep+weq("s", number(r['s'], t, 4)) # subarea or cell side
+        p.append(weq("s", number(r['s'], t, 4))) # subarea or cell side
     if 'f' in r:
-        n += sep+weq("f", str(r['f'])) # filling
+        p.append(weq("f", str(r['f']))) # filling
     if 't' in r:
-        n += sep+weq("t", number(r['t'], t, 3)) # wall thickness
+        p.append(weq("t", number(r['t'], t, 3))) # wall thickness
     if 'l' in r:
-        n += sep+weq("l", number(r['l'], t, 3)) # dipole length
-    if t == 'title':
-        n += r"\right) $ "
-    elif t == 'console':
-        n += ")"
+        p.append(weq("l", number(r['l'], t, 3))) # dipole length
+    if 'r' in r:
+        p.append(weq("r", str(r['r'])))
+    # concatenate
+    if len(p) > 0:
+        if t == 'title':
+            n += r" $ \left( "+", \ ".join(p)+r" \right) $ "
+        elif t == 'console':
+            n += " ("+" ".join(p)+")"
+        else:
+            n += "_"+"_".join(p)
     return n
