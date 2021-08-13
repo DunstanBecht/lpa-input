@@ -85,7 +85,7 @@ def RDD(
     bp = np.ones(n//2, dtype=int) # positive Burgers vectors
     b = np.concatenate((bp, -bp)) # add negative Burgers vectors
     if n%2 == 1: # add a random burger vector
-        b = np.concatenate((p, np.random.choice([1, -1], size=1)))
+        b = np.concatenate((b, np.random.choice([1, -1], size=1)))
     return p, b
 
 @beartype
