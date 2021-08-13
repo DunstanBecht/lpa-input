@@ -184,6 +184,6 @@ def export(
         O( complexity(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
-        export_distribution(o, p, n)
+        export_distribution(o, o.i, p, n)
     else:
         export_sample(o, p, n)
