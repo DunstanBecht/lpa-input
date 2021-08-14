@@ -87,12 +87,12 @@ def export(
     if rank == root:
         if isinstance(o, sets.Distribution):
             c = str(size) # number of distributions analyzed
-            tt = c+" "+o.plotTitle() # plots title
-            id = c+"_"+o.fileName() # plots file name
+            tt = c+" "+o.title(t=False, s=False) # plots title
+            id = c+"_"+o.identifier(t=False, s=False) # plots file name
         else:
             c = str(len(o)*size) # number of distributions analyzed
-            tt = c+" "+o[0].plotTitle() # plots title
-            id = c+"_"+o[0].fileName() # plots file name
+            tt = c+" "+o[0].title(t=False, s=False) # plots title
+            id = c+"_"+o[0].identifier(t=False, s=False) # plots file name
         analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, p, id, tt)
         analyze.plot_gggg(r, master[f.index('gggg')], p, id, tt)
         analyze.plot_GaGs(r, master[f.index('GaGs')], p, id, tt)
