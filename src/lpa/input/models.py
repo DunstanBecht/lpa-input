@@ -100,7 +100,7 @@ def ticks(
 
     Input:
         g: geometry
-        l: length to subdivide [nm]
+        l: shape size [nm]
         s: size of the step [nm]
 
     Output:
@@ -131,7 +131,11 @@ def even_positions(
         x: x coordinates of points
         y: y coordinates of points
 
-    Example for t=[0, 1] and f=4:
+    Input example:
+        t = np.array([0, 1])
+        f = 4
+
+    Output example:
         x = [0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1]
         y = [0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1]
     """
@@ -154,7 +158,11 @@ def even_senses(
     Output:
         b: Burgers vector senses
 
-    Example for t=[0, 1] and f=4:
+    Input example:
+        t = np.array([0, 1])
+        f = 4
+
+    Output example:
         b = [- - + + - - + + - - + + - - + +]
     """
     bp = np.ones(f//2, dtype=int)
@@ -261,11 +269,12 @@ def RCDD(
     When the parameter 'r' is not specified, the random seed is chosen
     randomly and added to the parameters dictionary.
 
-    When the parameter 'v' is set to 'R', the Burgers vectors are
-    randomly distributed. When 'v' is set to 'E', the Burgers vectors
-    are evenly distributed in each cell. When 'v' is set to 'D', the
-    Burgers vectors with positive sense and negative sense are spaced
-    by a distance defined by 'l'.
+    When the parameter 'v' is set to 'R', the positions and the Burgers
+    vectors senses are randomly distributed. When 'v' is set to 'E',
+    each cell contains a fixed number of dislocations and the Burgers
+    vectors senses are evenly distributed in each cell. When 'v' is set
+    to 'D', the Burgers vectors with positive sense and negative sense
+    are spaced by a distance defined with 'l'.
 
     Complexity:
         O( r['d'] * a )

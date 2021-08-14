@@ -111,10 +111,10 @@ class Distribution:
     @beartype
     def __repr__(self) -> str:
         """
-        Return the representation of the distribution.
+        Return the eval-able representation of the distribution.
 
         Output:
-            r: string that can be evaluated
+            r: representation of the distribution
         """
         args = [
             repr(self.g), # geometry
@@ -233,6 +233,14 @@ class Distribution:
         Output:
             w: weighting coefficients for each value of radius around a
 
+        Input example:
+            a = np.array([0, 0])
+            r = np.array([1, 2, 3, ...])
+            r2 = np.array([1, 4, 9, ...])
+
+        Output example:
+            w = np.array([1, 1, 0.9, ...])
+
         Complexity:
             O( len(r) )
         """
@@ -313,10 +321,10 @@ class Sample:
     @beartype
     def __repr__(self) -> str:
         """
-        Return the representation of the sample of distributions.
+        Return the eval-able representation of the sample of distributions.
 
         Output:
-            r: string that can be evaluated
+            r: representation of the sample of distributions
         """
         args = [
             str(len(self)), # number of distributions
@@ -415,7 +423,7 @@ class Sample:
             f: function that can be applied to a distribution
             *args: additional arguments to pass to function f
 
-        Outpur:
+        Output:
             r: result of f applied to each distribution and averaged
 
         Complexity:

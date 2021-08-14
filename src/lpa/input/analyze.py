@@ -30,6 +30,14 @@ def N(
     Output:
         n: list of the number of points for each radius value
 
+    Input example:
+        a = np.array([0, 0])
+        B = np.array([[0.5, 0], [2, 0]])
+        r2 = np.array([1, 4, 9])
+
+    Output example:
+        n = np.array([1, 2, 2])
+
     Complexity:
         O( len(B)*log(len(B)) + len(r2) )
     """
@@ -65,6 +73,16 @@ def M(
 
     Output:
         m: list of the average number of points for each radius value
+
+    Input example:
+        A = np.array([[0, 0], [-1, 0]])
+        B = np.array([[0.5, 0], [2, 0]])
+        w = lambda a, r, r2: np.ones(len(r))
+        r = np.array([1, 2, 3])
+        r2 = np.array([1, 4, 9])
+
+    Output example:
+        m = np.array([0.5, 1.5, 2])
 
     Complexity:
         O( len(A) * (complexity(w)+complexity(N)) )
@@ -107,6 +125,16 @@ def MMMM_cp_cm(
         cp: number of dislocations with Burgers vector sense + [1]
         cm: number of dislocations with Burgers vector sense - [1]
 
+    Output example:
+        MMMM = np.array([
+            [M++(r_0), M++(r_1), M++(r_2), ...],
+            [M-+(r_0), M-+(r_1), M-+(r_2), ...],
+            [M+-(r_0), M+-(r_1), M+-(r_2), ...],
+            [M--(r_0), M--(r_1), M--(r_2), ...],
+        ])
+        cp = 2
+        cm = 3
+
     Complexity:
         O( complexity(M) )
     """
@@ -145,6 +173,16 @@ def KKKK_dp_dm(
         dp: density of dislocations with Burgers vector sense + [nm^-n]
         dm: density of dislocations with Burgers vector sense - [nm^-n]
 
+    Output example:
+        KKKK = np.array([
+            [K++(r_0), K++(r_1), K++(r_2), ...],
+            [K-+(r_0), K-+(r_1), K-+(r_2), ...],
+            [K+-(r_0), K+-(r_1), K+-(r_2), ...],
+            [K--(r_0), K--(r_1), K--(r_2), ...],
+        ])
+        dp = 0.002
+        dp = 0.003
+
     Complexity:
         O( len(MMMM) )
     """
@@ -172,6 +210,15 @@ def gggg_dVvdr(
     Ouput:
         gggg: stacked values of g++, g-+, g+-, g-- [1]
         dVvdr: derivative of the neighborhood volume [nm^(n-1)]
+
+    Output example:
+        gggg = np.array([
+            [g++(r_0), g++(r_1), g++(r_2), ...],
+            [g-+(r_0), g-+(r_1), g-+(r_2), ...],
+            [g+-(r_0), g+-(r_1), g+-(r_2), ...],
+            [g--(r_0), g--(r_1), g--(r_2), ...],
+        ])
+        dVvdr = np.array([2*pi*r_0, 2*pi*r_1, 2*pi*r_2, ...])
 
     Complexity:
         O( len(r) )
@@ -208,6 +255,12 @@ def GaGs(
 
     Output:
         GaGs: stacked values of Ga and Gs [1]
+
+    Output example:
+        GaGs = np.array([
+            [Ga(r_0), Ga(r_1), Ga(r_2), ...],
+            [Gs(r_0), Gs(r_1), Gs(r_2), ...],
+        ])
 
     Complexity:
         O( len(MMMM) )
@@ -247,7 +300,7 @@ def calculate(
         v: values of the quantities in the order requested in q
 
     Exemple:
-        >>> KKKK, GaGs = calculate(['KKKK', 'GaGs'], distribution, r)
+        KKKK, GaGs = calculate(['KKKK', 'GaGs'], distribution, r)
 
     Complexity:
         O( complexity(MMMM_Pp_Pm) ) if o is a distribution
@@ -255,13 +308,13 @@ def calculate(
     """
     if r2 is None:
         r2 = np.square(r)
-
+    # create an incremental analysis function to apply to a distribution
     @beartype
     def calculate_on_distribution(
         d: sets.Distribution,
     ) -> AnalysisOutput:
         """
-        Auxiliary function of calculate applied to a distribution only.
+        Auxiliary function applied to a distribution only.
         """
         s = {}
         s['MMMM'], s['cp'], s['cm'] = MMMM_cp_cm(
@@ -289,7 +342,7 @@ def calculate(
                 s['cm'],
             )
         return tuple([s[k] for k in q])
-
+    # return the result of the function applied to a distribution or a sample
     if isinstance(o, sets.Distribution):
         return calculate_on_distribution(o)
     return o.average(calculate_on_distribution)
@@ -429,6 +482,7 @@ def plot_GaGs(
 def intervals(
     i: Scalar,
     s: Scalar,
+    n: int = 100,
 ) -> Tuple:
     """
     Suggest default radius interval for the analysis of a distribution.
@@ -441,13 +495,13 @@ def intervals(
     Input:
         i: inter dislocation distance [nm]
         s: shape size [nm]
+        n: number of points between a and b
 
     Output:
         r: full range of radii for analysis [nm]
         iK: index of the maximum value for the plot of K
     """
     a, b, c = 0, 4*i, s/2
-    n = 100 # number of points between a and b
     return np.linspace(a, c, int((c-a)*n/(b-a))), n
 
 @beartype
@@ -462,7 +516,7 @@ def export(
 
     Input:
         o: distribution or sample of distributions to analyze
-        p: path where to export the file
+        p: path where to export the files
         id: custom identifier
         tt: custom title
 

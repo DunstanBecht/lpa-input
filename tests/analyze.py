@@ -13,11 +13,12 @@ d = sets.Distribution('circle', 1000, RDD, {'d': 1e15*1e-18})
 s = sets.Sample(2, 'circle', 1000, RDD, {'d': 1e15*1e-18})
 
 # create a study range
-r, iK = analyze.intervals(100, 1000)
+rd, iKd = analyze.intervals(d.i, d.s)
+rs, iKs = analyze.intervals(s.i, s.s)
 
 # calculate statistical functions on a distribution or a sample
-KKKK, GaGs = analyze.calculate(['KKKK', 'GaGs'], d, r)
-gggg, KKKK = analyze.calculate(['gggg', 'KKKK'], s, r)
+KKKK, GaGs = analyze.calculate(['KKKK', 'GaGs'], d, rd)
+gggg, MMMM = analyze.calculate(['gggg', 'MMMM'], s, rs)
 
 # export a complete statistical analysis of a distribution or a sample
 analyze.export(d, p='analyses')

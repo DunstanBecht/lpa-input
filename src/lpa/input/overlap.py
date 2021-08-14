@@ -19,13 +19,19 @@ def circle_circle(
     """
     Return the overlapping area of two circles.
 
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
     Input:
-        rA: radius of the circle A
-        rB: radius of the circle B
-        d: distance between the circle centers
-        r2A: squared radius of the circle A
-        r2B: squared radius of the circle B
-        d2: squared distance between the circle centers
+        rA: radius/ii of the circle A
+        rB: radius/ii of the circle B
+        d: distance/s between the circle centers
+        r2A: squared radius/ii of the circle A
+        r2B: squared radius/ii of the circle B
+        d2: squared distance/s between the circle centers
+
+    Output:
+        o: overlapping area/s
 
     Complexity:
         O( max(rA.size, rB.size, d.size) )
@@ -85,12 +91,18 @@ def circle_square(
     """
     Return the overlapping area of a circle and a square.
 
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
     Input:
-        x: x coordinate of the circle center
-        y: y coordinate of the circle center
-        r: circle radius
-        r2: squared circle radius
-        s: square side
+        x: x coordinate/s of the circle center
+        y: y coordinate/s of the circle center
+        r: circle radius/ii
+        r2: squared circle radius/ii
+        s: square side/s
+
+    Output:
+        o: overlapping area/s
 
     Complexity:
         O( max(x.size, r.size, s.size) )

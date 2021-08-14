@@ -16,8 +16,9 @@ from . import *
 from . import sets
 from . import analyze
 
+@beartype
 def average_on_cores(
-    w,
+    w: AnalysisOutput,
     b: bool = False
 ):
     """
@@ -32,6 +33,20 @@ def average_on_cores(
 
     Output:
         m: averaged value of w over the cores
+
+    Input example:
+        On master core:
+            w = 1
+            b = False
+        On worker core:
+            w = 0
+            b = False
+
+    Output example:
+        On master core:
+            m = 0.5
+        On worker core:
+            m = None
     """
     if not isinstance(w, np.ndarray):
         w = np.array(w)
@@ -46,6 +61,7 @@ def average_on_cores(
         m = comm.bcast(m, root=root) # broadcast to the workers
     return m
 
+@beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
     p: str = "",

@@ -32,6 +32,16 @@ def IDBC(
         cp: image dislocation positions [nm]
         cb: image dislocation Burgers vectors sense [1]
 
+    Input example:
+        s = 2
+        p = np.array([[1, 0], [-1, 0], [0, 0]])
+        b = np.array([1, 1, 1])
+        t = 'screw'
+
+    Output example:
+        cp = np.array([[4, 0], [-4, 0]])
+        cb = np.array([-1, -1, -1])
+
     Complexity:
         O( len(p) )
     """
@@ -43,7 +53,7 @@ def IDBC(
         r = s**2/n[m] # radii of the image dislocations
         cp = np.stack((r*np.cos(t), r*np.sin(t)), axis=1) # image positions
         cb = -b # image Burgers vector senses
-        return cp, -cb
+        return cp, cb
     else:
         raise ValueError("cannot calculate images of edge dislocations")
 
@@ -66,6 +76,25 @@ def PBCG(
     Output:
         cp: replicated dislocation positions [nm]
         cb: replicated dislocation Burgers vectors sense [1]
+
+    Input example:
+        s = 1
+        p = np.array([[1,1]])
+        b = np.array([1])
+        r = 1
+
+    Output example:
+        cp = np.array([
+            [0, 2],
+            [2, 2],
+            [2, 0],
+            [0, 0],
+            [0, 1],
+            [1, 2],
+            [2, 1],
+            [1, 0],
+        ])
+        cb = np.array([1])
 
     Complexity:
         O( len(p) * r^2 )

@@ -54,4 +54,4 @@ ScalarListList = np.ndarray # shape: (..., ...)
 VectorList = np.ndarray # shape: (..., n)
 CorrectionFunction = Callable[[Vector, ScalarList, ScalarList], ScalarList]
 GenerationFunction = Callable[[str, int], Tuple[VectorList, VectorList]]
-AnalysisOutput = Union[Tuple, Union[Scalar, np.ndarray]]
+AnalysisOutput = Union[Tuple, Scalar, np.ndarray]

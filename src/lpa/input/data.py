@@ -45,6 +45,16 @@ def contrast_factor(
 
     Output:
         C: dislocation contrast factor [1]
+
+    Input example:
+        t = 'screw'
+        g = np.array([2, 0, 0])
+        l = np.array([1, 1, 0])
+        b = np.array([1, 1, 0])
+        nu = 0.345
+
+    Output example:
+        C = 0.25
     """
     ng = np.linalg.norm(g) # diffraction vector norm to normalize
     nl = np.linalg.norm(l) # dislocation line vector norm to normalize
@@ -185,6 +195,8 @@ def export(
     Input:
         o: distribution or sample of distributions to export
         p: path where to place the exported file
+        g: diffraction vector direction (hkl)
+        b: Burgers vector direction [uvw]
         n: name of the exported file or directory
 
     Complexity:
