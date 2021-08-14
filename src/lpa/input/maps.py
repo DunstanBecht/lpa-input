@@ -14,8 +14,8 @@ from . import models
 def export(
     d: sets.Distribution,
     p: str = "",
-    n: Optional[str] = None,
-    t: Optional[str] = None,
+    id: Optional[str] = None,
+    tt: Optional[str] = None,
 ) -> None:
     """
     Export the dislocation map of the distribution d.
@@ -23,18 +23,18 @@ def export(
     Input:
         d: distribution to be exported
         p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        id: custom identifier
+        tt: custom title
 
     Complexity:
         O( len(d) )
     """
     if p!="" and p[-1]!="/":
         p += "/"
-    if n == None:
-        n = d.fileName(t=False)
-    if t == None:
-        t = d.plotTitle()
+    if id is None:
+        id = d.identifier(t=False)
+    if tt is None:
+        tt = d.title(t=False, s=False)
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)
@@ -96,9 +96,9 @@ def export(
     # information
     ax.set_xlabel(r"$x \ (nm)$")
     ax.set_ylabel(r"$y \ (nm)$")
-    plt.title(t)
+    plt.title(tt)
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
-    plt.savefig(p+n+".pdf")
+    plt.savefig(p+id+".pdf")
     plt.close('all')

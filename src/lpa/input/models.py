@@ -10,6 +10,7 @@ The following parameters can be used in the model parameters:
     d: density (RDD, RRDD, RCDD)
     s: side of the subarea (RRDD) or the cell (RCDD)
     f: filling of the subareas (RRDD)
+    t: wall thickness (RCDD)
     l: dipole length (RCDD)
     name: parameters set nickname (RDD, RRDD, RCDD)
 """

@@ -66,10 +66,10 @@ def contrast_factor(
 def export_distribution(
     d: sets.Distribution,
     i: Scalar,
-    p: str = "",
-    n: Optional[str] = None,
-    g: Vector = np.array([2, 0, 0]),
-    b: Vector = np.array([1, 1, 0]),
+    p: str,
+    g: Vector,
+    b: Vector,
+    id: Optional[str] = None,
 ) -> None:
     """
     Export the dislocations of d to a standardized input data file.
@@ -81,17 +81,17 @@ def export_distribution(
         d: distribution to be exported
         i: inter dislocation distance [nm]
         p: path where to place the exported file
-        n: name of the exported file
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
+        id: name of the exported file
 
     Complexity:
         O( len(d) )
     """
     if p!="" and p[-1]!="/":
         p += "/"
-    if n == None:
-        n = d.fileName()
+    if id == None:
+        id = d.identifier(s=False)
     # parameters
     m = 12 # number of points along Lx
     a = 0.40494 # cell side [nm]
@@ -118,7 +118,7 @@ def export_distribution(
         else:
             str_g = "Square side"
     # write
-    with open(p+n+".dat", "w") as f:
+    with open(p+id+".dat", "w") as f:
         h = ("# please keep the structure of this file unchanged\n"
             + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
             + indices(L)+" # x: direction of 'L' (Fourier variable) [uvw]\n"
@@ -138,8 +138,10 @@ def export_distribution(
 @beartype
 def export_sample(
     s: sets.Sample,
-    p: str = "",
-    n: Optional[str] = None,
+    p: str,
+    g: Vector,
+    b: Vector,
+    id: Optional[str] = None,
 ) -> None:
     """
     Export a standardized input data file for each distributions of s.
@@ -147,14 +149,18 @@ def export_sample(
     Input:
         s: sample of distributions to be exported
         p: path where to place the exported file
-        n: name of the exported directory
+        g: diffraction vector direction (hkl)
+        b: Burgers vector direction [uvw]
+        id: name of the exported directory
 
     Complexity:
         O( len(s) * complexity(export_distribution) )
     """
     if p!="" and p[-1]!="/":
         p += "/"
-    e = p+s.fileName()+"/" # folder where to export the distributions
+    if id is None:
+        id = s.identifier(s=False)
+    e = p+id+"/" # folder where to export the files
     # export
     w = len(str(len(s))) # number of characters in file names
     if os.path.exists(e):
@@ -163,13 +169,15 @@ def export_sample(
     else:
         os.mkdir(e)
     for i in range(len(s)):
-        export_distribution(s[i], s.i, e, str(i+1).zfill(w))
+        export_distribution(s[i], s.i, e, g, b, str(i+1).zfill(w))
 
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
     p: str = "",
-    n: Optional[str] = None,
+    g: Vector = np.array([2, 0, 0]),
+    b: Vector = np.array([1, 1, 0]),
+    id: Optional[str] = None,
 ) -> None:
     """
     Convenient function for exporting a standardized data file.
@@ -184,6 +192,6 @@ def export(
         O( complexity(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
-        export_distribution(o, o.i, p, n)
+        export_distribution(o, o.i, p, g, b, id=id)
     else:
-        export_sample(o, p, n)
+        export_sample(o, p, g, b, id=id)

@@ -10,7 +10,7 @@ from . import *
 @beartype
 def number(
     x: Scalar,
-    t: str = 'file',
+    t: str = 'console',
     w: int = 4,
 ) -> str:
     """
@@ -18,7 +18,7 @@ def number(
 
     Input:
         x: number
-        t: type of use ('file', 'console', 'title')
+        t: type of use ('id', 'tt', 'console')
         w: width of the output string
 
     Output:
@@ -26,20 +26,20 @@ def number(
     """
     if x<10**w and x>=1 or x == 0: # diplay x with fixed comma
         s = str(round(x))
-        if t == 'file':
+        if t == 'id':
             s = s.zfill(w) # fill with zeros
         elif t == 'console':
             s = format(s, '>'+str(w)) # fill with spaces
-    elif t == 'title': # LaTeX scientific notation
+    elif t == 'tt': # LaTeX scientific notation
         s = format(x, '1.'+str(max(w-6, 0))+'e')
         m, e = s.split("e") # separate mantissa and exponent
         s = m+" \\times 10^{"+str(int(e))+"}"
-    else: # scientific notation with 'e'
+    elif t in ('id', 'console'): # scientific notation with 'e'
         s = format(x, '1.0e').replace("+", "")
         s = s.replace("e0", "e").replace("e-0", "e-")
         d = w-len(s) # number of missing characters to reach the ideal width
         if d>0:
-            if t=='file' or d==1:
+            if t=='id' or d==1:
                 if "e-" in s:
                     s = s.replace("e-", "e-0")
                 else:
@@ -48,19 +48,23 @@ def number(
                 fmt = '1.'+str(d-1)+'e'
                 s = format(x, fmt)
                 s = s.replace("+", "").replace("e0", "e").replace("e-0", "e-")
+    else:
+        raise ValueError("unknown usage type: "+str(t))
     return s
 
 @beartype
 def parameters(
     r: dict,
-    t: str = 'file',
+    t: str = 'console',
+    s: bool = True,
 ) -> str:
     """
     Return a string descibing the model parameters.
 
     Input:
         r: model parameters
-        t: type of use ('file', 'console', 'title')
+        t: type of use ('id', 'tt', 'console')
+        s: display the seed
 
     Output:
         n: model parameters description
@@ -69,36 +73,34 @@ def parameters(
     if 'name' in r:
         return r['name']
     n = ""
-    # writing of equalities
-    if t == 'file':
-        weq = lambda a, b: a+b
-    elif t == 'console':
-        weq = lambda a, b: a+"="+b
-    elif t == 'title':
-        weq = lambda a, b: a+r" = "+b
     # version
     if 'v' in r:
         n += "-"+r['v']
     # parameter list
     p = []
     if 'd' in r:
-        p.append(weq('d', number(r['d'], t))) # density
+        p.append(('d', number(r['d'], t))) # density
     if 's' in r:
-        p.append(weq("s", number(r['s'], t, 4))) # subarea or cell side
+        p.append(("s", number(r['s'], t, 4))) # subarea or cell side
     if 'f' in r:
-        p.append(weq("f", str(r['f']))) # filling
+        p.append(("f", str(r['f']))) # filling
     if 't' in r:
-        p.append(weq("t", number(r['t'], t, 3))) # wall thickness
+        p.append(("t", number(r['t'], t, 3))) # wall thickness
     if 'l' in r:
-        p.append(weq("l", number(r['l'], t, 3))) # dipole length
-    if 'r' in r:
-        p.append(weq("r", str(r['r'])))
+        p.append(("l", number(r['l'], t, 3))) # dipole length
+    if 'r' in r and s:
+        p.append(("r", str(r['r']))) # random seed
     # concatenate
     if len(p) > 0:
-        if t == 'title':
-            n += r" $ \left( "+", \ ".join(p)+r" \right) $ "
+        if t == 'id':
+            d = [a+b for a, b in p]
+            n += "_"+"_".join(d)
+        elif t == 'tt':
+            d = [a+" = "+b for a, b in p]
+            n += r" $ \left( "+", \ ".join(d)+r" \right) $ "
         elif t == 'console':
-            n += " ("+" ".join(p)+")"
+            d = [a+"="+b for a, b in p]
+            n += " ("+" ".join(d)+")"
         else:
-            n += "_"+"_".join(p)
+            raise ValueError("unknown usage type: "+str(t))
     return n

@@ -49,8 +49,6 @@ def average_on_cores(
 def export(
     o: Union[sets.Distribution, sets.Sample],
     p: str = "",
-    n: Optional[str] = None,
-    t: Optional[str] = None,
 ) -> None:
     """
     Export a complete pooled analysis of the object o of each core.
@@ -73,12 +71,12 @@ def export(
     if rank == root:
         if isinstance(o, sets.Distribution):
             c = str(size) # number of distributions analyzed
-            t = c+" "+o.plotTitle() # plots title
-            n = c+"_"+o.fileName() # plots file name
+            tt = c+" "+o.plotTitle() # plots title
+            id = c+"_"+o.fileName() # plots file name
         else:
             c = str(len(o)*size) # number of distributions analyzed
-            t = c+" "+o[0].plotTitle() # plots title
-            n = c+"_"+o[0].fileName() # plots file name
-        analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, p, n, t)
-        analyze.plot_gggg(r, master[f.index('gggg')], p, n, t)
-        analyze.plot_GaGs(r, master[f.index('GaGs')], p, n, t)
+            tt = c+" "+o[0].plotTitle() # plots title
+            id = c+"_"+o[0].fileName() # plots file name
+        analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, p, id, tt)
+        analyze.plot_gggg(r, master[f.index('gggg')], p, id, tt)
+        analyze.plot_GaGs(r, master[f.index('GaGs')], p, id, tt)

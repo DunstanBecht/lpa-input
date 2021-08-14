@@ -299,8 +299,8 @@ def plot_KKKK(
     r: ScalarList,
     KKKK: ScalarListList,
     p: str,
-    n: str,
-    t: str,
+    id: str,
+    tt: str,
 ) -> None:
     """
     Export the figure showing functions K++, K-+, K+-, K--.
@@ -309,8 +309,8 @@ def plot_KKKK(
         r: radius of the neighborhoods [nm]
         KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
         p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        id: custom identifier
+        tt: custom title
 
     Complexity:
         O( len(r) )
@@ -321,7 +321,7 @@ def plot_KKKK(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ K_{ab} $ of "+t, fontsize=16)
+    fig.suptitle(r"$ K_{ab} $ of "+tt, fontsize=16)
     # ax1
     ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $")
     ax1.plot(r, KKKK[0], label=r"$K_{++}(r)$")
@@ -338,7 +338,7 @@ def plot_KKKK(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
     # export
-    plt.savefig(p+"KKKK_"+n+".pdf")
+    plt.savefig(p+"KKKK_"+id+".pdf")
     plt.close('all')
 
 @beartype
@@ -346,8 +346,8 @@ def plot_gggg(
     r: ScalarList,
     gggg: ScalarListList,
     p: str,
-    n: str,
-    t: str,
+    id: str,
+    tt: str,
 ) -> None:
     """
     Export the figure showing functions g++, g-+, g+-, g--.
@@ -356,8 +356,8 @@ def plot_gggg(
         r: radius of the neighborhoods [nm]
         gggg: stacked values of g++, g-+, g+-, g-- [1]
         p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        id: custom identifier
+        tt: custom title
 
     Complexity:
         O( len(r) )
@@ -365,7 +365,7 @@ def plot_gggg(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ g_{ab} $ of "+t, fontsize=16)
+    fig.suptitle(r"$ g_{ab} $ of "+tt, fontsize=16)
     ymin = min(np.nanmin(gggg)*0.95, 0.9)
     ymax = max(np.nanmax(gggg)*1.05, 1.1)
     # ax1
@@ -383,7 +383,7 @@ def plot_gggg(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
     # export
-    plt.savefig(p+"gggg_"+n+".pdf")
+    plt.savefig(p+"gggg_"+id+".pdf")
     plt.close('all')
 
 @beartype
@@ -391,8 +391,8 @@ def plot_GaGs(
     r: ScalarList,
     GaGs: ScalarListList,
     p: str,
-    n: str,
-    t: str,
+    id: str,
+    tt: str,
 ) -> None:
     """
     Export the figure showing functions Ga and Gs.
@@ -401,8 +401,8 @@ def plot_GaGs(
         r: radius of the neighborhoods [nm]
         GaGs: stacked values of Ga and Gs [1]
         p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        id: custom identifier
+        tt: custom title
 
     Complexity:
         O( len(r) )
@@ -410,7 +410,7 @@ def plot_GaGs(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ G^a $ and $ G^s $ of "+t, fontsize=16)
+    fig.suptitle(r"$ G^a $ and $ G^s $ of "+tt, fontsize=16)
     # ax1
     ax1.plot(r, GaGs[0], label=r"$G^a(r)$")
     ax1.legend()
@@ -422,7 +422,7 @@ def plot_GaGs(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     # export
-    plt.savefig(p+"GaGs_"+n+".pdf")
+    plt.savefig(p+"GaGs_"+id+".pdf")
     plt.close('all')
 
 @beartype
@@ -454,8 +454,8 @@ def intervals(
 def export(
     o: Union[sets.Distribution, sets.Sample],
     p: str = "",
-    n: Optional[str] = None,
-    t: Optional[str] = None,
+    id: Optional[str] = None,
+    tt: Optional[str] = None,
 ) -> None:
     """
     Export a complete analysis of the object o.
@@ -463,8 +463,8 @@ def export(
     Input:
         o: distribution or sample of distributions to analyze
         p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        id: custom identifier
+        tt: custom title
 
     Complexity:
         O( complexity(calculate) )
@@ -473,8 +473,10 @@ def export(
         p += "/"
     r, iK = intervals(o.i, o.s) # intervals to display
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
-    n = o.fileName(t=False)
-    t = o.plotTitle()
-    plot_KKKK(r[:iK], KKKK.T[:iK].T, p, n, t)
-    plot_gggg(r, gggg, p, n, t)
-    plot_GaGs(r, GaGs, p, n, t)
+    if id is None:
+        id = o.identifier(t=False, s=False)
+    if tt is None:
+        tt = o.title(t=False, s=False)
+    plot_KKKK(r[:iK], KKKK.T[:iK].T, p, id, tt)
+    plot_gggg(r, gggg, p, id, tt)
+    plot_GaGs(r, GaGs, p, id, tt)

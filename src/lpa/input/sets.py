@@ -135,17 +135,14 @@ class Distribution:
             s: distribution information
         """
         s = (
-            "Distribution: "+self.fileName()
+            "Distribution: "+self.identifier()
             + "\n- geometry: "+self.g
-            + "\n- size: "+notation.number(self.s, 'console')+" nm"
-            + "\n- n-volume: "+notation.number(self.v, 'console')
-            + " nm^"+str(self.n)
+            + "\n- size: "+notation.number(self.s)+" nm"
+            + "\n- n-volume: "+notation.number(self.v)+" nm^"+str(self.n)
             + "\n- dislocations type: "+self.t
-            + "\n- model: "+self.m.__name__
-            + notation.parameters(self.r, 'console')
+            + "\n- model: "+self.m.__name__+notation.parameters(self.r)
             + "\n- population: "+str(len(self))+" dislocations"
-            + "\n- dislocation density: "
-            + notation.number(self.d*1e9**self.n, 'console')
+            + "\n- dislocation density: "+notation.number(self.d*1e9**self.n)
             + " m^-"+str(self.n)
             + "\n- inter dislocation distance: "+str(round(self.i))+" nm"
             + "\n- boundary conditions: "+str(self.c)
@@ -165,43 +162,59 @@ class Distribution:
         return len(self.b)
 
     @beartype
-    def fileName(self,
+    def identifier(self,
         t: bool = True,
+        s: bool = True,
     ) -> str:
         """
-        Return a name that can be used to export the distribution.
+        Return a file system compatible name.
 
         Input:
-            t: add dislocation type information
+            t: add dislocation type
+            s: add seed
 
         Output:
-            n: file name of the distribution
+            id: identifier of the distribution
         """
-        n = (
+        id = (
             notation.number(self.d*1e9**self.n)+"m-"+str(self.n) # density
-            + "_"+self.g+"_"+notation.number(self.s)+"nm" # geometry
-            + "_"+self.m.__name__+notation.parameters(self.r) # model
+            + "_"+self.g # geometry
+            + "_"+notation.number(self.s, 'id', w=4)+"nm" # size
+            + "_"+self.m.__name__ # model
+            + notation.parameters(self.r, 'id', s=s) # model parameters
         )
         if t:
-            n += "_"+self.t # add dislocation type information
+            id += "_"+self.t # add dislocation type information
         if self.c:
-            n += "_"+self.c # add bondary conditions information
-        return n
+            id += "_"+self.c # add bondary conditions information
+        return id
 
     @beartype
-    def plotTitle(self) -> str:
+    def title(self,
+        t: bool = True,
+        s: bool = True,
+    ) -> str:
         """
         Return a name that can be used as a title in a plot.
 
+        Input:
+            t: add dislocation type
+            s: add seed
+
         Output:
-            t: title containing LaTeX code
+            tt: title containing LaTeX code
         """
-        m = self.m.__name__+notation.parameters(self.r, 'title') # model
-        d = notation.number(self.d*1e9**self.n, 'title') # density
-        t = m+r" $ \rho \sim "+d+r" m^{-2} $" # title
+        d = notation.number(self.d*1e9**self.n, 'tt') # density
+        tt = (
+            self.m.__name__ # model
+            + notation.parameters(self.r, 'tt', s=s) # model parameters
+            + r" $ \rho \sim "+d+r" m^{-2} $" # density
+        )
+        if t:
+            tt += " "+self.t # add dislocation type information
         if self.c and self.c[:4]!='PBCR':
-            t += " "+self.c # boundary conditions
-        return t
+            tt += " "+self.c # add bondary conditions information
+        return tt
 
     @beartype
     def w(self,
@@ -325,17 +338,14 @@ class Sample:
             s: distribution information
         """
         s = (
-            "Sample: "+self.fileName()
+            "Sample: "+self.identifier()
             + "\n- population: "+str(len(self))+" distributions"
             + "\n- geometry: "+self.g
-            + "\n- size: "+notation.number(self.s, 'console')+" nm"
-            + "\n- n-volume: "+notation.number(self.v, 'console')
-            + " nm^"+str(self.n)
+            + "\n- size: "+notation.number(self.s)+" nm"
+            + "\n- n-volume: "+notation.number(self.v)+" nm^"+str(self.n)
             + "\n- dislocations type: "+self.t
-            + "\n- model: "+self.m.__name__
-            + notation.parameters(self.r, 'console')
-            + "\n- dislocation density: "
-            + notation.number(self.d*1e9**self.n, 'console')
+            + "\n- model: "+self.m.__name__+notation.parameters(self.r)
+            + "\n- dislocation density: "+notation.number(self.d*1e9**self.n)
             + " m^-"+str(self.n)
             + "\n- inter dislocation distance: "+str(round(self.i))+" nm"
             + "\n- boundary conditions: "+str(self.c)
@@ -366,7 +376,7 @@ class Sample:
         return len(self.l)
 
     @beartype
-    def fileName(self, **kwargs) -> str:
+    def identifier(self, **kwargs) -> str:
         """
         Return a name that can be used to export the sample.
 
@@ -374,19 +384,19 @@ class Sample:
         the Distribution class.
 
         Output:
-            n: file name of the samplee
+            id: identifier of the sample
         """
-        return str(len(self))+'_'+self[0].fileName(**kwargs)
+        return str(len(self))+'_'+self[0].identifier(**kwargs)
 
     @beartype
-    def plotTitle(self) -> str:
+    def title(self, **kwargs) -> str:
         """
         Return a name that can be used as a title in a plot.
 
         Output:
-            t: title containing LaTeX code
+            tt: title containing LaTeX code
         """
-        return str(len(self))+" "+self[0].plotTitle()
+        return str(len(self))+" "+self[0].title(**kwargs)
 
     @beartype
     def average(self,
