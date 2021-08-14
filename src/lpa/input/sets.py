@@ -95,6 +95,8 @@ class Distribution:
         self.t = t # dislocation type
         self.p, self.b = self.m(self.g, self.s, self.v, self.r) # generate
         self.d = len(self)/self.v # density of dislocations [nm^-n]
+        if self.d == 0:
+            raise ValueError("the model gives a density equal to 0")
         self.i = 1/np.sqrt(self.d) # inter dislocation distance [nm]
         # boundary conditions
         self.c = c # boundary conditions code
@@ -176,8 +178,9 @@ class Distribution:
         Output:
             id: identifier of the distribution
         """
+        d = notation.number(self.d*1e9**self.n, 'id') # density
         id = (
-            notation.number(self.d*1e9**self.n)+"m-"+str(self.n) # density
+            d+"m-"+str(self.n) # density
             + "_"+self.g # geometry
             + "_"+notation.number(self.s, 'id', w=4)+"nm" # size
             + "_"+self.m.__name__ # model
