@@ -67,7 +67,7 @@ def export(
     exdir: str = "",
     exfmt: str = "pdf",
     exstm: Optional[str] = None,
-    exttl: Optional[str] = None,
+    title: Optional[str] = None,
 ) -> None:
     """
     Export a complete pooled analysis of the object o of each core.
