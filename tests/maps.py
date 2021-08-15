@@ -7,9 +7,14 @@ Script to test the module maps.
 
 from lpa.input import maps
 from lpa.input import sets
-from lpa.input.models import RDD
+from lpa.input.models import RDD, RRDD
 
-d = sets.Distribution('circle', 1000, RDD, {'d': 5e13*1e-18, 'r': 0})
+rdd = (RDD, {'d': 5e13*1e-18, 'r': 0})
+rrdde = (RRDD, {'v': 'E', 'f': 2, 's': 200, 'r': 0})
 
-# export a distribution map
-maps.export(d, ep='maps')
+drdd = sets.Distribution('circle', 1000, *rdd)
+drrdde = sets.Distribution('square', 2000, *rrdde)
+
+# export distribution maps
+maps.export(drdd, ep='maps')
+maps.export(drrdde, ep='maps')
