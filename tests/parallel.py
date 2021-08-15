@@ -14,4 +14,4 @@ from lpa.input.models import RRDD
 s = sets.Sample(10000, 'circle', 1000, RRDD, {'v': 'E', 'f': 2, 's': 200})
 
 # export the pooled statistical analysis of the samples s of each core
-parallel.export(s, ef='svg')
+parallel.export(s, exfmt='svg')

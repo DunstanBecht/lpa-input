@@ -13,8 +13,8 @@ d = sets.Distribution('circle', 1000, RDD, {'d': 1e15*1e-18}, c='IDBC')
 s = sets.Sample(10, 'square', 2000, RDD, {'d': 1e15*1e-18}, t='edge')
 
 # get file name proposition
-print(d.identifier())
-print(s.identifier(), end="\n\n")
+print(d.stem(t=False))
+print(s.stem(s=False), end="\n\n")
 
 # get representation
 print(repr(d))

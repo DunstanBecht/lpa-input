@@ -78,9 +78,9 @@ def export_distribution(
     i: Scalar,
     g: Vector,
     b: Vector,
-    ep: str = "",
-    ef: str = "dat",
-    id: Optional[str] = None,
+    exdir: str = "",
+    exfmt: str = "dat",
+    exstm: Optional[str] = None,
 ) -> None:
     """
     Export the dislocations of d to a standardized input data file.
@@ -93,17 +93,17 @@ def export_distribution(
         i: inter dislocation distance [nm]
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        ep: export path
-        ef: export format
-        id: custom identifier used to name the input file
+        exdir: export directory
+        exfmt: export format
+        exstm: export stem
 
     Complexity:
         O( len(d) )
     """
-    if ep!="" and ep[-1]!="/":
-        ep += "/"
-    if id == None:
-        id = d.identifier(s=False)
+    if exdir!="" and exdir[-1]!="/":
+        exdir += "/"
+    if exstm is None:
+        exstm = d.stem(s=False)
     # parameters
     m = 12 # number of points along Lx
     a = 0.40494 # cell side [nm]
@@ -130,7 +130,7 @@ def export_distribution(
         else:
             str_g = "Square side"
     # write
-    with open(ep+id+"."+ef, "w") as f:
+    with open(exdir+exstm+"."+exfmt, "w") as f:
         h = ("# please keep the structure of this file unchanged\n"
             + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
             + indices(L)+" # x: direction of 'L' (Fourier variable) [uvw]\n"
@@ -152,9 +152,9 @@ def export_sample(
     s: sets.Sample,
     g: Vector,
     b: Vector,
-    ep: str = "",
-    ef: str = "dat",
-    id: Optional[str] = None,
+    exdir: str = "",
+    exfmt: str = "dat",
+    exstm: Optional[str] = None,
 ) -> None:
     """
     Export a standardized input data file for each distributions of s.
@@ -163,36 +163,36 @@ def export_sample(
         s: sample of distributions to be exported
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        ep: export path
-        ef: export format
-        id: custom identifier used to name the input directory
+        exdir: export directory
+        exfmt: export format
+        exstm: export stem
 
     Complexity:
         O( len(s) * complexity(export_distribution) )
     """
-    if ep!="" and ep[-1]!="/":
-        ep += "/"
-    if id is None:
-        id = s.identifier(s=False)
-    ep_id = ep+id+"/" # folder where to export the files
+    if exdir!="" and exdir[-1]!="/":
+        exdir += "/"
+    if exstm is None:
+        exstm = s.stem(s=False)
+    stmdir = exdir+exstm+"/" # folder where to export the files
     # export
     w = len(str(len(s))) # number of characters in file names
-    if os.path.exists(ep_id):
-        for f in os.listdir(ep_id):
-            os.remove(ep_id+f) # delete the existing distributions
+    if os.path.exists(stmdir):
+        for f in os.listdir(stmdir):
+            os.remove(stmdir+f) # delete the existing distributions
     else:
-        os.mkdir(ep_id)
+        os.mkdir(stmdir)
     for i in range(len(s)):
-        export_distribution(s[i], s.i, g, b, ep_id, ef, str(i+1).zfill(w))
+        export_distribution(s[i], s.i, g, b, stmdir, exfmt, str(i+1).zfill(w))
 
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
     g: Vector = np.array([2, 0, 0]),
     b: Vector = np.array([1, 1, 0]),
-    ep: str = "",
-    ef: str = "dat",
-    id: Optional[str] = None,
+    exdir: str = "",
+    exfmt: str = "dat",
+    exstm: Optional[str] = None,
 ) -> None:
     """
     Convenient function for exporting a standardized data file.
@@ -201,15 +201,15 @@ def export(
         o: distribution or sample of distributions to export
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        ep: export path
-        ef: export format
-        id: custom identifier used to name the input file or directory
+        exdir: export directory
+        exfmt: export format
+        exstm: export stem
 
     Complexity:
         O( complexity(export_distribution) ) if o is a distribution
         O( complexity(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
-        export_distribution(o, o.i, g, b, ep, ef, id)
+        export_distribution(o, o.i, g, b, exdir, exfmt, exstm)
     else:
-        export_sample(o, g, b, ep, ef, id)
+        export_sample(o, g, b, exdir, exfmt, exstm)

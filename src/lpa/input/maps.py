@@ -13,30 +13,30 @@ from . import models
 @beartype
 def export(
     d: sets.Distribution,
-    ep: str = "",
-    ef: str = "pdf",
-    id: Optional[str] = None,
-    tt: Optional[str] = None,
+    exdir: str = "",
+    exfmt: str = "pdf",
+    exstm: Optional[str] = None,
+    title: Optional[str] = None,
 ) -> None:
     """
     Export the dislocation map of the distribution d.
 
     Input:
         d: distribution to be exported
-        ep: export path
-        ef: export format
-        id: custom identifier used to name the file
-        tt: custom title
+        exdir: export directory
+        exfmt: export format
+        exstm: export stem
+        title: map title
 
     Complexity:
         O( len(d) )
     """
-    if ep!="" and ep[-1]!="/":
-        ep += "/"
-    if id is None:
-        id = d.identifier(t=False)
-    if tt is None:
-        tt = d.title(t=False, s=False)
+    if exdir!="" and exdir[-1]!="/":
+        exdir += "/"
+    if exstm is None:
+        exstm = d.stem(t=False)
+    if title is None:
+        title = d.title(t=False, s=False)
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)
@@ -98,9 +98,9 @@ def export(
     # information
     ax.set_xlabel(r"$x \ (nm)$")
     ax.set_ylabel(r"$y \ (nm)$")
-    plt.title(tt)
+    plt.title(title)
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
-    plt.savefig(ep+id+"."+ef, format=ef)
+    plt.savefig(exdir+exstm+"."+exfmt, format=exfmt)
     plt.close('all')

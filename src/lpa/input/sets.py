@@ -137,7 +137,7 @@ class Distribution:
             s: distribution information
         """
         s = (
-            "Distribution: "+self.identifier()
+            "Distribution: "+self.stem()
             + "\n- geometry: "+self.g
             + "\n- size: "+notation.number(self.s)+" nm"
             + "\n- n-volume: "+notation.number(self.v)+" nm^"+str(self.n)
@@ -164,33 +164,33 @@ class Distribution:
         return len(self.b)
 
     @beartype
-    def identifier(self,
+    def stem(self,
         t: bool = True,
         s: bool = True,
     ) -> str:
         """
-        Return a file system compatible name.
+        Return a string that can be used in a file name.
 
         Input:
             t: add dislocation type
             s: add seed
 
         Output:
-            id: identifier of the distribution
+            stm: name identifying the distribution
         """
-        d = notation.number(self.d*1e9**self.n, 'id') # density
-        id = (
+        d = notation.number(self.d*1e9**self.n, 'stm') # density
+        stm = (
             d+"m-"+str(self.n) # density
             + "_"+self.g # geometry
-            + "_"+notation.number(self.s, 'id', w=4)+"nm" # size
+            + "_"+notation.number(self.s, 'stm', w=4)+"nm" # size
             + "_"+self.m.__name__ # model
-            + notation.parameters(self.r, 'id', s=s) # model parameters
+            + notation.parameters(self.r, 'stm', s=s) # model parameters
         )
         if t:
-            id += "_"+self.t # add dislocation type information
+            stm += "_"+self.t # add dislocation type information
         if self.c:
-            id += "_"+self.c # add bondary conditions information
-        return id
+            stm += "_"+self.c # add bondary conditions information
+        return stm
 
     @beartype
     def title(self,
@@ -205,19 +205,19 @@ class Distribution:
             s: add seed
 
         Output:
-            tt: title containing LaTeX code
+            ttl: title containing LaTeX code
         """
-        d = notation.number(self.d*1e9**self.n, 'tt') # density
-        tt = (
+        d = notation.number(self.d*1e9**self.n, 'ttl') # density
+        ttl = (
             self.m.__name__ # model
-            + notation.parameters(self.r, 'tt', s=s) # model parameters
+            + notation.parameters(self.r, 'ttl', s=s) # model parameters
             + r" $ \rho \sim "+d+r" m^{-2} $" # density
         )
         if t:
-            tt += " "+self.t # add dislocation type information
+            ttl += " "+self.t # add dislocation type information
         if self.c and self.c[:4]!='PBCR':
-            tt += " "+self.c # add bondary conditions information
-        return tt
+            ttl += " "+self.c # add bondary conditions information
+        return ttl
 
     @beartype
     def w(self,
@@ -349,7 +349,7 @@ class Sample:
             s: distribution information
         """
         s = (
-            "Sample: "+self.identifier()
+            "Sample: "+self.stem()
             + "\n- population: "+str(len(self))+" distributions"
             + "\n- geometry: "+self.g
             + "\n- size: "+notation.number(self.s)+" nm"
@@ -387,17 +387,17 @@ class Sample:
         return len(self.l)
 
     @beartype
-    def identifier(self, **kwargs) -> str:
+    def stem(self, **kwargs) -> str:
         """
-        Return a name that can be used to export the sample.
+        Return a string that can be used in a file name.
 
-        The keyword arguments are passed to the equivalent function in
-        the Distribution class.
+        The arguments are passed to the equivalent function in the
+        Distribution class.
 
         Output:
-            id: identifier of the sample
+            stm: name identifying the sample
         """
-        return str(len(self))+'_'+self[0].identifier(**kwargs)
+        return str(len(self))+'_'+self[0].stem(**kwargs)
 
     @beartype
     def title(self, **kwargs) -> str:
@@ -405,7 +405,7 @@ class Sample:
         Return a name that can be used as a title in a plot.
 
         Output:
-            tt: title containing LaTeX code
+            ttl: title containing LaTeX code
         """
         return str(len(self))+" "+self[0].title(**kwargs)
 
