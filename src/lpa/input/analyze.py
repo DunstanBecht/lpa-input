@@ -376,7 +376,7 @@ def plot_KKKK(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ K_{ab} $ of "+title, fontsize=16)
+    fig.suptitle(title, fontsize=16)
     # ax1
     ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $")
     ax1.plot(r, KKKK[0], label=r"$K_{++}(r)$")
@@ -422,7 +422,7 @@ def plot_gggg(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ g_{ab} $ of "+title, fontsize=16)
+    fig.suptitle(title, fontsize=16)
     ymin = min(np.nanmin(gggg)*0.95, 0.9)
     ymax = max(np.nanmax(gggg)*1.05, 1.1)
     # ax1
@@ -469,7 +469,7 @@ def plot_GaGs(
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
-    fig.suptitle(r"$ G^a $ and $ G^s $ of "+title, fontsize=16)
+    fig.suptitle(title, fontsize=16)
     # ax1
     ax1.plot(r, GaGs[0], label=r"$G^a(r)$")
     ax1.legend()
@@ -508,7 +508,7 @@ def intervals(
         iK: index of the maximum value for the plot of K
     """
     a, b, c = 0, 4*i, s/2
-    return np.linspace(a, c, int((c-a)*n/(b-a))), n
+    return np.linspace(a, max(c, b), max(int((c-a)*n/(b-a)), n)), n-1
 
 @beartype
 def export(
