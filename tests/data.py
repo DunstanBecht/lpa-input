@@ -13,5 +13,5 @@ d = sets.Distribution('circle', 50, RDD, {'d': 1e15*1e-18}, c='IDBC')
 s = sets.Sample(2, 'circle', 50, RDD, {'d': 1e15*1e-18})
 
 # export the input data file of a distribution or a sample
-data.export(d, p='data')
-data.export(s, p='data')
+data.export(d, ep='data')
+data.export(s, ep='data')

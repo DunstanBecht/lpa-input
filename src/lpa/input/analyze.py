@@ -351,7 +351,8 @@ def calculate(
 def plot_KKKK(
     r: ScalarList,
     KKKK: ScalarListList,
-    p: str,
+    ep: str,
+    ef: str,
     id: str,
     tt: str,
 ) -> None:
@@ -361,8 +362,9 @@ def plot_KKKK(
     Input:
         r: radius of the neighborhoods [nm]
         KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
-        p: path where to export the file
-        id: custom identifier
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the file
         tt: custom title
 
     Complexity:
@@ -391,14 +393,15 @@ def plot_KKKK(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
     # export
-    plt.savefig(p+"KKKK_"+id+".pdf")
+    plt.savefig(ep+"KKKK_"+id+"."+ef, format=ef)
     plt.close('all')
 
 @beartype
 def plot_gggg(
     r: ScalarList,
     gggg: ScalarListList,
-    p: str,
+    ep: str,
+    ef: str,
     id: str,
     tt: str,
 ) -> None:
@@ -408,8 +411,9 @@ def plot_gggg(
     Input:
         r: radius of the neighborhoods [nm]
         gggg: stacked values of g++, g-+, g+-, g-- [1]
-        p: path where to export the file
-        id: custom identifier
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the file
         tt: custom title
 
     Complexity:
@@ -436,14 +440,15 @@ def plot_gggg(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
     # export
-    plt.savefig(p+"gggg_"+id+".pdf")
+    plt.savefig(ep+"gggg_"+id+"."+ef, format=ef)
     plt.close('all')
 
 @beartype
 def plot_GaGs(
     r: ScalarList,
     GaGs: ScalarListList,
-    p: str,
+    ep: str,
+    ef: str,
     id: str,
     tt: str,
 ) -> None:
@@ -453,8 +458,9 @@ def plot_GaGs(
     Input:
         r: radius of the neighborhoods [nm]
         GaGs: stacked values of Ga and Gs [1]
-        p: path where to export the file
-        id: custom identifier
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the file
         tt: custom title
 
     Complexity:
@@ -475,7 +481,7 @@ def plot_GaGs(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     # export
-    plt.savefig(p+"GaGs_"+id+".pdf")
+    plt.savefig(ep+"GaGs_"+id+"."+ef, format=ef)
     plt.close('all')
 
 @beartype
@@ -507,7 +513,8 @@ def intervals(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    p: str = "",
+    ep: str = "",
+    ef: str = "pdf",
     id: Optional[str] = None,
     tt: Optional[str] = None,
 ) -> None:
@@ -516,21 +523,22 @@ def export(
 
     Input:
         o: distribution or sample of distributions to analyze
-        p: path where to export the files
-        id: custom identifier
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the files
         tt: custom title
 
     Complexity:
         O( complexity(calculate) )
     """
-    if p!="" and p[-1]!="/":
-        p += "/"
+    if ep!="" and ep[-1]!="/":
+        ep += "/"
     r, iK = intervals(o.i, o.s) # intervals to display
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
     if id is None:
         id = o.identifier(t=False, s=False)
     if tt is None:
         tt = o.title(t=False, s=False)
-    plot_KKKK(r[:iK], KKKK.T[:iK].T, p, id, tt)
-    plot_gggg(r, gggg, p, id, tt)
-    plot_GaGs(r, GaGs, p, id, tt)
+    plot_KKKK(r[:iK], KKKK.T[:iK].T, ep, ef, id, tt)
+    plot_gggg(r, gggg, ep, ef, id, tt)
+    plot_GaGs(r, GaGs, ep, ef, id, tt)

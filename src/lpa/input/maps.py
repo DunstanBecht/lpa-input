@@ -13,7 +13,8 @@ from . import models
 @beartype
 def export(
     d: sets.Distribution,
-    p: str = "",
+    ep: str = "",
+    ef: str = "pdf",
     id: Optional[str] = None,
     tt: Optional[str] = None,
 ) -> None:
@@ -22,15 +23,16 @@ def export(
 
     Input:
         d: distribution to be exported
-        p: path where to export the file
-        id: custom identifier
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the file
         tt: custom title
 
     Complexity:
         O( len(d) )
     """
-    if p!="" and p[-1]!="/":
-        p += "/"
+    if ep!="" and ep[-1]!="/":
+        ep += "/"
     if id is None:
         id = d.identifier(t=False)
     if tt is None:
@@ -100,5 +102,5 @@ def export(
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
-    plt.savefig(p+id+".pdf")
+    plt.savefig(ep+id+"."+ef, format=ef)
     plt.close('all')
