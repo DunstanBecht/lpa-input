@@ -64,7 +64,10 @@ def average_on_cores(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    p: str = "",
+    ep: str = "",
+    ef: str = "pdf",
+    id: Optional[str] = None,
+    tt: Optional[str] = None,
 ) -> None:
     """
     Export a complete pooled analysis of the object o of each core.
@@ -73,12 +76,13 @@ def export(
 
     Input:
         o: distribution or sample to analyze on the core
-        p: path where to export the file
-        n: name of the exported file
-        t: title of the plot
+        ep: export path
+        ef: export format
+        id: custom identifier used to name the files
+        tt: custom title
     """
-    if p!="" and p[-1]!="/":
-        p += "/"
+    if ep!="" and ep[-1]!="/":
+        ep += "/"
     i = average_on_cores(o.i, True) # averaged inter dislocation distance
     r, iK = analyze.intervals(i, o.s) # intervals to display
     f = ['KKKK', 'gggg', 'GaGs'] # functions to calculate
@@ -87,12 +91,17 @@ def export(
     if rank == root:
         if isinstance(o, sets.Distribution):
             c = str(size) # number of distributions analyzed
-            tt = c+" "+o.title(t=False, s=False) # plots title
-            id = c+"_"+o.identifier(t=False, s=False) # plots file name
+            if tt is None:
+                tt = c+" "+o.title(t=False, s=False) # plots title
+            if id is None:
+                id = c+"_"+o.identifier(t=False, s=False) # plots file name
         else:
             c = str(len(o)*size) # number of distributions analyzed
-            tt = c+" "+o[0].title(t=False, s=False) # plots title
-            id = c+"_"+o[0].identifier(t=False, s=False) # plots file name
-        analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, p, id, tt)
-        analyze.plot_gggg(r, master[f.index('gggg')], p, id, tt)
-        analyze.plot_GaGs(r, master[f.index('GaGs')], p, id, tt)
+            if tt is None:
+                tt = c+" "+o[0].title(t=False, s=False) # plots title
+            if id is None:
+                id = c+"_"+o[0].identifier(t=False, s=False) # plots file name
+        args = (ep, ef, id, tt)
+        analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, *args)
+        analyze.plot_gggg(r, master[f.index('gggg')], *args)
+        analyze.plot_GaGs(r, master[f.index('GaGs')], *args)
