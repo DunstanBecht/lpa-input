@@ -34,7 +34,7 @@ def export(
     if exstm is None:
         exstm = d.name('dgsmc', 'stm')
     if title is None:
-        title = d.name('mcd', 'ttl')
+        title = d.name('mcd', 'ttl', s=False)
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)

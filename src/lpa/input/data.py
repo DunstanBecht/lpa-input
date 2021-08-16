@@ -101,7 +101,7 @@ def export_distribution(
         O( len(d) )
     """
     if exstm is None:
-        exstm = d.name(c='stm')
+        exstm = d.name(c='stm', s=True)
     # parameters
     m = 12 # number of points along Lx
     a = 0.40494 # cell side [nm]
@@ -169,7 +169,7 @@ def export_sample(
         O( len(s) * complexity(export_distribution) )
     """
     if exstm is None:
-        exstm = s.name(c='stm')
+        exstm = s.name(c='stm', s=True)
     stmdir = os.path.join(exdir, exstm) # folder where to export the files
     # export
     w = len(str(len(s))) # number of characters in file names

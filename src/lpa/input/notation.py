@@ -148,15 +148,15 @@ def parameters(
         s: display the seed
 
     Output:
-        s: model parameters description
+        n: model parameters description
     """
     # user-defined name for the set of parameters
     if 'name' in r:
         return r['name']
-    s = ""
+    n = ""
     # version
     if 'v' in r:
-        s += "-"+r['v']
+        n += "-"+r['v']
     # parameter list
     p = []
     if 'd' in r:  # density
@@ -174,15 +174,15 @@ def parameters(
     # concatenate
     if len(p) > 0:
         if c == 'stm':
-            s += "_"+"_".join(p)
+            n += "_"+"_".join(p)
         elif c == 'ttl':
             p = [q.replace("$", "").strip() for q in p]
-            s += r" $ \left( "+", \ ".join(p)+r" \right) $ "
+            n += r" $ \left( "+", \ ".join(p)+r" \right) $ "
         elif c == 'csl':
-            s += " ("+" ".join(p)+")"
+            n += " ("+" ".join(p)+")"
         else:
             raise ValueError("unknown context "+str(c))
-    return s
+    return n
 
 @beartype
 def fmt(
