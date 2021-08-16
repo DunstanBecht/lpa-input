@@ -535,10 +535,13 @@ def export(
     """
     r, iK = intervals(o.i, o.s) # range of the study
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
+    fstm, fttl = 'dmgs', 'mgsd'
+    if isinstance(o, sets.Sample):
+        fstm, fttl = "n"+fstm, "n"+fttl
     if exstm is None:
-        exstm = o.name(c='stm', s=False)
+        exstm = o.name(fstm, c='stm', s=False)
     if title is None:
-        title = o.name(c='ttl', s=False)
+        title = o.name(fttl, c='ttl', s=False)
     args = (exdir, exfmt, exstm, title)
     plot_KKKK(r[:iK], KKKK.T[:iK].T, *args)
     plot_gggg(r, gggg, *args)

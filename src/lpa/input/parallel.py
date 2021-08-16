@@ -89,16 +89,12 @@ def export(
     if rank == root:
         if isinstance(o, sets.Distribution):
             c = str(size) # number of distributions analyzed
-            if title is None:
-                title = c+" "+o.title(t=False, s=False) # plots title
-            if exstm is None:
-                exstm = c+"_"+o.stem(t=False, s=False) # plots file name
         else:
             c = str(len(o)*size) # number of distributions analyzed
-            if title is None:
-                title = c+" "+o[0].title(t=False, s=False) # plots title
-            if exstm is None:
-                exstm = c+"_"+o[0].stem(t=False, s=False) # plots file name
+        if exstm is None:
+            exstm = c+"_"+o.name('dmgs', c='stm', s=False) # plots file name
+        if title is None:
+            title = c+" "+o.name('mgsd', c='ttl', s=False) # plots title
         args = (exdir, exfmt, exstm, title)
         analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, *args)
         analyze.plot_gggg(r, master[f.index('gggg')], *args)
