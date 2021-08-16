@@ -27,6 +27,21 @@ print(notation.number(12345, 'ttl', 5))
 print(notation.number(12345, 'ttl', 6))
 print(notation.number(12345, 'ttl', 7), end="\n\n")
 
+# write units
+print(notation.unit("nm^{-3}", 'stm'))
+print(notation.unit("nm^{-3}", 'csl'))
+print(notation.unit("nm^{-3}", 'ttl'), end="\n\n")
+
+# write quantities
+print(notation.quantity(2, "nm", 'stm'))
+print(notation.quantity(2, "nm", 'csl'))
+print(notation.quantity(2, "nm", 'ttl'), end="\n\n")
+
+# write equalities
+print(notation.equality(r"\alpha", "10", 'stm'))
+print(notation.equality(r"\alpha", "10", 'csl'))
+print(notation.equality(r"\alpha", "10", 'ttl'), end="\n\n")
+
 # write model parameters
 r_none = {}
 r_rrdd = {'v': 'R', 'd': 5e-3, 's': 200}

@@ -81,8 +81,6 @@ def export(
         exstm: export stem
         title: figure title
     """
-    if exdir!="" and exdir[-1]!="/":
-        exdir += "/"
     i = average_on_cores(o.i, True) # averaged inter dislocation distance
     r, iK = analyze.intervals(i, o.s) # intervals to display
     f = ['KKKK', 'gggg', 'GaGs'] # functions to calculate

@@ -100,10 +100,8 @@ def export_distribution(
     Complexity:
         O( len(d) )
     """
-    if exdir!="" and exdir[-1]!="/":
-        exdir += "/"
     if exstm is None:
-        exstm = d.stem(s=False)
+        exstm = d.name(c='stm')
     # parameters
     m = 12 # number of points along Lx
     a = 0.40494 # cell side [nm]
@@ -130,7 +128,7 @@ def export_distribution(
         else:
             str_g = "Square side"
     # write
-    with open(exdir+exstm+"."+exfmt, "w") as f:
+    with open(os.path.join(exdir, exstm+"."+exfmt), "w") as f:
         h = ("# please keep the structure of this file unchanged\n"
             + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
             + indices(L)+" # x: direction of 'L' (Fourier variable) [uvw]\n"
@@ -170,16 +168,14 @@ def export_sample(
     Complexity:
         O( len(s) * complexity(export_distribution) )
     """
-    if exdir!="" and exdir[-1]!="/":
-        exdir += "/"
     if exstm is None:
-        exstm = s.stem(s=False)
-    stmdir = exdir+exstm+"/" # folder where to export the files
+        exstm = s.name(c='stm')
+    stmdir = os.path.join(exdir, exstm) # folder where to export the files
     # export
     w = len(str(len(s))) # number of characters in file names
     if os.path.exists(stmdir):
         for f in os.listdir(stmdir):
-            os.remove(stmdir+f) # delete the existing distributions
+            os.remove(os.path.join(stmdir, f)) # delete the existing
     else:
         os.mkdir(stmdir)
     for i in range(len(s)):

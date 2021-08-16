@@ -33,6 +33,7 @@ over the cores.
 __author__ = "Dunstan Becht"
 __version__ = "0.9.10"
 
+import os
 import sys
 import numpy as np
 from typing import Union, Optional, NewType, Any
@@ -47,11 +48,22 @@ else:
     from typing import List
     from typing import Tuple
 
+# scalar and vectors
 Scalar = Union[int, float, np.intc]
 Vector = np.ndarray # shape: (n,)
+# sets
 ScalarList = np.ndarray # shape: (...,)
 ScalarListList = np.ndarray # shape: (..., ...)
 VectorList = np.ndarray # shape: (..., n)
-CorrectionFunction = Callable[[Vector, ScalarList, ScalarList], ScalarList]
-GenerationFunction = Callable[[str, int], Tuple[VectorList, VectorList]]
+# model generation functions
+CorrectionFunction = Callable[
+    [Vector, ScalarList, ScalarList],
+    ScalarList
+]
+# edge correction functions
+GenerationFunction = Callable[
+    [str, Scalar, Scalar, dict],
+    Tuple[VectorList, ScalarList]
+]
+# generic analysis function output
 AnalysisOutput = Union[Tuple, Scalar, np.ndarray]

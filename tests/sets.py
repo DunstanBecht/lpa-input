@@ -12,9 +12,17 @@ from lpa.input.models import RDD
 d = sets.Distribution('circle', 1000, RDD, {'d': 1e15*1e-18}, c='IDBC')
 s = sets.Sample(10, 'square', 2000, RDD, {'d': 1e15*1e-18}, t='edge')
 
-# get file name proposition
-print(d.stem(t=False))
-print(s.stem(s=False), end="\n\n")
+# get stem string
+print(d.name('dmgc', 'stm'))
+print(s.name('nstc', 'stm'), end="\n\n")
+
+# get title string
+print(d.name('dmgc', 'ttl'))
+print(s.name('nstc', 'ttl'), end="\n\n")
+
+# get console string
+print(d.name('dmgc', 'csl'))
+print(s.name('nstc', 'csl'), end="\n\n")
 
 # get representation
 print(repr(d))
@@ -23,10 +31,6 @@ print(repr(s), end="\n\n")
 # evaluate a representation
 eval('sets.'+repr(d))
 eval('sets.'+repr(s))
-
-# get plot title proposition
-print(d.title())
-print(s.title(), end="\n\n")
 
 # print the object
 print(d, end="\n\n")

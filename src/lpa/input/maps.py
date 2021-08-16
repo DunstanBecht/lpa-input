@@ -31,12 +31,10 @@ def export(
     Complexity:
         O( len(d) )
     """
-    if exdir!="" and exdir[-1]!="/":
-        exdir += "/"
     if exstm is None:
-        exstm = d.stem(t=False)
+        exstm = d.name('dgsmc', 'stm')
     if title is None:
-        title = d.title(t=False, s=False)
+        title = d.name('mcd', 'ttl')
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)
@@ -102,5 +100,5 @@ def export(
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
-    plt.savefig(exdir+exstm+"."+exfmt, format=exfmt)
+    plt.savefig(os.path.join(exdir, exstm+"."+exfmt), format=exfmt)
     plt.close('all')

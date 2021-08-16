@@ -31,12 +31,12 @@ def N(
         n: list of the number of points for each radius value
 
     Input example:
-        a = np.array([0, 0])
-        B = np.array([[0.5, 0], [2, 0]])
-        r2 = np.array([1, 4, 9])
+        a = np.array([a_x, a_y])
+        B = np.array([[b_0_x, b_0_y], [b_1_x, b_1_y], ...])
+        r2 = np.array([r_0^2, r_1^2, r_2^2, ...])
 
     Output example:
-        n = np.array([1, 2, 2])
+        n = np.array([N(r_0), (r_1), N(r_2), ...])
 
     Complexity:
         O( len(B)*log(len(B)) + len(r2) )
@@ -75,14 +75,14 @@ def M(
         m: list of the average number of points for each radius value
 
     Input example:
-        A = np.array([[0, 0], [-1, 0]])
-        B = np.array([[0.5, 0], [2, 0]])
+        A = np.array([[a_0_x, a_0_y], [a_1_x, a_1_y], ...])
+        B = np.array([[b_0_x, b_0_y], [b_1_x, b_1_y], ...])
         w = lambda a, r, r2: np.ones(len(r))
-        r = np.array([1, 2, 3])
-        r2 = np.array([1, 4, 9])
+        r = np.array([r_0, r_1, r_2, ...])
+        r2 = np.array([r_0^2, r_1^2, r_2^2, ...])
 
     Output example:
-        m = np.array([0.5, 1.5, 2])
+        m = np.array([M(r_0), M(r_1), M(r_2)])
 
     Complexity:
         O( len(A) * (complexity(w)+complexity(N)) )
@@ -138,12 +138,12 @@ def MMMM_cp_cm(
     Complexity:
         O( complexity(M) )
     """
-    Pp = d.p[d.b>0]
-    Pm = d.p[d.b<0]
-    Mpp = M(Pp, Pp, d.w, r, r2)
-    Mmp = M(Pm, Pp, d.w, r, r2)
-    Mpm = M(Pp, Pm, d.w, r, r2)
-    Mmm = M(Pm, Pm, d.w, r, r2)
+    Pp = d.p[d.b>0] # positive Burgers vector sense dislocation positions
+    Pm = d.p[d.b<0] # negative Burgers vector sense dislocation positions
+    Mpp = M(Pp, Pp, d.w, r, r2) # M++
+    Mmp = M(Pm, Pp, d.w, r, r2) # M-+
+    Mpm = M(Pp, Pm, d.w, r, r2) # M+-
+    Mmm = M(Pm, Pm, d.w, r, r2) # M--
     return np.stack((Mpp, Mmp, Mpm, Mmm)), len(Pp), len(Pm)
 
 @beartype
@@ -198,6 +198,8 @@ def gggg_dVvdr(
     """
     Return g++, g-+, g+-, g-- and derivative of neighborhood volume.
 
+    Implementation of the pair correlation function.
+
     This function is incremental. It uses pre-calculated KKKK values
     to avoid unnecessary repetition of calculations common to spatial
     analysis functions
@@ -223,13 +225,13 @@ def gggg_dVvdr(
     Complexity:
         O( len(r) )
     """
-    if n == 2:
+    if n == 2: # circle
         dVvdr = np.where(r!=0, 2*np.pi*r, 1)
-    elif n == 3:
+    elif n == 3: # sphere
         dVvdr = np.where(r!=0, np.pi*r**2, 1)
-    dKKKK = np.roll(KKKK, -1) - np.roll(KKKK, 1)
-    dr = np.roll(r, -1) - np.roll(r, 1)
-    dKdr = np.divide(dKKKK, dr)
+    dKKKK = np.roll(KKKK, -1) - np.roll(KKKK, 1) # differential of K
+    dr = np.roll(r, -1) - np.roll(r, 1) # differential of r
+    dKdr = np.divide(dKKKK, dr) # derivative of K with respect to r
     gggg = dKdr/dVvdr
     for i in range(len(gggg)):
         gggg[i][0], gggg[i][-1] = None, None
@@ -308,7 +310,7 @@ def calculate(
     """
     if r2 is None:
         r2 = np.square(r)
-    # create an incremental analysis function to apply to a distribution
+    # create an incremental analysis function to be applied to a distribution
     @beartype
     def calculate_on_distribution(
         d: sets.Distribution,
@@ -393,7 +395,7 @@ def plot_KKKK(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
     # export
-    plt.savefig(exdir+"KKKK_"+exstm+"."+exfmt, format=exfmt)
+    plt.savefig(os.path.join(exdir, "KKKK_"+exstm+"."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype
@@ -440,7 +442,7 @@ def plot_gggg(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
     # export
-    plt.savefig(exdir+"gggg_"+exstm+"."+exfmt, format=exfmt)
+    plt.savefig(os.path.join(exdir, "gggg_"+exstm+"."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype
@@ -481,7 +483,7 @@ def plot_GaGs(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     # export
-    plt.savefig(exdir+"GaGs_"+exstm+"."+exfmt, format=exfmt)
+    plt.savefig(os.path.join(exdir, "GaGs_"+exstm+"."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype
@@ -501,7 +503,7 @@ def intervals(
     Input:
         i: inter dislocation distance [nm]
         s: shape size [nm]
-        n: number of points between a and b
+        n: number of steps between a and b
 
     Output:
         r: full range of radii for analysis [nm]
@@ -531,14 +533,12 @@ def export(
     Complexity:
         O( complexity(calculate) )
     """
-    if exdir!="" and exdir[-1]!="/":
-        exdir += "/"
-    r, iK = intervals(o.i, o.s) # intervals to display
+    r, iK = intervals(o.i, o.s) # range of the study
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
     if exstm is None:
-        exstm = o.stem(t=False, s=False)
+        exstm = o.name(c='stm', s=False)
     if title is None:
-        title = o.title(t=False, s=False)
+        title = o.name(c='ttl', s=False)
     args = (exdir, exfmt, exstm, title)
     plot_KKKK(r[:iK], KKKK.T[:iK].T, *args)
     plot_gggg(r, gggg, *args)

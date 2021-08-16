@@ -10,7 +10,7 @@ from lpa.input import sets
 from lpa.input.models import RDD
 import numpy as np
 
-d = sets.Distribution('circle', 50, RDD, {'d': 1e15*1e-18}, c='IDBC')
+d = sets.Distribution('circle', 50, RDD, {'d': 1e15*1e-18, 'r': 0}, c='IDBC')
 s = sets.Sample(10, 'circle', 50, RDD, {'d': 1e15*1e-18})
 
 # export the input data file of a distribution or a sample
