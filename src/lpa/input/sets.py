@@ -98,13 +98,11 @@ class Distribution:
             raise ValueError("the model gives a density equal to 0")
         self.i = 1/np.sqrt(self.d) # inter dislocation distance [nm]
         # boundary conditions
-        if c: # boundary conditions are applied
+        if c and (self.g!='square' or c[:4]!='PBCR'):
             if self.g=='circle' and c=='IDBC':
                 cp, cb = boundaries.IDBC(self.s, self.p, self.b, self.t)
             elif self.g=='square' and c[:4]=='PBCG':
                 cp, cb = boundaries.PBCG(self.s, self.p, self.b, int(c[4:]))
-            elif self.g=='square' and c[:4]=='PBCR':
-                pass
             else:
                 raise Exception("invalid boundary conditions: "+str(c))
             self.p = np.concatenate((self.p, cp))
