@@ -16,7 +16,8 @@ def export(
     exdir: str = "",
     exfmt: str = "pdf",
     exstm: Optional[str] = None,
-    title: Optional[str] = None,
+    ttlsp: Optional[str] = None,
+    ttlsb: Optional[str] = None,
 ) -> None:
     """
     Export the dislocation map of the distribution d.
@@ -26,15 +27,18 @@ def export(
         exdir: export directory
         exfmt: export format
         exstm: export stem
-        title: map title
+        ttlsp: map sup title
+        ttlsb: map sub title
 
     Complexity:
         O( len(d) )
     """
     if exstm is None:
         exstm = d.name('dgsmc', 'stm')
-    if title is None:
-        title = d.name('mcd', 'ttl', s=False)
+    if ttlsp is None:
+        ttlsp = d.name('dgsc', 'ttl')
+    if ttlsb is None:
+        ttlsb = d.name('m', 'ttl', s=False)
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)
@@ -96,7 +100,8 @@ def export(
     # information
     ax.set_xlabel(r"$x \ (nm)$")
     ax.set_ylabel(r"$y \ (nm)$")
-    plt.title(title)
+    plt.suptitle(ttlsp)
+    plt.title(ttlsb)
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
