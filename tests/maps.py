@@ -17,4 +17,4 @@ drrdde = sets.Distribution('square', 2000, *rrdde)
 
 # export distribution maps
 maps.export(drdd, exdir='maps', exstm='stem')
-maps.export(drrdde, exdir='maps/', title='title')
+maps.export(drrdde, exdir='maps/', ttlsp='suptitle', ttlsb='subtitle')
