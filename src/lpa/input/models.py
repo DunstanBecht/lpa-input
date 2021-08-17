@@ -16,6 +16,7 @@ The following parameters can be used in the model parameters:
 
 import math
 from . import *
+from . import geometries
 
 @beartype
 def RDD(
@@ -202,11 +203,8 @@ def RRDD(
     elif rv == 'E':
         b = even_senses(t, rf)
     # masking
-    if g == 'circle':
-        mask = np.sum(np.square(p), axis=1) < s**2
-    elif g == 'square':
-        mask = (p[:,0]<s) & (p[:,1]<s)
-    return p[mask], b[mask]
+    m = geometries.mask(g, s, p)
+    return p[m], b[m]
 
 @beartype
 def RCDD(
@@ -305,7 +303,7 @@ def RCDD(
     p = np.stack((x,y), axis=1)
     # masking
     if g == 'circle':
-        mask = np.sum(np.square(p), axis=1) < s**2
-        p = p[mask]
-        b = b[mask]
+        m = geometries.mask(g, s, p)
+        p = p[m]
+        b = b[m]
     return p, b

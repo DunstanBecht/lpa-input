@@ -9,6 +9,7 @@ from . import *
 from . import overlap
 from . import notation
 from . import boundaries
+from . import geometries
 
 class Distribution:
     """
@@ -49,8 +50,6 @@ class Distribution:
         G (np.random._generator.Generator): random generator
     """
 
-    geometries = ('square', 'circle') # available geometries
-
     @beartype
     def __init__(self,
         g: str,
@@ -78,21 +77,12 @@ class Distribution:
         Complexity:
             O( complexity(m) )
         """
-        # shape size
+        # shape
         if s <= 0:
             raise ValueError("incorrect size: "+str(s))
         self.s = s # characteristic size of the region of interest [nm]
-        # shape geometry
-        if not g in Distribution.geometries:
-            raise ValueError("unknown geometry: "+str(g))
         self.g = g # geometry of the region of interest
-        # shape n-volume
-        if self.g == 'circle': # centered at the origin
-            self.n = 2 # dimension of space
-            self.v = np.pi*self.s**2 # surface [nm^2]
-        elif self.g == 'square': # bottom left corner at the origin
-            self.n = 2 # dimension of space
-            self.v = self.s**2 # surface [nm^2]
+        self.n, self.v = geometries.nvolume(g, s) # dimension and n-volume
         # model
         self.m = m # model generation function
         self.r = r.copy() # model parameters

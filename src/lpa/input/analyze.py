@@ -8,6 +8,7 @@ Tools for spatial analysis of dislocation distributions.
 import matplotlib.pyplot as plt
 from . import *
 from . import sets
+from . import geometries
 
 @beartype
 def N(
@@ -140,6 +141,9 @@ def MMMM_cp_cm(
     """
     Pp = d.p[d.b>0] # positive Burgers vector sense dislocation positions
     Pm = d.p[d.b<0] # negative Burgers vector sense dislocation positions
+    if d.c:
+        Pp = Pp[geometries.mask(d.g, d.s, Pp)]
+        Pm = Pm[geometries.mask(d.g, d.s, Pm)]
     Mpp = M(Pp, Pp, d.w, r, r2) # M++
     Mmp = M(Pm, Pp, d.w, r, r2) # M-+
     Mpm = M(Pp, Pm, d.w, r, r2) # M+-
