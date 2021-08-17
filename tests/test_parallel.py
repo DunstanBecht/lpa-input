@@ -12,4 +12,5 @@ from lpa.input import parallel
 from test_sets import *
 
 # export the pooled statistical analysis of the samples s of each core
-parallel.export(d_rrdd, exfmt='svg')
+parallel.export(d_rrdd)
+parallel.export(s_rcdd, exfmt='svg')

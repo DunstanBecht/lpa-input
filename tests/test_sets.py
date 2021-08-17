@@ -14,11 +14,11 @@ rcdd = (RCDD, {'v': 'R', 'd': 1e15*1e-18, 's': 200, 't': 10})
 
 # instantiate
 d_rdd = sets.Distribution('circle', 1000, *rdd, S=0)
-d_rrdd = sets.Distribution('square', 2000, *rrdd, S=1)
-d_rcdd = sets.Distribution('square', 2000, *rcdd, c='PBCR3', S=2)
-s_rdd = sets.Sample(10, 'square', 2000, *rdd, t='edge', S=3)
-s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='IDBC', S=4)
-s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='PBCG1', S=5)
+d_rrdd = sets.Distribution('square', 2000, *rrdd, S=0)
+d_rcdd = sets.Distribution('square', 2000, *rcdd, c='PBCR3', S=0)
+s_rdd = sets.Sample(10, 'square', 2000, *rdd, t='edge', S=0)
+s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='IDBC', S=0)
+s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='PBCG1', S=0)
 
 if __name__ == "__main__":
 
