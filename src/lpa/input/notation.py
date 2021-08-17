@@ -177,7 +177,7 @@ def parameters(
             n += "_"+"_".join(p)
         elif c == 'ttl':
             p = [q.replace("$", "").strip() for q in p]
-            n += r" $ \left( "+", \ ".join(p)+r" \right) $ "
+            n += r" $ \left( "+", \ ".join(p)+r" \right) $"
         elif c == 'csl':
             n += " ("+" ".join(p)+")"
         else:
