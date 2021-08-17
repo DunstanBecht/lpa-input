@@ -425,8 +425,8 @@ def plot_gggg(
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(title, fontsize=16)
-    ymin = min(np.nanmin(gggg)*0.95, 0.9)
-    ymax = max(np.nanmax(gggg)*1.05, 1.1)
+    ymin = min(np.nanmin(gggg[gggg != -np.inf])*0.95, 0.9)
+    ymax = max(np.nanmax(gggg[gggg != np.inf])*1.05, 1.1)
     # ax1
     ax1.plot(r, gggg[0], label=r"$g_{++}(r)$")
     ax1.plot(r, gggg[1], label=r"$g_{-+}(r)$")
