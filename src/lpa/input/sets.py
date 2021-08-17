@@ -316,7 +316,7 @@ class Sample:
 
     @beartype
     def name(self,
-        f: str = 'dgsmtc',
+        f: str = 'ndgsmtc',
         c: str = 'csl',
         s: bool = True,
     ) -> str:
