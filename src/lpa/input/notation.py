@@ -169,8 +169,6 @@ def parameters(
         p.append(equality("t", number(r['t'], c, 3)+unit("nm", c), c))
     if 'l' in r: # dipole length
         p.append(equality("l", number(r['l'], c, 3)+unit("nm", c), c))
-    if 'r' in r and s: # random seed
-        p.append(equality("r", str(r['r']), c))
     # concatenate
     if len(p) > 0:
         if c == 'stm':

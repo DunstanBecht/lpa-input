@@ -34,11 +34,11 @@ def export(
         O( len(d) )
     """
     if exstm is None:
-        exstm = d.name('dgsmc', 'stm')
+        exstm = d.name('dgsmcS', 'stm')
     if ttlsp is None:
         ttlsp = d.name('dgsc', 'ttl')
     if ttlsb is None:
-        ttlsb = d.name('m', 'ttl', s=False)
+        ttlsb = d.name('m', 'ttl')
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)

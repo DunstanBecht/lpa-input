@@ -45,6 +45,8 @@ class Distribution:
         d (Scalar): dislocation density [nm^-n]
         i (Scalar): inter dislocation distance [nm]
         c (str|None): boundary conditions
+        S (int|None): random seed
+        G (np.random._generator.Generator): random generator
     """
 
     geometries = ('square', 'circle') # available geometries
@@ -57,6 +59,8 @@ class Distribution:
         r: dict,
         t: str = 'screw',
         c: Optional[str] = None,
+        S: Optional[int] = None,
+        G: Optional[np.random._generator.Generator] = None,
     ) -> None:
         """
         Initialize the distribution.
@@ -68,6 +72,8 @@ class Distribution:
             r: model parameters
             t: dislocation type
             c: boundary conditions
+            S: random seed
+            G: random generator
 
         Complexity:
             O( complexity(m) )
@@ -92,7 +98,13 @@ class Distribution:
         self.r = r.copy() # model parameters
         # dislocations
         self.t = t # dislocation type
-        self.p, self.b = self.m(self.g, self.s, self.v, self.r) # generate
+        if not G is None:
+            self.G = G
+            self.S = None
+        else:
+            self.G = np.random.default_rng(S) # random generator
+            self.S = S # random seed
+        self.p, self.b = self.m(self.g, self.s, self.v, self.r, self.G)
         self.d = len(self)/self.v # density of dislocations [nm^-n]
         if self.d == 0:
             raise ValueError("the model gives a density equal to 0")
@@ -119,6 +131,7 @@ class Distribution:
             repr(self.r), # model parameters
             repr(self.t), # dislocation type
             repr(self.c), # bondary conditions
+            repr(self.S), # random seed
         )
         return self.__class__.__name__+"("+", ".join(args)+")"
 
@@ -134,9 +147,8 @@ class Distribution:
 
     @beartype
     def name(self,
-        f: str = 'dgsmtc',
+        f: str = 'dgsmtcS',
         c: str = 'csl',
-        s: bool = True,
     ) -> str:
         """
         Return a string describing the distribution in context c.
@@ -144,7 +156,6 @@ class Distribution:
         Input:
             f: format
             c: context
-            s: add the random seed in the string
 
         Output:
             csl|stm|ttl: string describing the distribution
@@ -157,16 +168,19 @@ class Distribution:
             t: dislocation type
             c: boundary conditions
             n: number of dislocations
+            S: random seed
         """
         rho = notation.quantity(self.d*1e9**self.n, "m^{-"+str(self.n)+"}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,
             's': notation.quantity(self.s, r"nm", c, w=4),
-            'm': self.m.__name__+notation.parameters(self.r, c, s=s),
+            'm': self.m.__name__+notation.parameters(self.r, c),
             't': self.t,
             'c': self.c,
             'n': str(int(len(self))),
+            'S': notation.equality(r"S", str(self.S), c)
+                if not self.S is None else None,
         }
         return notation.fmt(f, v, c)
 
@@ -231,6 +245,8 @@ class Sample:
         d (Scalar): averaged dislocation density [nm^-n]
         i (Scalar): averaged inter dislocation distance [nm]
         c (str|None): boundary conditions
+        S (int|None): random seed
+        G (np.random._generator.Generator): random generator
     """
 
     @beartype
@@ -242,6 +258,7 @@ class Sample:
         r: dict,
         t: str = 'screw',
         c: Optional[str] = None,
+        S: Optional[int] = None,
     ) -> None:
         """
         Initialize the sample of distributions.
@@ -254,13 +271,18 @@ class Sample:
             r: model parameters
             t: dislocation type
             c: boundary conditions
+            S: random seed
 
         Complexity:
             O( c * complexity(Distribution) )
         """
+
+        self.G = np.random.default_rng(S) # random generator
+        self.S = S # random seed
+        args = (g, s, m, r, t, c, None, self.G) # distribution arguments
         if n <= 0:
             raise ValueError("incorrect number of distribution: "+str(n))
-        self.l = tuple([Distribution(g, s, m, r, t, c) for i in range(n)])
+        self.l = tuple([Distribution(*args) for i in range(n)])
         self.g = g # geometry of the region of interest
         self.s = s # size of the region of interest [nm]
         self.n = self[0].n # dimension of space
@@ -283,6 +305,7 @@ class Sample:
             repr(self.r), # model parameters
             repr(self.t), # dislocation type
             repr(self.c), # boundary conditions
+            repr(self.S), # random seed
         )
         return self.__class__.__name__+"("+", ".join(args)+")"
 
@@ -316,9 +339,8 @@ class Sample:
 
     @beartype
     def name(self,
-        f: str = 'ndgsmtc',
+        f: str = 'ndgsmtcS',
         c: str = 'csl',
-        s: bool = True,
     ) -> str:
         """
         Return a string describing the sample in context c.
@@ -326,7 +348,6 @@ class Sample:
         Input:
             f: format
             c: context
-            s: add the random seed in the string
 
         Output:
             csl|stm|ttl: string describing the sample
@@ -339,16 +360,19 @@ class Sample:
             t: dislocation type
             c: boundary conditions
             n: number of generated distribution
+            S: random seed
         """
         rho = notation.quantity(self.d*1e9**self.n, "m^{-"+str(self.n)+"}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,
             's': notation.quantity(self.s, r"nm", c, w=4),
-            'm': self.m.__name__+notation.parameters(self.r, c, s=s),
+            'm': self.m.__name__+notation.parameters(self.r, c),
             't': self.t,
             'c': self.c,
             'n': str(int(len(self))),
+            'S': notation.equality(r"S", str(self.S), c)
+                if not self.S is None else None,
         }
         return notation.fmt(f, v, c)
 
