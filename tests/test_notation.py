@@ -43,15 +43,17 @@ print(notation.equality(r"\alpha", "10", 'csl'))
 print(notation.equality(r"\alpha", "10", 'ttl'), end="\n\n")
 
 # write model parameters
-r_none = {}
-r_rrdd = {'v': 'R', 'd': 5e-3, 's': 200}
-r_rcdd = {'v': 'D', 'd': 5e-3, 's': 134, 't': 14}
-print("NONE"+notation.parameters(r_none, 'stm')+"...")
-print("RRDD"+notation.parameters(r_rrdd, 'stm')+"...")
-print("RCDD"+notation.parameters(r_rcdd, 'stm')+"...", end="\n\n")
-print("NONE"+notation.parameters(r_none, 'csl')+"...")
-print("RRDD"+notation.parameters(r_rrdd, 'csl')+"...")
-print("RCDD"+notation.parameters(r_rcdd, 'csl')+"...", end="\n\n")
-print("NONE"+notation.parameters(r_none, 'ttl')+"...")
-print("RRDD"+notation.parameters(r_rrdd, 'ttl')+"...")
-print("RCDD"+notation.parameters(r_rcdd, 'ttl')+"...", end="\n\n")
+r1 = {}
+r2 = {'d': 0}
+r3 = {'s': 0, 'f': 0, 't': 0, 'l': 0, 'x': 0}
+print("NONE"+notation.parameters(r1, 'stm')+"...")
+print("RRDD"+notation.parameters(r2, 'stm')+"...")
+print("RCDD"+notation.parameters(r3, 'stm')+"...", end="\n\n")
+print("NONE"+notation.parameters(r1, 'csl')+"...")
+print("RRDD"+notation.parameters(r2, 'csl')+"...")
+print("RCDD"+notation.parameters(r3, 'csl')+"...", end="\n\n")
+print("NONE"+notation.parameters(r1, 'ttl')+"...")
+print("RRDD"+notation.parameters(r2, 'ttl')+"...")
+print("RCDD"+notation.parameters(r3, 'ttl')+"...", end="\n\n")
+
+input("OK")

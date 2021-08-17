@@ -18,4 +18,6 @@ print(np.column_stack((cb, cp)), end="\n\n")
 p = np.array([[10, 10]])
 b = np.array([1])
 cp, cb = boundaries.PBCG(10, p, b, 1)
-print(np.column_stack((cb, cp)))
+print(np.column_stack((cb, cp)), end="\n\n")
+
+input("OK")

@@ -7,7 +7,7 @@
 ulimit -l unlimited
 ###unset SLURM_GTIDS
 
-SCRIPT=parallel.py
+SCRIPT=test_parallel.py
 echo ------------------------------------------------------
 echo number of nodes in the job resource allocation: $SLURM_NNODES
 echo nodes allocated to the job: $SLURM_JOB_NODELIST

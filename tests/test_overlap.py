@@ -21,4 +21,6 @@ y = np.array([1, 1, 2])
 r = 1
 s = 2
 area = overlap.circle_square(x, y, r, r**2, s)
-print(area/np.pi/r**2)
+print(area/np.pi/r**2, end="\n\n")
+
+input("OK")
