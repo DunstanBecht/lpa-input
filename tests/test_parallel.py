@@ -2,7 +2,7 @@
 # coding: utf-8
 
 """
-Script to test the module overlap.
+Script to test the module parallel.
 
 This script should be submitted with the command:
 sbatch test_parallel.job

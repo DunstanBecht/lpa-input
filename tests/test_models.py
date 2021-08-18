@@ -10,7 +10,7 @@ import numpy as np
 
 prm_rdd = {'d': 5e13*1e-18}
 prm_rrdd = {'v': 'E', 's': 200, 'f': 2}
-prm_rcdd = {'v': 'R', 'd': 1e13*1e-18, 's': 200, 't': 20}
+prm_rcdd = {'v': 'R', 'd': 5e13*1e-18, 's': 500, 't': 20}
 
 if __name__ == "__main__":
 
