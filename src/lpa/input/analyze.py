@@ -384,16 +384,16 @@ def plot_KKKK(
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(title, fontsize=16)
     # ax1
-    ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $")
     ax1.plot(r, KKKK[0], label=r"$K_{++}(r)$")
     ax1.plot(r, KKKK[1], label=r"$K_{-+}(r)$")
+    ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $", color='black')
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
     # ax2
-    ax2.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $")
     ax2.plot(r, KKKK[3], label=r"$K_{--}(r)$")
     ax2.plot(r, KKKK[2], label=r"$K_{+-}(r)$")
+    ax2.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $", color='black')
     ax2.legend()
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
@@ -434,6 +434,7 @@ def plot_gggg(
     # ax1
     ax1.plot(r, gggg[0], label=r"$g_{++}(r)$")
     ax1.plot(r, gggg[1], label=r"$g_{-+}(r)$")
+    ax1.hlines(1, r[0], r[-1], label=r"$1$", color='black')
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
@@ -441,6 +442,7 @@ def plot_gggg(
     # ax2
     ax2.plot(r, gggg[3], label=r"$g_{--}(r)$")
     ax2.plot(r, gggg[2], label=r"$g_{+-}(r)$")
+    ax2.hlines(1, r[0], r[-1], label=r"$1$", color='black')
     ax2.legend()
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
