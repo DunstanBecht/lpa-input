@@ -11,7 +11,7 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank() # number of the processor executing this script
 size = comm.Get_size() # number of processors
 root = 0 # master processor
-
+import warnings
 from . import *
 from . import sets
 from . import analyze
@@ -81,6 +81,13 @@ def export(
         exstm: export stem
         title: figure title
     """
+    if rank==root and not o.S is None:
+        msg = ("chosen random seed detected on "+o.name('stm')+" "
+            + "(The use of a seed is not recommended. In order for "
+            + "the distributions or samples not to be identical from "
+            + "one core to another, the seed must not be identical "
+            + "from one core to another.")
+        warnings.warn(msg, Warning)
     i = average_on_cores(o.i, True) # averaged inter dislocation distance
     r, iK = analyze.intervals(i, o.s) # intervals to display
     f = ['KKKK', 'gggg', 'GaGs'] # functions to calculate
