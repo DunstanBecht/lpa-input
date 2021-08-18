@@ -92,7 +92,7 @@ def export(
         else:
             c = str(len(o)*size) # number of distributions analyzed
         if exstm is None:
-            exstm = c+"_"+o.name('dmgs', c='stm') # plots file name
+            exstm = c+"_"+o.name('dmgsS', c='stm') # plots file name
         if title is None:
             title = c+" "+o.name('mgsd', c='ttl') # plots title
         args = (exdir, exfmt, exstm, title)
