@@ -50,6 +50,6 @@ def mask(
     if g == 'circle':
         return np.sum(np.square(p), axis=1) < s**2
     elif g == 'square':
-        return (p[:,0]<s) & (p[:,1]<s)
+        return (p[:,0]<s) & (p[:,1]<s) & (p[:,0]>0) & (p[:,1]>0)
     else:
         raise ValueError("unknown geometry: "+str(g))
