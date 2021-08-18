@@ -8,31 +8,39 @@ Script to test the module models.
 from lpa.input import models
 import numpy as np
 
-G = np.random.default_rng(0)
+prm_rdd = {'d': 5e13*1e-18}
+prm_rrdd = {'v': 'E', 's': 200, 'f': 2}
+prm_rcdd = {'v': 'R', 'd': 1e13*1e-18, 's': 200, 't': 20}
 
-# generate ticks
-s = 100
-t = models.ticks('square', s, 50)
-print(t, end="\n\n")
+if __name__ == "__main__":
 
-# generate evenly distributes positions and Burgers vector senses
-x, y = models.even_positions(t, 2)
-b = models.even_senses (t, 2)
-print(np.concatenate((b, x, y)), end="\n\n")
+    G = np.random.default_rng(0)
 
-# use RDD model
-r = {'d': 0.0001}
-p, b = models.RDD('circle', s, 2*np.pi*s**2, r, G)
-print(np.column_stack((b, p)), end="\n\n")
+    # generate ticks
+    print(models.ticks('circle', 100, 50))
+    print(models.ticks('square', 200, 50))
+    print()
 
-# use RRDD model
-r = {'v': 'E', 'f': 2, 's': 100}
-p, b = models.RRDD('square', s, s**2, r, G)
-print(np.column_stack((b, p)), end="\n\n")
+    # generate evenly distributed positions and Burgers vector senses
+    t = models.ticks('square', 1, 0.9)[:-1]
+    x, y = models.even_positions(t, 2)
+    b = models.even_senses (t, 2)
+    print(np.column_stack((b, x, y)))
+    print()
 
-# use RCDD model
-r = {'v': 'R', 'd': 0.0005, 's': 50, 't': 10}
-p, b = models.RCDD('square', s, s**2, r, G)
-print(np.column_stack((b, p)), end="\n\n")
+    # use RDD model
+    p, b = models.RDD('circle', 100, 2*np.pi*100**2, prm_rdd, G)
+    print(np.column_stack((b, p)))
+    print()
 
-input("OK")
+    # use RRDD model
+    p, b = models.RRDD('square', 400, 400**2, prm_rrdd, G)
+    print(np.column_stack((b, p)))
+    print()
+
+    # use RCDD model
+    p, b = models.RCDD('square', 400, 400**2, prm_rcdd, G)
+    print(np.column_stack((b, p)))
+    print()
+
+    input("OK")

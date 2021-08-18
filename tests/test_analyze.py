@@ -8,16 +8,19 @@ Script to test the module analyze.
 from lpa.input import analyze
 from test_sets import *
 
+d = sets.Distribution('circle', 1000, *rdd, S=0)
+s = sets.Sample(10, 'square', 2000, *rcdd, c='PBCG1', S=0)
+
 # create a study range
-rd, i = analyze.intervals(d_rdd.i, d_rdd.s)
-rs, _ = analyze.intervals(s_rrdd.i, s_rrdd.s)
+rd, i = analyze.intervals(d.i, d.s)
+rs, _ = analyze.intervals(s.i, s.s)
 
 # calculate statistical functions on a distribution or a sample
-KKKK, GaGs = analyze.calculate(['KKKK', 'GaGs'], d_rdd, rd)
-gggg, MMMM = analyze.calculate(['gggg', 'MMMM'], s_rrdd, rs)
+KKKK, GaGs = analyze.calculate(['KKKK', 'GaGs'], d, rd)
+gggg, MMMM = analyze.calculate(['gggg', 'MMMM'], s, rs)
 
 # export a complete statistical analysis of a distribution or a sample
-analyze.export(d_rcdd, exdir='analyses/', exstm='stem')
-analyze.export(s_rdd, exdir='analyses', title='title')
+analyze.export(d, exdir='analyses/', exstm='stem')
+analyze.export(s, exdir='analyses', title='title')
 
 input("OK")

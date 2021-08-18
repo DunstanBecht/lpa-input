@@ -12,12 +12,14 @@ import numpy as np
 p = np.array([[1, 0], [0, 0]])
 b = np.array([1])
 cp, cb = boundaries.IDBC(2, p, b, 'screw')
-print(np.column_stack((cb, cp)), end="\n\n")
+print(np.column_stack((cb, cp)))
+print()
 
 # generate replicated dislocations
 p = np.array([[10, 10]])
 b = np.array([1])
 cp, cb = boundaries.PBCG(10, p, b, 1)
-print(np.column_stack((cb, cp)), end="\n\n")
+print(np.column_stack((cb, cp)))
+print()
 
 input("OK")

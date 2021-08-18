@@ -6,21 +6,21 @@ Script to test the module sets.
 """
 
 from lpa.input import sets
-from lpa.input.models import RDD, RRDD, RCDD
+from test_models import *
 
-rdd = (RDD, {'d': 5e13*1e-18})
-rrdd = (RRDD, {'v': 'E', 's': 200, 'f': 2})
-rcdd = (RCDD, {'v': 'R', 'd': 1e15*1e-18, 's': 200, 't': 10})
-
-# instantiate
-d_rdd = sets.Distribution('circle', 1000, *rdd, S=0)
-d_rrdd = sets.Distribution('square', 2000, *rrdd, S=0)
-d_rcdd = sets.Distribution('square', 2000, *rcdd, c='PBCR3', S=0)
-s_rdd = sets.Sample(10, 'square', 2000, *rdd, t='edge', S=0)
-s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='IDBC', S=0)
-s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='PBCG1', S=0)
+rdd = (models.RDD, prm_rdd)
+rrdd = (models.RRDD, prm_rrdd)
+rcdd = (models.RCDD, prm_rcdd)
 
 if __name__ == "__main__":
+
+    # instantiate
+    d_rdd = sets.Distribution('circle', 1000, *rdd, S=0)
+    d_rrdd = sets.Distribution('square', 2000, *rrdd, S=0)
+    d_rcdd = sets.Distribution('square', 2000, *rcdd, c='PBCR3', S=0)
+    s_rdd = sets.Sample(10, 'square', 2000, *rdd, t='edge', S=0)
+    s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='IDBC', S=0)
+    s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='PBCG1', S=0)
 
     # get stem string
     print(d_rcdd.name(c='stm', f='dgsmtcS'))
@@ -29,7 +29,8 @@ if __name__ == "__main__":
     print(d_rcdd.name(c='stm', f='dgsm'))
     print(d_rcdd.name(c='stm', f='dgs'))
     print(d_rcdd.name(c='stm', f='dg'))
-    print(d_rcdd.name(c='stm', f='d'), end="\n\n")
+    print(d_rcdd.name(c='stm', f='d'))
+    print()
 
     # get title string
     print(d_rdd.name(c='ttl', f='mtcS'))
@@ -37,7 +38,8 @@ if __name__ == "__main__":
     print(d_rdd.name(c='ttl', f='mt'))
     print(d_rdd.name(c='ttl', f='dgs'))
     print(d_rdd.name(c='ttl', f='dg'))
-    print(d_rdd.name(c='ttl', f='d'), end="\n\n")
+    print(d_rdd.name(c='ttl', f='d'))
+    print()
 
     # get console string
     print(s_rcdd.name(c='csl', f='ndgsmtcS'))
@@ -46,23 +48,23 @@ if __name__ == "__main__":
     print(s_rcdd.name(c='csl', f='ndgsm'))
     print(s_rcdd.name(c='csl', f='ndgs'))
     print(s_rcdd.name(c='csl', f='ndg'))
-    print(s_rcdd.name(c='csl', f='nd'), end="\n\n")
-
-    # get representation
-    print(repr(d_rdd))
-    print(repr(d_rrdd))
-    print(repr(d_rcdd))
-    print(repr(s_rdd))
-    print(repr(s_rrdd))
-    print(repr(s_rcdd), end="\n\n")
+    print(s_rcdd.name(c='csl', f='nd'))
+    print()
 
     # evaluate a representation
-    eval('sets.'+repr(d_rdd))
-    eval('sets.'+repr(d_rrdd))
-    eval('sets.'+repr(d_rcdd))
-    eval('sets.'+repr(s_rdd))
-    eval('sets.'+repr(s_rrdd))
-    eval('sets.'+repr(s_rcdd))
+    print(repr(d_rdd))
+    print(repr(eval('sets.'+repr(d_rdd).replace("RDD","models.RDD"))))
+    print(repr(d_rrdd))
+    print(repr(eval('sets.'+repr(d_rrdd).replace("RRDD","models.RRDD"))))
+    print(repr(d_rcdd))
+    print(repr(eval('sets.'+repr(d_rcdd).replace("RCDD","models.RCDD"))))
+    print(repr(s_rdd))
+    print(repr(eval('sets.'+repr(s_rdd).replace("RDD","models.RDD"))))
+    print(repr(s_rrdd))
+    print(repr(eval('sets.'+repr(s_rrdd).replace("RRDD","models.RRDD"))))
+    print(repr(s_rcdd))
+    print(repr(eval('sets.'+repr(s_rcdd).replace("RCDD","models.RCDD"))))
+    print()
 
     # print the object
     print(d_rdd)
@@ -70,12 +72,14 @@ if __name__ == "__main__":
     print(d_rcdd)
     print(s_rdd)
     print(s_rrdd)
-    print(s_rcdd, end="\n\n")
+    print(s_rcdd)
+    print()
 
     # average over a sample
-    rho = lambda dist: len(dist)/dist.v
-    print(str(s_rdd.average(rho)))
-    print(str(s_rrdd.average(rho)))
-    print(str(s_rcdd.average(rho)), end="\n\n")
+    v = lambda dist: dist.v
+    print(str(s_rdd.average(v)))
+    print(str(s_rrdd.average(v)))
+    print(str(s_rcdd.average(v)))
+    print()
 
     input("OK")
