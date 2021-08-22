@@ -399,7 +399,7 @@ def plot_KKKK(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
     # export
-    plt.savefig(os.path.join(exdir, "KKKK_"+exstm+"."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(exdir, exstm+"_KKKK."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype
@@ -448,7 +448,7 @@ def plot_gggg(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
     # export
-    plt.savefig(os.path.join(exdir, "gggg_"+exstm+"."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(exdir, exstm+"_gggg."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype
@@ -489,7 +489,7 @@ def plot_GaGs(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     # export
-    plt.savefig(os.path.join(exdir, "GaGs_"+exstm+"."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(exdir, exstm+"_GaGs."+exfmt), format=exfmt)
     plt.close('all')
 
 @beartype

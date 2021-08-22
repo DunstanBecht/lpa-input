@@ -37,7 +37,7 @@ pip install -U lpa-input
 </div>
 
 ### Input data files
-```bash
+```
 # please keep the structure of this file unchanged
  1  1  0 # z: direction of 'l' (line vector) [uvw]
 -1  1  0 # x: direction of 'L' (Fourier variable) [uvw]
@@ -78,9 +78,9 @@ pip install -U lpa-input
 ```
 
 ### Spatial analysis
-![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/KKKK_40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0.svg)
-![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/gggg_40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0.svg)
-![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/GaGs_40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0.svg)
+![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_KKKK.svg)
+![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_gggg.svg)
+![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_GaGs.svg)
 
 # Physical aspects
 
