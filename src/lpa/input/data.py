@@ -142,7 +142,7 @@ def export_distribution(
             + format(len(d), '8.0f')+" # number of dislocations\n"
             + "# Burgers vector and dislocation (x,y) coordinates\n")
         f.write(h)
-        fmt = "%2.0f %27.20E %27.20E"
+        fmt = "%2.0f %22.15E %22.15E"
         np.savetxt(f, np.stack((d.b, d.p[:,0], d.p[:,1])).T, fmt=fmt)
 
 @beartype
