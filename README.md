@@ -15,7 +15,7 @@ The package `lpa.input` can be used to:
 * generate dislocation distributions according to different models
 * export the distributions in standardized files for input to an X-ray diffraction simulation program
 * export the distributions in dislocation maps
-* export a spatial analysis of the distributions
+* export statistical spatial analyses of the distributions
 
 # Installation
 
