@@ -13,7 +13,7 @@ d = sets.Distribution('circle', 400, *rdd, S=0)
 s = sets.Sample(10, 'circle', 400, *rrdd, S=0)
 
 # export the input data file of a distribution or a sample
-data.export(d, exfmt='txt')
-data.export(s, exdir='data', g=np.array([1,0,0]), exstm='stem')
+data.export(d, expfmt='txt')
+data.export(s, expdir='data', g=np.array([1,0,0]), expstm='stem')
 
 input("OK")

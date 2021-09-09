@@ -78,9 +78,7 @@ def export_distribution(
     i: Scalar,
     g: Vector,
     b: Vector,
-    exdir: str = "",
-    exfmt: str = "dat",
-    exstm: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Export the dislocations of d to a standardized input data file.
@@ -93,15 +91,19 @@ def export_distribution(
         i: inter dislocation distance [nm]
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+      **expdir: export directory (default: '')
+      **expfmt: export format (default: 'dat')
+      **expstm: export stem (default: d.name())
 
     Complexity:
         O( len(d) )
     """
-    if exstm is None:
-        exstm = d.name(c='stm')
+    # optional parameters
+    expdir = kwargs.pop('expdir', '') # export directory
+    expfmt = kwargs.pop('expfmt', 'dat') # export directory
+    expstm = kwargs.pop('expstm', d.name(c='stm')) # export directory
+    if len(kwargs)>0:
+        raise ValueError("wrong keywords: "+str(kwargs))
     # parameters
     m = 12 # number of points along Lx
     a = 0.40494 # cell side [nm]
@@ -128,7 +130,7 @@ def export_distribution(
         else:
             str_g = "Square side"
     # write
-    with open(os.path.join(exdir, exstm+"."+exfmt), "w") as f:
+    with open(os.path.join(expdir, expstm+"."+expfmt), "w") as f:
         h = ("# please keep the structure of this file unchanged\n"
             + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
             + indices(L)+" # x: direction of 'L' (Fourier variable) [uvw]\n"
@@ -150,9 +152,7 @@ def export_sample(
     s: sets.Sample,
     g: Vector,
     b: Vector,
-    exdir: str = "",
-    exfmt: str = "dat",
-    exstm: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Export a standardized input data file for each distributions of s.
@@ -161,17 +161,21 @@ def export_sample(
         s: sample of distributions to be exported
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+      **expdir: export directory (default: '')
+      **expfmt: export format (default: 'dat')
+      **expstm: export stem (default: s.name())
 
     Complexity:
         O( len(s) * complexity(export_distribution) )
     """
-    if exstm is None:
-        exstm = s.name(c='stm')
-    stmdir = os.path.join(exdir, exstm) # folder where to export the files
+    # optional parameters
+    expdir = kwargs.pop('expdir', '') # export directory
+    expfmt = kwargs.pop('expfmt', 'dat') # export format
+    expstm = kwargs.pop('expstm', s.name(c='stm')) # export stem
+    if len(kwargs)>0:
+        raise ValueError("wrong keywords: "+str(kwargs))
     # export
+    stmdir = os.path.join(expdir, expstm) # folder where to export the files
     w = len(str(len(s))) # number of characters in file names
     if os.path.exists(stmdir):
         for f in os.listdir(stmdir):
@@ -179,16 +183,22 @@ def export_sample(
     else:
         os.mkdir(stmdir)
     for i in range(len(s)):
-        export_distribution(s[i], s.i, g, b, stmdir, exfmt, str(i+1).zfill(w))
+        export_distribution(
+            s[i],
+            s.i,
+            g,
+            b,
+            expdir=stmdir,
+            expfmt=expfmt,
+            expstm=str(i+1).zfill(w),
+        )
 
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
     g: Vector = np.array([2, 0, 0]),
     b: Vector = np.array([1, 1, 0]),
-    exdir: str = "",
-    exfmt: str = "dat",
-    exstm: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Convenient function for exporting a standardized data file.
@@ -197,15 +207,15 @@ def export(
         o: distribution or sample of distributions to export
         g: diffraction vector direction (hkl)
         b: Burgers vector direction [uvw]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+      **expdir: export directory (default: '')
+      **expfmt: export format (default: 'dat')
+      **expstm: export stem (default: d.name())
 
     Complexity:
         O( complexity(export_distribution) ) if o is a distribution
         O( complexity(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
-        export_distribution(o, o.i, g, b, exdir, exfmt, exstm)
+        export_distribution(o, o.i, g, b, **kwargs)
     else:
-        export_sample(o, g, b, exdir, exfmt, exstm)
+        export_sample(o, g, b, **kwargs)

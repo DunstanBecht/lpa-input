@@ -64,9 +64,9 @@ def average_on_cores(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    exdir: str = "",
-    exfmt: str = "pdf",
-    exstm: Optional[str] = None,
+    expdir: str = "",
+    expfmt: str = "pdf",
+    expstm: Optional[str] = None,
     title: Optional[str] = None,
 ) -> None:
     """
@@ -76,9 +76,9 @@ def export(
 
     Input:
         o: distribution or sample to analyze on the core
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+        expdir: export directory
+        expfmt: export format
+        expstm: export stem
         title: figure title
     """
     if rank==root and not o.S is None:
@@ -98,11 +98,15 @@ def export(
             c = str(size) # number of distributions analyzed
         else:
             c = str(len(o)*size) # number of distributions analyzed
-        if exstm is None:
-            exstm = c+"_"+o.name('dmgsS', c='stm') # plots file name
-        if title is None:
-            title = c+" "+o.name('mgsd', c='ttl') # plots title
-        args = (exdir, exfmt, exstm, title)
+        # optional parameters
+        expdir = kwargs.pop('expdir', '') # export directory
+        expfmt = kwargs.pop('expfmt', 'pdf') # export format
+        expstm = kwargs.pop('expstm', c+"_"+o.name('dmgsS', c='stm')) # stem
+        title = kwargs.pop('title', c+" "+o.name('mgsd', c='ttl')) # title
+        if len(kwargs)>0:
+            raise ValueError("wrong keywords: "+str(kwargs))
+        # export
+        args = (expdir, expfmt, expstm, title)
         analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, *args)
         analyze.plot_gggg(r, master[f.index('gggg')], *args)
         analyze.plot_GaGs(r, master[f.index('GaGs')], *args)

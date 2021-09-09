@@ -15,10 +15,10 @@ d4 = sets.Distribution('square', 2000, *rcdd, S=0, c='PBCG1')
 d5 = sets.Distribution('square', 2000, *rrdd, S=0, c='PBCR2')
 
 # export distribution maps
-maps.export(d1, exfmt='svg')
-maps.export(d2, exfmt='svg')
-maps.export(d3, exfmt='svg')
-maps.export(d4, exfmt='svg')
-maps.export(d5, exdir='maps/', ttlsp='suptitle', ttlsb='subtitle')
+maps.export(d1, expfmt='svg')
+maps.export(d2, expfmt='svg')
+maps.export(d3, expfmt='svg')
+maps.export(d4, expfmt='svg')
+maps.export(d5, expdir='maps/', supttl='suptitle', subttl='subtitle')
 
 input("OK")

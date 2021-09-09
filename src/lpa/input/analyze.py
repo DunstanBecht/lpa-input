@@ -357,9 +357,9 @@ def calculate(
 def plot_KKKK(
     r: ScalarList,
     KKKK: ScalarListList,
-    exdir: str,
-    exfmt: str,
-    exstm: str,
+    expdir: str,
+    expfmt: str,
+    expstm: str,
     title: str,
 ) -> None:
     """
@@ -368,9 +368,9 @@ def plot_KKKK(
     Input:
         r: radius of the neighborhoods [nm]
         KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+        expdir: export directory
+        expfmt: export format
+        expstm: export stem
         title: figure title
 
     Complexity:
@@ -399,16 +399,16 @@ def plot_KKKK(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
     # export
-    plt.savefig(os.path.join(exdir, exstm+"_KKKK."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(expdir, expstm+"_KKKK."+expfmt), format=expfmt)
     plt.close('all')
 
 @beartype
 def plot_gggg(
     r: ScalarList,
     gggg: ScalarListList,
-    exdir: str,
-    exfmt: str,
-    exstm: str,
+    expdir: str,
+    expfmt: str,
+    expstm: str,
     title: str,
 ) -> None:
     """
@@ -417,9 +417,9 @@ def plot_gggg(
     Input:
         r: radius of the neighborhoods [nm]
         gggg: stacked values of g++, g-+, g+-, g-- [1]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+        expdir: export directory
+        expfmt: export format
+        expstm: export stem
         title: figure title
 
     Complexity:
@@ -448,16 +448,16 @@ def plot_gggg(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
     # export
-    plt.savefig(os.path.join(exdir, exstm+"_gggg."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(expdir, expstm+"_gggg."+expfmt), format=expfmt)
     plt.close('all')
 
 @beartype
 def plot_GaGs(
     r: ScalarList,
     GaGs: ScalarListList,
-    exdir: str,
-    exfmt: str,
-    exstm: str,
+    expdir: str,
+    expfmt: str,
+    expstm: str,
     title: str,
 ) -> None:
     """
@@ -466,9 +466,9 @@ def plot_GaGs(
     Input:
         r: radius of the neighborhoods [nm]
         GaGs: stacked values of Ga and Gs [1]
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
+        expdir: export directory
+        expfmt: export format
+        expstm: export stem
         title: figure title
 
     Complexity:
@@ -489,7 +489,7 @@ def plot_GaGs(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     # export
-    plt.savefig(os.path.join(exdir, exstm+"_GaGs."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(expdir, expstm+"_GaGs."+expfmt), format=expfmt)
     plt.close('all')
 
 @beartype
@@ -521,34 +521,35 @@ def intervals(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    exdir: str = "",
-    exfmt: str = "pdf",
-    exstm: Optional[str] = None,
-    title: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Export a complete analysis of the object o.
 
     Input:
         o: distribution or sample of distributions to analyze
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
-        title: figure title
+      **expdir: export directory (default: '')
+      **expfmt: export format
+      **expstm: export stem
+      **title: figure title
 
     Complexity:
         O( complexity(calculate) )
     """
-    r, iK = intervals(o.i, o.s) # range of the study
-    KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
     fstm, fttl = 'dmgsS', 'mgsd'
     if isinstance(o, sets.Sample):
         fstm, fttl = "n"+fstm, "n"+fttl
-    if exstm is None:
-        exstm = o.name(fstm, c='stm')
-    if title is None:
-        title = o.name(fttl, c='ttl')
-    args = (exdir, exfmt, exstm, title)
+    # optional parameters
+    expdir = kwargs.pop('expdir', '') # export directory
+    expfmt = kwargs.pop('expfmt', 'pdf') # export format
+    expstm = kwargs.pop('expstm', o.name(fstm, c='stm')) # export stem
+    title = kwargs.pop('title', o.name(fttl, c='ttl')) # title
+    if len(kwargs)>0:
+        raise ValueError("wrong keywords: "+str(kwargs))
+    # export
+    r, iK = intervals(o.i, o.s) # range of the study
+    KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)
+    args = (expdir, expfmt, expstm, title)
     plot_KKKK(r[:iK], KKKK.T[:iK].T, *args)
     plot_gggg(r, gggg, *args)
     plot_GaGs(r, GaGs, *args)

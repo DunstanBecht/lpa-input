@@ -13,32 +13,31 @@ from . import models
 @beartype
 def export(
     d: sets.Distribution,
-    exdir: str = "",
-    exfmt: str = "pdf",
-    exstm: Optional[str] = None,
-    ttlsp: Optional[str] = None,
-    ttlsb: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Export the dislocation map of the distribution d.
 
     Input:
         d: distribution to be exported
-        exdir: export directory
-        exfmt: export format
-        exstm: export stem
-        ttlsp: map sup title
-        ttlsb: map sub title
+      **expdir: export directory
+      **expfmt: export format
+      **expstm: export stem
+      **supttl: map sup title
+      **subttl: map sub title
 
     Complexity:
         O( len(d) )
     """
-    if exstm is None:
-        exstm = d.name('dgsmcS', 'stm')
-    if ttlsp is None:
-        ttlsp = d.name('dgsc', 'ttl')
-    if ttlsb is None:
-        ttlsb = d.name('m', 'ttl')
+    # optional parameters
+    expdir = kwargs.pop('expdir', '') # export directory
+    expfmt = kwargs.pop('expfmt', 'pdf') # export format
+    expstm = kwargs.pop('expstm', d.name('dgsmcS', 'stm')) # export stem
+    supttl = kwargs.pop('supttl', d.name('dgsc', 'ttl')) # sup title
+    subttl = kwargs.pop('subttl', d.name('m', 'ttl')) # sub title
+    if len(kwargs)>0:
+        raise ValueError("wrong keywords: "+str(kwargs))
+    # fig
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect
     ax.set_aspect(1)
@@ -100,10 +99,10 @@ def export(
     # information
     ax.set_xlabel(r"$x \ (nm)$")
     ax.set_ylabel(r"$y \ (nm)$")
-    plt.suptitle(ttlsp)
-    plt.title(ttlsb)
+    plt.suptitle(supttl)
+    plt.title(subttl)
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
     # export
-    plt.savefig(os.path.join(exdir, exstm+"."+exfmt), format=exfmt)
+    plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)
     plt.close('all')
