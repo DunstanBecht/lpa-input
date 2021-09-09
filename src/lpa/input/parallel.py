@@ -64,10 +64,7 @@ def average_on_cores(
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    expdir: str = "",
-    expfmt: str = "pdf",
-    expstm: Optional[str] = None,
-    title: Optional[str] = None,
+    **kwargs,
 ) -> None:
     """
     Export a complete pooled analysis of the object o of each core.
