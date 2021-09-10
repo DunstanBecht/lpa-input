@@ -33,20 +33,42 @@ over the cores.
 __author__ = "Dunstan Becht"
 __version__ = "1.0.4"
 
-# python standard library
 import os
 import sys
-from typing import Union, Optional, Any, get_args, get_origin
+from typing import Union, Optional, Any
+
 if sys.version_info[0]>=3 and sys.version_info[1]>=9:
     from collections.abc import Callable
 else:
     from typing import Callable
 
-# python package index
+if sys.version_info[0]>=3 and sys.version_info[1]>=8:
+    from typing import get_args, get_origin
+else:
+    get_args = lambda x: x.__args__
+    get_origin = lambda x: x.__origin__ if hasattr(x, '__origin__') else x
+
 import numpy as np
 from beartype import beartype
 
-# keyword arguments management
+# scalar and vectors
+Scalar = Union[int, float, np.intc]
+Vector = np.ndarray # shape: (n,)
+
+# sets
+ScalarList = np.ndarray # shape: (...,)
+ScalarListList = np.ndarray # shape: (..., ...)
+VectorList = np.ndarray # shape: (..., n)
+
+# generic analysis function output
+AnalysisOutput = Union[tuple, Scalar, np.ndarray]
+
+# edge correction functions
+CorrectionFunction = Callable[[Vector, ScalarList, ScalarList], ScalarList]
+
+# model generation functions
+GenerationFunction = Callable[[str, Scalar, Scalar, dict], tuple]
+
 def getkwa(
     key: str,
     kwa: dict,
@@ -87,21 +109,3 @@ def endkwa(
         msg = ("unexpected keyword argument(s): "
             + ", ".join([repr(key) for key in kwa]))
         raise TypeError(msg)
-
-# scalar and vectors
-Scalar = Union[int, float, np.intc]
-Vector = np.ndarray # shape: (n,)
-
-# sets
-ScalarList = np.ndarray # shape: (...,)
-ScalarListList = np.ndarray # shape: (..., ...)
-VectorList = np.ndarray # shape: (..., n)
-
-# generic analysis function output
-AnalysisOutput = Union[tuple, Scalar, np.ndarray]
-
-# edge correction functions
-CorrectionFunction = Callable[[Vector, ScalarList, ScalarList], ScalarList]
-
-# model generation functions
-GenerationFunction = Callable[[str, Scalar, Scalar, dict], tuple]
