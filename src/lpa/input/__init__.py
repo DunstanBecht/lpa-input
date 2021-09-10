@@ -31,7 +31,7 @@ over the cores.
 """
 
 __author__ = "Dunstan Becht"
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 # python standard library
 import os
