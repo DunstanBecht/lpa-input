@@ -19,24 +19,23 @@ def export(
     Export the dislocation map of the distribution d.
 
     Input:
-        d: distribution to be exported
-      **expdir: export directory
-      **expfmt: export format
-      **expstm: export stem
-      **supttl: map sup title
-      **subttl: map sub title
+        d (Distribution): distribution to be exported
+      **expdir (str): export directory
+      **expfmt (str): export format
+      **expstm (str): export stem
+      **supttl (str): map sup title
+      **subttl (str): map sub title
 
     Complexity:
         O( len(d) )
     """
     # optional parameters
-    expdir = kwargs.pop('expdir', '') # export directory
-    expfmt = kwargs.pop('expfmt', 'pdf') # export format
-    expstm = kwargs.pop('expstm', d.name('dgsmcS', 'stm')) # export stem
-    supttl = kwargs.pop('supttl', d.name('dgsc', 'ttl')) # sup title
-    subttl = kwargs.pop('subttl', d.name('m', 'ttl')) # sub title
-    if len(kwargs)>0:
-        raise ValueError("wrong keywords: "+str(kwargs))
+    expdir = getkwa('expdir', kwargs, str, '')
+    expfmt = getkwa('expfmt', kwargs, str, 'pdf')
+    expstm = getkwa('expstm', kwargs, str, d.name('dgsmcS', 'stm'))
+    supttl = getkwa('supttl', kwargs, str, d.name('dgsc', 'ttl'))
+    subttl = getkwa('subttl', kwargs, str, d.name('m', 'ttl'))
+    endkwa(kwargs)
     # fig
     fig, ax = plt.subplots(figsize=(6, 6))
     # aspect

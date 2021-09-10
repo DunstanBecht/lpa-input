@@ -23,15 +23,15 @@ def circle_circle(
     them is an array, the result will be an array of the same size.
 
     Input:
-        rA: radius/ii of the circle A
-        rB: radius/ii of the circle B
-        d: distance/s between the circle centers
-        r2A: squared radius/ii of the circle A
-        r2B: squared radius/ii of the circle B
-        d2: squared distance/s between the circle centers
+        rA (Scalar|ScalarList): radius/ii of the circle A
+        rB (Scalar|ScalarList): radius/ii of the circle B
+        d (Scalar|ScalarList): distance(s) between the circle centers
+        r2A (Scalar|ScalarList): squared radius/ii of the circle A
+        r2B (Scalar|ScalarList): squared radius/ii of the circle B
+        d2 (Scalar|ScalarList): squared distance(s) between the circle centers
 
     Output:
-        o: overlapping area/s
+        o (Scalar|ScalarList): overlapping area/s
 
     Complexity:
         O( max(rA.size, rB.size, d.size) )
@@ -95,14 +95,14 @@ def circle_square(
     them is an array, the result will be an array of the same size.
 
     Input:
-        x: x coordinate/s of the circle center
-        y: y coordinate/s of the circle center
-        r: circle radius/ii
-        r2: squared circle radius/ii
-        s: square side/s
+        x (Scalar|ScalarList): x coordinate(s) of the circle center
+        y (Scalar|ScalarList): y coordinate(s) of the circle center
+        r (Scalar|ScalarList): circle radius/ii
+        r2 (Scalar|ScalarList): squared circle radius/ii
+        s (Scalar|ScalarList): square side(s)
 
     Output:
-        o: overlapping area/s
+        o (Scalar|ScalarList): overlapping area/s
 
     Complexity:
         O( max(x.size, r.size, s.size) )

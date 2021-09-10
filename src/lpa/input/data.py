@@ -17,10 +17,10 @@ def indices(
     Return the formated string of Miller indices of v.
 
     Input:
-        v: Miller indices
+        v (Vector): Miller indices
 
     Output:
-        s: formated string of Miller indices
+        s (str): formated string of Miller indices
     """
     sep, fmt = " ", '2.0f'
     return sep.join([format(c, fmt) for c in v])
@@ -37,14 +37,14 @@ def contrast_factor(
     Return the contrast factor in elastically isotropic crystals.
 
     Input:
-        t: dislocation type
-        g: diffraction vector direction (hkl)
-        l: dislocation line vector direction [uvw]
-        b: Burgers vector direction [uvw]
-        nu: Poisson's number [1]
+        t (str): dislocation type
+        g (Vector): diffraction vector direction (hkl)
+        l (Vector): dislocation line vector direction [uvw]
+        b (Vector): Burgers vector direction [uvw]
+        nu (Scalar): Poisson's number [1]
 
     Output:
-        C: dislocation contrast factor [1]
+        C (Scalar): dislocation contrast factor [1]
 
     Input example:
         t = 'screw'
@@ -72,12 +72,13 @@ def contrast_factor(
             * (1-4*nu+8*nu**2+4*(1-2*nu)*np.cos(gamma)**2))
     return C
 
+dft_l = {'edge': np.array([ 1, -1, -2]), 'screw': np.array([ 1,  1,  0])}
+dft_L = {'edge': np.array([ 1,  1,  0]), 'screw': np.array([-1,  1,  0])}
+
 @beartype
 def export_distribution(
     d: sets.Distribution,
     i: Scalar,
-    g: Vector,
-    b: Vector,
     **kwargs,
 ) -> None:
     """
@@ -87,40 +88,39 @@ def export_distribution(
     different from d.i when averaged over several distributions.
 
     Input:
-        d: distribution to be exported
-        i: inter dislocation distance [nm]
-        g: diffraction vector direction (hkl)
-        b: Burgers vector direction [uvw]
-      **expdir: export directory (default: '')
-      **expfmt: export format (default: 'dat')
-      **expstm: export stem (default: d.name())
+        d (Distribution): distribution to be exported
+        i (Scalar): inter dislocation distance [nm]
+      **g (Vector): diffraction vector direction (hkl) (default: [2, 0, 0])
+      **b (Vector): Burgers vector direction [uvw] (default: [2, 0, 0])
+      **l (Vector): line vector direction [uvw] (default: depends on d. type)
+      **L (Vector): direction along Lx [uvw] (defaut: depends on d. type)
+      **a (Scalar): cell side [nm] (default: 0.40494)
+      **a3 (Scalar): step size along Lx [nm] (default: depends on i)
+      **nu (Scalar): Poisson's number [1] (default: 0.345)
+      **expdir (str): export directory (default: '')
+      **expfmt (str): export format (default: 'dat')
+      **expstm (str): export stem (default: d.name())
 
     Complexity:
         O( len(d) )
     """
     # optional parameters
-    expdir = kwargs.pop('expdir', '') # export directory
-    expfmt = kwargs.pop('expfmt', 'dat') # export directory
-    expstm = kwargs.pop('expstm', d.name(c='stm')) # export directory
-    if len(kwargs)>0:
-        raise ValueError("wrong keywords: "+str(kwargs))
+    g = getkwa('g', kwargs, Vector, np.array([2, 0, 0]))
+    b = getkwa('b', kwargs, Vector, np.array([1, 1, 0]))
+    l = getkwa('l', kwargs, Vector, dft_l[d.t])
+    L = getkwa('L', kwargs, Vector, dft_L[d.t])
+    a = getkwa('a', kwargs, Scalar, 0.40494)
+    a3 = getkwa('a3', kwargs, Scalar, max(2, i/12))
+    nu = getkwa('nu', kwargs, Scalar, 0.345)
+    expdir = getkwa('expdir', kwargs, str, '')
+    expfmt = getkwa('expfmt', kwargs, str, 'dat')
+    expstm = getkwa('expstm', kwargs, str, d.name(c='stm'))
+    endkwa(kwargs)
     # parameters
-    m = 12 # number of points along Lx
-    a = 0.40494 # cell side [nm]
-    a3 = max(2, i/m) # step size along Lx [nm]
-    if d.g == 'circle':
-        a3 = min(a3, 3*i/m)
-    if d.t == 'screw':
-        l = np.array([ 1,  1,  0]) # dislocation line vector direction [uvw]
-        L = np.array([-1,  1,  0]) # direction along Lx [uvw]
-        if np.linalg.norm(np.cross(l, b)) != 0:
-            raise ValueError("screw type but l and b not parallel")
-    elif d.t == 'edge':
-        l = np.array([ 1, -1, -2]) # dislocation line vector direction [uvw]
-        L = np.array([ 1,  1,  0]) # direction along Lx [uvw]
-        if np.dot(l, b) != 0:
-            raise ValueError("edge type but l and b not perpendicular")
-    nu = 0.345 # Poisson's number
+    if d.t == 'screw' and np.linalg.norm(np.cross(l, b)) != 0:
+        raise ValueError("screw type but l and b not parallel")
+    elif d.t == 'edge' and np.dot(l, b) != 0:
+        raise ValueError("edge type but l and b not perpendicular")
     C = contrast_factor(d.t, g, l, b, nu)
     if d.g == 'circle':
         str_g = "Cylinder radius"
@@ -150,20 +150,14 @@ def export_distribution(
 @beartype
 def export_sample(
     s: sets.Sample,
-    g: Vector,
-    b: Vector,
     **kwargs,
 ) -> None:
     """
     Export a standardized input data file for each distributions of s.
 
     Input:
-        s: sample of distributions to be exported
-        g: diffraction vector direction (hkl)
-        b: Burgers vector direction [uvw]
-      **expdir: export directory (default: '')
-      **expfmt: export format (default: 'dat')
-      **expstm: export stem (default: s.name())
+        s (Sample): sample of distributions to be exported
+        <see export_distribution function for keyword arguments>
 
     Complexity:
         O( len(s) * complexity(export_distribution) )
@@ -172,8 +166,6 @@ def export_sample(
     expdir = kwargs.pop('expdir', '') # export directory
     expfmt = kwargs.pop('expfmt', 'dat') # export format
     expstm = kwargs.pop('expstm', s.name(c='stm')) # export stem
-    if len(kwargs)>0:
-        raise ValueError("wrong keywords: "+str(kwargs))
     # export
     stmdir = os.path.join(expdir, expstm) # folder where to export the files
     w = len(str(len(s))) # number of characters in file names
@@ -186,36 +178,29 @@ def export_sample(
         export_distribution(
             s[i],
             s.i,
-            g,
-            b,
             expdir=stmdir,
             expfmt=expfmt,
             expstm=str(i+1).zfill(w),
+            **kwargs,
         )
 
 @beartype
 def export(
     o: Union[sets.Distribution, sets.Sample],
-    g: Vector = np.array([2, 0, 0]),
-    b: Vector = np.array([1, 1, 0]),
     **kwargs,
 ) -> None:
     """
-    Convenient function for exporting a standardized data file.
+    Versatile function for exporting a standardized data file.
 
     Input:
-        o: distribution or sample of distributions to export
-        g: diffraction vector direction (hkl)
-        b: Burgers vector direction [uvw]
-      **expdir: export directory (default: '')
-      **expfmt: export format (default: 'dat')
-      **expstm: export stem (default: d.name())
+        o (Distribution|Sample): distribution or sample to export
+        <see export_distribution function for keyword arguments>
 
     Complexity:
         O( complexity(export_distribution) ) if o is a distribution
         O( complexity(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
-        export_distribution(o, o.i, g, b, **kwargs)
+        export_distribution(o, o.i,**kwargs)
     else:
-        export_sample(o, g, b, **kwargs)
+        export_sample(o, **kwargs)

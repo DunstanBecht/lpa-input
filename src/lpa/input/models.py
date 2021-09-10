@@ -25,22 +25,22 @@ def RDD(
     a: Scalar,
     r: dict,
     G: np.random._generator.Generator,
-) -> Tuple[VectorList, ScalarList]:
+) -> tuple:
     """
     Return the positions and Burgers vector generated with RDD model.
 
     "RDD" means: "Random Dislocation Distribution"
 
     Input:
-        g: geometry of the region of interest
-        s: size of the region of interest [nm]
-        a: area of region of interest [nm^2]
-        r: model parameters
-        G: random number generator
+        g (str): geometry of the region of interest
+        s (Scalar): size of the region of interest [nm]
+        a (Scalar): area of region of interest [nm^2]
+        r (dict): model parameters
+        G (np.random._generator.Generator): random number generator
 
     Output:
-        p: dislocation positions [nm]
-        b: dislocation Burgers vectors sense [1]
+        p (VectorList): dislocation positions [nm]
+        b (ScalarList): dislocation Burgers vectors sense [1]
 
     The following parameters can be specified in r:
         'd' (Scalar): density of dislocations [nm^-2]
@@ -75,12 +75,12 @@ def ticks(
     Standardize the construction of a grid of subareas or cells.
 
     Input:
-        g: geometry
-        l: shape size [nm]
-        s: size of the step [nm]
+        g (str): geometry
+        l (Scalar): shape size [nm]
+        s (Scalar): size of the step [nm]
 
     Output:
-        t: ticks along an axis
+        t (ScalarList): ticks along an axis
 
     Complexity:
         O( l/s )
@@ -93,19 +93,19 @@ def ticks(
 
 @beartype
 def even_positions(
-    t: VectorList,
+    t: ScalarList,
     f: int,
-) -> Tuple[ScalarList, ScalarList]:
+) -> tuple:
     """
     Return the positions with a number of points f in each case.
 
     Input:
-        t: ticks along an axis
-        f: number of points in each case
+        t (ScalarList): ticks along an axis
+        f (int): number of points in each case
 
     Output:
-        x: x coordinates of points
-        y: y coordinates of points
+        x (ScalarList): x coordinates of points
+        y (ScalarList): y coordinates of points
 
     Input example:
         t = np.array([0, 1])
@@ -121,18 +121,18 @@ def even_positions(
 
 @beartype
 def even_senses(
-    t: VectorList,
+    t: ScalarList,
     f: int,
 ) -> ScalarList:
     """
     Return the evenly distributed Burgers senses for even_positions.
 
     Input:
-        t: ticks
-        f: number of points in each case
+        t (ScalarList): ticks along an axis
+        f (int): number of points in each case
 
     Output:
-        b: Burgers vector senses
+        b (ScalarList): Burgers vector senses
 
     Input example:
         t = np.array([0, 1])
@@ -152,22 +152,22 @@ def RRDD(
     a: Scalar,
     r: dict,
     G: np.random._generator.Generator,
-) -> Tuple[VectorList, ScalarList]:
+) -> tuple:
     """
     Return the positions and Burgers vector generated with RRDD model.
 
     "RRDD" means: "Restrictedly Random Dislocation Distribution"
 
     Input:
-        g: geometry of the region of interest
-        s: size of the region of interest [nm]
-        a: area region of interest [nm^2]
-        r: model parameters
-        G: random number generator
+        g (str): geometry of the region of interest
+        s (Scalar): size of the region of interest [nm]
+        a (Scalar): area of region of interest [nm^2]
+        r (dict): model parameters
+        G (np.random._generator.Generator): random number generator
 
     Output:
-        p: dislocation positions [nm]
-        b: dislocation Burgers vectors sense [1]
+        p (VectorList): dislocation positions [nm]
+        b (ScalarList): dislocation Burgers vectors sense [1]
 
     The following parameters can be specified in r:
         'v' (str): variant ('R' or 'E')
@@ -213,22 +213,22 @@ def RCDD(
     a: Scalar,
     r: dict,
     G: np.random._generator.Generator,
-) -> Tuple[VectorList, ScalarList]:
+) -> tuple:
     """
     Return the positions and Burgers vector generated with RCDD model.
 
     "RCDD" means: "Random Cell Dislocation Distribution"
 
     Input:
-        g: geometry of the region of interest
-        s: size of the region of interest [nm]
-        a: area region of interest [nm^2]
-        r: model parameters
-        G: random number generator
+        g (str): geometry of the region of interest
+        s (Scalar): size of the region of interest [nm]
+        a (Scalar): area of region of interest [nm^2]
+        r (dict): model parameters
+        G (np.random._generator.Generator): random number generator
 
     Output:
-        p: dislocation positions [nm]
-        b: dislocation Burgers vectors sense [1]
+        p (VectorList): dislocation positions [nm]
+        b (ScalarList): dislocation Burgers vectors sense [1]
 
     The following parameters can be specified in r:
         'v' (str): variant ('R', 'E' or 'D')

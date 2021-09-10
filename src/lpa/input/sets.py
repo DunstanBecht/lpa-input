@@ -65,14 +65,14 @@ class Distribution:
         Initialize the distribution.
 
         Input:
-            g: geometry of the region of interest
-            s: size of the region of interest [nm]
-            m: model generation function
-            r: model parameters
-            t: dislocation type
-            c: boundary conditions
-            S: random seed
-            G: random generator
+            g (str): geometry of the region of interest
+            s (Scalar): size of the region of interest [nm]
+            m (GenerationFunction): model generation function
+            r (dict): model parameters
+            t (str): dislocation type
+            c (NoneType|str): boundary conditions
+            S (NoneType|int): random seed
+            G (NoneType|np.random._generator.Generator): random generator
 
         Complexity:
             O( complexity(m) )
@@ -144,13 +144,13 @@ class Distribution:
         Return a string describing the distribution in context c.
 
         Input:
-            f: format
-            c: context
+            f (str): format
+            c (str): context
 
         Output:
-            csl|stm|ttl: string describing the distribution
+            csl|stm|ttl (str): string describing the distribution
 
-        The format is defined with the following characters:
+        The format is defined by an arrangement of the following characters:
             d: dislocation density [m^-2]
             g: geometry of the region of interest
             s: size of the region of interest [nm]
@@ -184,12 +184,12 @@ class Distribution:
         Return the edge correction coefficients of the shape.
 
         Input:
-            a: position around which neighborhoods are formed [nm]
-            r: radius of the neighborhoods [nm]
-            r2: squared radius of neighborhoods [nm^2]
+            a (Vector): position around which neighborhoods are formed [nm]
+            r (ScalarList): radius of the neighborhoods [nm]
+            r2 (ScalarList): squared radius of neighborhoods [nm^2]
 
         Output:
-            w: weighting coefficients for each value of radius around a
+            w (ScalarList): weighting coefficients for each radius value
 
         Input example:
             a = np.array([x, y])
@@ -254,14 +254,14 @@ class Sample:
         Initialize the sample of distributions.
 
         Input:
-            n: number of distributions to generate
-            g: geometry of the region of interest
-            s: size of the region of interest [nm]
-            m: model generation function
-            r: model parameters
-            t: dislocation type
-            c: boundary conditions
-            S: random seed
+            n (int): number of distributions to generate
+            g (str): geometry of the region of interest
+            s (Scalar): size of the region of interest [nm]
+            m (GenerationFunction): model generation function
+            r (dict): model parameters
+            t (str): dislocation type
+            c (NoneType|str): boundary conditions
+            S (NoneType|str): random seed
 
         Complexity:
             O( c * complexity(Distribution) )
@@ -306,25 +306,12 @@ class Sample:
 
     @beartype
     def __getitem__(self, k: int) -> Distribution:
-        """
-        Return the k-th distribution stored in the sample.
-
-        Input:
-            k: index of the distribution
-
-        Output:
-            d: k-th distribution
-        """
+        """Return the k-th distribution stored in the sample."""
         return self.l[k]
 
     @beartype
     def __len__(self) -> int:
-        """
-        Return the number of distributions stored in the sample.
-
-        Output:
-            n: number of stored distributions
-        """
+        """Return the number of distributions stored in the sample."""
         return len(self.l)
 
     @beartype
@@ -336,13 +323,13 @@ class Sample:
         Return a string describing the sample in context c.
 
         Input:
-            f: format
-            c: context
+            f (str): format
+            c (str): context
 
         Output:
-            csl|stm|ttl: string describing the sample
+            csl|stm|ttl (str): string describing the sample
 
-        The format is defined with the following characters:
+        The format is defined by an arrangement of the following characters:
             d: dislocation density [m^-2]
             g: geometry of the region of interest
             s: size of the region of interest [nm]
@@ -380,11 +367,11 @@ class Sample:
         one by one according to their position in the tuple.
 
         Input:
-            f: function that can be applied to a distribution
+            f (Callable): function that can be applied to a distribution
             *args: additional arguments to pass to function f
 
         Output:
-            r: result of f applied to each distribution and averaged
+            r (AnalysisOutput): result of f averaged over the distributions
 
         Complexity:
             O( len(self) * complexity(f) )

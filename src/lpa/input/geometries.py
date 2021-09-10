@@ -11,17 +11,17 @@ from . import *
 def nvolume(
     g: str,
     s: Scalar
-) -> Tuple[Scalar, Scalar]:
+) -> tuple:
     """
     Return the dimension of space n and the n-volume of the shape.
 
     Input:
-        g: geometry of the region of interest
-        s: size of the region of interest [nm]
+        g (str): geometry of the region of interest
+        s (Scalar): size of the region of interest [nm]
 
     Output:
-        n: dimension of space
-        v: n-volume of the shape [nm^n]
+        n (int): dimension of space
+        v (Scalar): n-volume of the shape [nm^n]
     """
     if g == 'circle':
         return 2, np.pi*s**2
@@ -40,12 +40,12 @@ def mask(
     Return the mask filtering positions inside the region of interest.
 
     Input:
-        g: geometry of the region of interest
-        s: size of the region of interest [nm]
-        p: positions of the dislocations [nm]
+        g (str): geometry of the region of interest
+        s (Scalar): size of the region of interest [nm]
+        p (VectorList): positions of the dislocations [nm]
 
     Output:
-        m: mask of positions within the region of interest
+        m (np.ndarray): mask of positions within the region of interest
     """
     if g == 'circle':
         return np.sum(np.square(p), axis=1) < s**2

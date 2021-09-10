@@ -20,7 +20,7 @@ from . import analyze
 def average_on_cores(
     w: AnalysisOutput,
     b: bool = False
-):
+) -> AnalysisOutput:
     """
     Return the average value of w ​​over the cores.
 
@@ -28,11 +28,11 @@ def average_on_cores(
     the workers get None and the root gets the average value.
 
     Input:
-        w: worker value
-        b: broadcast the result to all cores
+        w (AnalysisOutput): worker value
+        b (bool): broadcast the result to all cores
 
     Output:
-        m: averaged value of w over the cores
+        m (AnalysisOutput): averaged value of w over the cores
 
     Input example:
         On master core:
@@ -72,11 +72,11 @@ def export(
     Function similar to the export function of the analyze module.
 
     Input:
-        o: distribution or sample to analyze on the core
-        expdir: export directory
-        expfmt: export format
-        expstm: export stem
-        title: figure title
+        o (Distribution|Sample): distribution or sample to analyze on the core
+      **expdir (str): export directory
+      **expfmt (str): export format
+      **expstm (str): export stem
+      **title (str): figure title
     """
     if rank==root and not o.S is None:
         msg = ("chosen random seed detected on "+o.name('stm')+" "
@@ -96,12 +96,11 @@ def export(
         else:
             c = str(len(o)*size) # number of distributions analyzed
         # optional parameters
-        expdir = kwargs.pop('expdir', '') # export directory
-        expfmt = kwargs.pop('expfmt', 'pdf') # export format
-        expstm = kwargs.pop('expstm', c+"_"+o.name('dmgsS', c='stm')) # stem
-        title = kwargs.pop('title', c+" "+o.name('mgsd', c='ttl')) # title
-        if len(kwargs)>0:
-            raise ValueError("wrong keywords: "+str(kwargs))
+        expdir = getkwa('expdir', kwargs, str, '')
+        expfmt = getkwa('expfmt', kwargs, str, 'pdf')
+        expstm = getkwa('expstm', kwargs, str, c+"_"+o.name('dmgsS', c='stm'))
+        title = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
+        endkwa(kwargs)
         # export
         args = (expdir, expfmt, expstm, title)
         analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, *args)

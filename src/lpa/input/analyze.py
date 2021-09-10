@@ -24,12 +24,12 @@ def N(
     of B coincides with the point a then it is not counted.
 
     Input:
-        a: point around which the neighborhoods are formed
-        B: observed points that are counted when in the neighborhoods
-        r2: squared radius of the neighborhoods in ascending order
+        a (Vector): point around which the neighborhoods are formed
+        B (VectorList): points that can be counted when in the neighborhoods
+        r2 (ScalarList): squared neighborhood radii in ascending order
 
     Output:
-        n: list of the number of points for each radius value
+        n (ScalarList): list of the number of points for each radius value
 
     Input example:
         a = np.array([a_x, a_y])
@@ -66,14 +66,14 @@ def M(
     a spatial analysis of a distribution of points in space.
 
     Input:
-        A: points around which the neighborhoods are formed
-        B: observed points that are counted when in the neighborhoods
-        w: weighting function for correction at the edges
-        r: radius of the neighborhoods in ascending order
-        r2: squared radius of the neighborhoods in ascending order
+        A (VectorList): points around which the neighborhoods are formed
+        B (VectorList): points that can be counted when in the neighborhoods
+        w (CorrectionFunction): weighting function for correction at the edges
+        r (ScalarList): neighborhood radii in ascending order
+        r2 (ScalarList): squared neighborhood radii in ascending order
 
     Output:
-        m: list of the average number of points for each radius value
+        m (ScalarList): average number of points for each radius value
 
     Input example:
         A = np.array([[a_0_x, a_0_y], [a_1_x, a_1_y], ...])
@@ -98,7 +98,7 @@ def MMMM_cp_cm(
     d: sets.Distribution,
     r: ScalarList,
     r2: ScalarList,
-) -> Tuple[ScalarListList, Scalar, Scalar]:
+) -> tuple:
     """
     Return M++, M-+, M+-, M-- and the number of + and - dislocations.
 
@@ -117,14 +117,14 @@ def MMMM_cp_cm(
     dislocation in the center of the neighborhood is not counted.
 
     Input:
-        d: distribution of dislocations to analyze
-        r: radius of the neighborhoods in ascending order [nm]
-        r2: squared radius of the neighborhoods [nm^2]
+        d (Distribution): distribution of dislocations to analyze
+        r (ScalarList): neighborhood radii in ascending order [nm]
+        r2 (ScalarList): squared neighborhood radii in ascending order [nm^2]
 
     Output:
-        MMMM: stacked values of M++, M-+, M+-, M-- [1]
-        cp: number of dislocations with Burgers vector sense + [1]
-        cm: number of dislocations with Burgers vector sense - [1]
+        MMMM (ScalarListList): stacked values of M++, M-+, M+-, M-- [1]
+        cp (Scalar): number of dislocations with Burgers vector sense + [1]
+        cm (Scalar): number of dislocations with Burgers vector sense - [1]
 
     Output example:
         MMMM = np.array([
@@ -156,7 +156,7 @@ def KKKK_dp_dm(
     cp: Scalar,
     cm: Scalar,
     v: Scalar,
-) -> Tuple[ScalarListList, Scalar, Scalar]:
+) -> tuple:
     """
     Return K++, K-+, K+-, K-- and densities of + and - dislocations.
 
@@ -167,15 +167,15 @@ def KKKK_dp_dm(
     analysis functions
 
     Input:
-        MMMM: stacked values of M++, M-+, M+-, M-- [1]
-        cp: number of dislocations with Burgers vector sense + [1]
-        cm: number of dislocations with Burgers vector sense - [1]
-        v: n-volume of the region of interest [nm^n]
+        MMMM (ScalarListList): stacked values of M++, M-+, M+-, M-- [1]
+        cp (Scalar): number of dislocations with Burgers vector sense + [1]
+        cm (Scalar): number of dislocations with Burgers vector sense - [1]
+        v (Scalar): n-volume of the region of interest [nm^n]
 
     Output:
-        KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
-        dp: density of dislocations with Burgers vector sense + [nm^-n]
-        dm: density of dislocations with Burgers vector sense - [nm^-n]
+        KKKK (ScalarListList): stacked values of K++, K-+, K+-, K-- [nm^n]
+        dp (Scalar): density of dislocations with Burgers vector + [nm^-n]
+        dm (Scalar): density of dislocations with Burgers vector - [nm^-n]
 
     Output example:
         KKKK = np.array([
@@ -198,7 +198,7 @@ def gggg_dVvdr(
     KKKK: ScalarListList,
     r: ScalarList,
     n: int,
-) -> Tuple[ScalarListList, ScalarList]:
+) -> tuple:
     """
     Return g++, g-+, g+-, g-- and derivative of neighborhood volume.
 
@@ -209,13 +209,13 @@ def gggg_dVvdr(
     analysis functions
 
     Input:
-        KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
-        r: radius of the neighborhoods in ascending order [nm]
-        n: dimension of the space of the region of interest
+        KKKK (ScalarListList): stacked values of K++, K-+, K+-, K-- [nm^n]
+        r (ScalarList): neighborhood radii in ascending order [nm]
+        n (int): dimension of the space of the region of interest
 
     Ouput:
-        gggg: stacked values of g++, g-+, g+-, g-- [1]
-        dVvdr: derivative of the neighborhood volume [nm^(n-1)]
+        gggg (ScalarListList): stacked values of g++, g-+, g+-, g-- [1]
+        dVvdr (ScalarList): derivative of the neighborhood volume [nm^(n-1)]
 
     Output example:
         gggg = np.array([
@@ -255,12 +255,12 @@ def GaGs(
     analysis functions
 
     Input:
-        MMMM: stacked values of M++, M-+, M+-, M-- [1]
-        cp: number of dislocations with Burgers vector sense + [1]
-        cm: number of dislocations with Burgers vector sense - [1]
+        MMMM (ScalarListList): stacked values of M++, M-+, M+-, M-- [1]
+        cp (Scalar): number of dislocations with Burgers vector sense + [1]
+        cm (Scalar): number of dislocations with Burgers vector sense - [1]
 
     Output:
-        GaGs: stacked values of Ga and Gs [1]
+        GaGs (ScalarListList): stacked values of Ga and Gs [1]
 
     Output example:
         GaGs = np.array([
@@ -277,7 +277,7 @@ def GaGs(
 
 @beartype
 def calculate(
-    q: List[str],
+    q: list,
     o: Union[sets.Distribution, sets.Sample],
     r: ScalarList,
     r2: Optional[ScalarList] = None,
@@ -297,13 +297,13 @@ def calculate(
         'dVvdr': derivative of the neighborhood volume [nm^-(n-1)]
 
     Input:
-        q: name of the quantities to calculate
-        o: distribution or sample of distributions to analyze
-        r: radius of the neighborhoods in ascending order [nm]
-        r2: squared radius of the neighborhoods in ascending order [nm^2]
+        q (list): name of the quantities to calculate
+        o (Distribution|Sample): distribution or sample to analyze
+        r (ScalarList): neighborhood radii in ascending order [nm]
+        r2 (ScalarList): squared neighborhood radii in ascending order [nm^2]
 
     Output:
-        v: values of the quantities in the order requested in q
+        v (AnalysisOutput): values of the quantities in requested order
 
     Exemple:
         KKKK, GaGs = calculate(['KKKK', 'GaGs'], distribution, r)
@@ -366,12 +366,12 @@ def plot_KKKK(
     Export the figure showing functions K++, K-+, K+-, K--.
 
     Input:
-        r: radius of the neighborhoods [nm]
-        KKKK: stacked values of K++, K-+, K+-, K-- [nm^n]
-        expdir: export directory
-        expfmt: export format
-        expstm: export stem
-        title: figure title
+        r (ScalarList): radius of the neighborhoods [nm]
+        KKKK (ScalarListList): stacked values of K++, K-+, K+-, K-- [nm^n]
+        expdir (str): export directory
+        expfmt (str): export format
+        expstm (str): export stem
+        title (str): figure title
 
     Complexity:
         O( len(r) )
@@ -415,12 +415,12 @@ def plot_gggg(
     Export the figure showing functions g++, g-+, g+-, g--.
 
     Input:
-        r: radius of the neighborhoods [nm]
-        gggg: stacked values of g++, g-+, g+-, g-- [1]
-        expdir: export directory
-        expfmt: export format
-        expstm: export stem
-        title: figure title
+        r (ScalarList): radius of the neighborhoods [nm]
+        gggg (ScalarListList): stacked values of g++, g-+, g+-, g-- [1]
+        expdir (str): export directory
+        expfmt (str): export format
+        expstm (str): export stem
+        title (str): figure title
 
     Complexity:
         O( len(r) )
@@ -464,12 +464,12 @@ def plot_GaGs(
     Export the figure showing functions Ga and Gs.
 
     Input:
-        r: radius of the neighborhoods [nm]
-        GaGs: stacked values of Ga and Gs [1]
-        expdir: export directory
-        expfmt: export format
-        expstm: export stem
-        title: figure title
+        r (ScalarList): radius of the neighborhoods [nm]
+        GaGs (ScalarListList): stacked values of Ga and Gs [1]
+        expdir (str): export directory
+        expfmt (str): export format
+        expstm (str): export stem
+        title (str): figure title
 
     Complexity:
         O( len(r) )
@@ -497,7 +497,7 @@ def intervals(
     i: Scalar,
     s: Scalar,
     n: int = 100,
-) -> Tuple:
+) -> tuple:
     """
     Suggest default radius interval for the analysis of a distribution.
 
@@ -507,13 +507,13 @@ def intervals(
     the inter-dislocation distance.
 
     Input:
-        i: inter dislocation distance [nm]
-        s: shape size [nm]
-        n: number of steps between a and b
+        i (Scalar): inter dislocation distance [nm]
+        s (Scalar): shape size [nm]
+        n (int): number of steps between a and b
 
     Output:
-        r: full range of radii for analysis [nm]
-        iK: index of the maximum value for the plot of K
+        r (ScalarList): full range of radii for analysis [nm]
+        iK (int): index of the maximum value for the plot of K
     """
     a, b, c = 0, 4*i, s/2
     return np.linspace(a, max(c, b), max(int((c-a)*n/(b-a)), n)), n-1
@@ -536,16 +536,15 @@ def export(
     Complexity:
         O( complexity(calculate) )
     """
+    # optional parameters
     fstm, fttl = 'dmgsS', 'mgsd'
     if isinstance(o, sets.Sample):
         fstm, fttl = "n"+fstm, "n"+fttl
-    # optional parameters
-    expdir = kwargs.pop('expdir', '') # export directory
-    expfmt = kwargs.pop('expfmt', 'pdf') # export format
-    expstm = kwargs.pop('expstm', o.name(fstm, c='stm')) # export stem
-    title = kwargs.pop('title', o.name(fttl, c='ttl')) # title
-    if len(kwargs)>0:
-        raise ValueError("wrong keywords: "+str(kwargs))
+    expdir = getkwa('expdir', kwargs, str, '')
+    expfmt = getkwa('expfmt', kwargs, str, 'pdf')
+    expstm = getkwa('expstm', kwargs, str, o.name(fstm, c='stm'))
+    title = getkwa('title', kwargs, str, o.name(fttl, c='ttl'))
+    endkwa(kwargs)
     # export
     r, iK = intervals(o.i, o.s) # range of the study
     KKKK, gggg, GaGs = calculate(['KKKK', 'gggg', 'GaGs'], o, r)

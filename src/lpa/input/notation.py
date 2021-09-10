@@ -22,12 +22,12 @@ def number(
     Return a notation of the number x in context c.
 
     Input:
-        x: number
-        c: context
-        w: width of the output string
+        x (Scalar): number
+        c (str): context
+        w (int): width of the output string
 
     Output:
-        s: notation of x
+        s (str): notation of x
     """
     if x<10**w and x>=1 or x == 0: # diplay x with fixed comma
         s = str(round(x))
@@ -66,11 +66,11 @@ def unit(
     Return a notation of the unit x in context c.
 
     Input:
-        x: unit
-        c: context
+        x (str): unit
+        c (str): context
 
     Output:
-        s: notation of x
+        s (str): notation of x
     """
     if c == 'ttl':
         return "$ \mathrm{"+x+"} $"
@@ -88,13 +88,13 @@ def quantity(
     Return the notation of value v and unit u in context c.
 
     Input:
-        v: value
-        u: unit
-        c: context
-        w: width of the value
+        v (Scalar): value
+        u (str): unit
+        c (str): context
+        w (int): width of the value
 
     Output:
-        s: notation of u and v as a physical quantity
+        s (str): notation of u and v as a physical quantity
     """
     val = number(v, c, w)
     uni = unit(u, c)
@@ -115,12 +115,12 @@ def equality(
     Return the notation of a=b in context c.
 
     Input:
-        a: left term of equality
-        b: right term of equality
-        c: context
+        a (str): left term of equality
+        b (str): right term of equality
+        c (str): context
 
     Output:
-        s: notation of the equality
+        s (str): notation of the equality
     """
     if c == 'ttl':
         a = a.replace(r"$", "").strip()
@@ -143,12 +143,12 @@ def parameters(
     Return the notation descibing the model parameters set r.
 
     Input:
-        r: model parameters
-        c: context
-        s: display the seed
+        r (dict): model parameters
+        c (str): context
+        s (bool): display the seed
 
     Output:
-        n: model parameters description
+        n (str): model parameters description
     """
     # user-defined name for the set of parameters
     if 'name' in r:
@@ -192,12 +192,12 @@ def fmt(
     Return the elements of v selected and ordered by f.
 
     Input:
-        f: format
-        v: dictionary containing the parameters
-        c: context
+        f (str): format
+        v (dict): dictionary containing the parameters
+        c (str): context
 
     Output:
-        s: elements of v selected and ordered by f
+        s (str): elements of v selected and ordered by f
     """
     if c == 'stm':
         sep = '_'

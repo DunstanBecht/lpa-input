@@ -33,37 +33,75 @@ over the cores.
 __author__ = "Dunstan Becht"
 __version__ = "1.0.3"
 
+# python standard library
 import os
 import sys
-import numpy as np
-from typing import Union, Optional, NewType, Any
-from beartype import beartype
-
+from typing import Union, Optional, Any, get_args, get_origin
 if sys.version_info[0]>=3 and sys.version_info[1]>=9:
     from collections.abc import Callable
-    List = list
-    Tuple = tuple
 else:
     from typing import Callable
-    from typing import List
-    from typing import Tuple
+
+# python package index
+import numpy as np
+from beartype import beartype
+
+# keyword arguments management
+def getkwa(
+    key: str,
+    kwa: dict,
+    typ: type,
+    dft: Any,
+) -> Any:
+    """
+    Retrieve the keyword argument and check its type.
+
+    Input:
+        key (str): keyword argument name
+        kwa (dict): keyword arguments dictionary
+        typ (type): keyword argument type
+        dft (Any): keyword argument default value
+
+    Output:
+        val (Any): value of the keyword argument
+    """
+    val = kwa.pop(key, dft)
+    if get_origin(typ) == Union:
+        typ = get_args(typ)
+    if not isinstance(val, typ):
+        msg = ("keyword argument '"+key+"' must be of type "+str(typ)
+            + " but "+str(type(val))+" given")
+        raise TypeError(msg)
+    return val
+
+def endkwa(
+    kwa: dict,
+) -> None:
+    """
+    Check that no bad keyword arguments have been passed.
+
+    Input:
+        kwa (dict): keyword arguments dictionary
+    """
+    if len(kwa) > 0:
+        msg = ("unexpected keyword argument(s): "
+            + ", ".join([repr(key) for key in kwa]))
+        raise TypeError(msg)
 
 # scalar and vectors
 Scalar = Union[int, float, np.intc]
 Vector = np.ndarray # shape: (n,)
+
 # sets
 ScalarList = np.ndarray # shape: (...,)
 ScalarListList = np.ndarray # shape: (..., ...)
 VectorList = np.ndarray # shape: (..., n)
-# model generation functions
-CorrectionFunction = Callable[
-    [Vector, ScalarList, ScalarList],
-    ScalarList
-]
-# edge correction functions
-GenerationFunction = Callable[
-    [str, Scalar, Scalar, dict],
-    Tuple[VectorList, ScalarList]
-]
+
 # generic analysis function output
-AnalysisOutput = Union[Tuple, Scalar, np.ndarray]
+AnalysisOutput = Union[tuple, Scalar, np.ndarray]
+
+# edge correction functions
+CorrectionFunction = Callable[[Vector, ScalarList, ScalarList], ScalarList]
+
+# model generation functions
+GenerationFunction = Callable[[str, Scalar, Scalar, dict], tuple]

@@ -13,7 +13,7 @@ def IDBC(
     p: VectorList,
     b: ScalarList,
     t: str,
-) -> Tuple[VectorList, ScalarList]:
+) -> tuple:
     """
     Return the image dislocations of (p, b) for a circle of radius s.
 
@@ -23,14 +23,14 @@ def IDBC(
     only applies to dislocations of type 'screw'.
 
     Input:
-        s: radius of the region of interest [nm]
-        p: dislocation positions [nm]
-        b: dislocation Burgers vectors sense [1]
-        t: dislocation type
+        s (Scalar): radius of the region of interest [nm]
+        p (VectorList): dislocation positions [nm]
+        b (ScalarList): dislocation Burgers vectors sense [1]
+        t (str): dislocation type
 
     Output:
-        cp: image dislocation positions [nm]
-        cb: image dislocation Burgers vectors sense [1]
+        cp (VectorList): image dislocation positions [nm]
+        cb (ScalarList): image dislocation Burgers vectors sense [1]
 
     Input example:
         s = 2
@@ -63,19 +63,19 @@ def PBCG(
     p: VectorList,
     b: ScalarList,
     r: int,
-) -> Tuple[VectorList, ScalarList]:
+) -> tuple:
     """
     Return the replicated dislocations of (p, b) for a square of side s.
 
     Input:
-        s: side of the region of interest [nm]
-        p: dislocation positions [nm]
-        b: dislocation Burgers vectors sense [1]
-        r: number of replications at the boundaries
+        s (Scalar): side of the region of interest [nm]
+        p (VectorList): dislocation positions [nm]
+        b (ScalarList): dislocation Burgers vectors sense [1]
+        r (int): number of replications at the boundaries
 
     Output:
-        cp: replicated dislocation positions [nm]
-        cb: replicated dislocation Burgers vectors sense [1]
+        cp (VectorList): replicated dislocation positions [nm]
+        cb (ScalarList): replicated dislocation Burgers vectors sense [1]
 
     Input example:
         s = 1
