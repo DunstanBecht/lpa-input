@@ -20,7 +20,7 @@ from . import analyze
 def average_on_cores(
     w: AnalysisOutput,
     b: bool = False
-) -> AnalysisOutput:
+) -> Optional[AnalysisOutput]:
     """
     Return the average value of w ​​over the cores.
 
