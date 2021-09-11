@@ -164,7 +164,6 @@ def export_sample(
     """
     # optional parameters
     expdir = kwargs.pop('expdir', '') # export directory
-    expfmt = kwargs.pop('expfmt', 'dat') # export format
     expstm = kwargs.pop('expstm', s.name(c='stm')) # export stem
     # export
     stmdir = os.path.join(expdir, expstm) # folder where to export the files
@@ -179,7 +178,6 @@ def export_sample(
             s[i],
             s.i,
             expdir=stmdir,
-            expfmt=expfmt,
             expstm=str(i+1).zfill(w),
             **kwargs,
         )
