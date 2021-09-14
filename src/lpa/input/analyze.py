@@ -6,6 +6,7 @@ Tools for spatial analysis of dislocation distributions.
 """
 
 import matplotlib.pyplot as plt
+import scipy.special
 from . import *
 from . import sets
 from . import geometries
@@ -194,13 +195,13 @@ def KKKK_dp_dm(
     return np.concatenate((MMMM[0:2]/dp, MMMM[2:4]/dm)), dp, dm
 
 @beartype
-def gggg_dVvdr(
+def gggg_dr_dV_dKKKK(
     KKKK: ScalarListList,
     r: ScalarList,
     n: int,
 ) -> tuple:
     """
-    Return g++, g-+, g+-, g-- and derivative of neighborhood volume.
+    Return g++, g-+, g+-, g-- and calculated differentials.
 
     Implementation of the pair correlation function.
 
@@ -215,7 +216,9 @@ def gggg_dVvdr(
 
     Ouput:
         gggg (ScalarListList): stacked values of g++, g-+, g+-, g-- [1]
-        dVvdr (ScalarList): derivative of the neighborhood volume [nm^(n-1)]
+        dr (ScalarList): differential of the radius [nm]
+        dV (ScalarList): differential of the neighborhood n-volume [nm^n]
+        dKKKK (ScalarList): differential of KKKK [nm^n]
 
     Output example:
         gggg = np.array([
@@ -224,22 +227,22 @@ def gggg_dVvdr(
             [g+-(r_0), g+-(r_1), g+-(r_2), ...],
             [g--(r_0), g--(r_1), g--(r_2), ...],
         ])
-        dVvdr = np.array([2*pi*r_0, 2*pi*r_1, 2*pi*r_2, ...])
+        dr = np.array([r_1-r_0, (r_2-r_0)/2, (r_3-r_1)/2, ...])
+        dV = np.array([pi*r_0*dr_0, pi*r_1*dr_1, ...])
+        dKKKK = np.array([
+            [K++(r_1)-K++(r_0), (K++(r_2)-K++(r_0))/2, ...],
+            [K-+(r_1)-K-+(r_0), (K-+(r_2)-K-+(r_0))/2, ...],
+            [K+-(r_1)-K+-(r_0), (K+-(r_2)-K+-(r_0))/2, ...],
+            [K--(r_1)-K--(r_0), (K--(r_2)-K--(r_0))/2, ...],
+        ])
 
     Complexity:
         O( len(r) )
     """
-    if n == 2: # circle
-        dVvdr = np.where(r!=0, 2*np.pi*r, 1)
-    elif n == 3: # sphere
-        dVvdr = np.where(r!=0, np.pi*r**2, 1)
-    dKKKK = np.roll(KKKK, -1) - np.roll(KKKK, 1) # differential of K
-    dr = np.roll(r, -1) - np.roll(r, 1) # differential of r
-    dKdr = np.divide(dKKKK, dr) # derivative of K with respect to r
-    gggg = dKdr/dVvdr
-    for i in range(len(gggg)):
-        gggg[i][0], gggg[i][-1] = None, None
-    return gggg, dVvdr
+    dr = np.gradient(r) # differential of r
+    dV = (np.pi**(n/2)/scipy.special.gamma(n/2+1))*n*R**(n-1)*dR # diff. of V
+    dKKKK = np.gradient(KKKK) # differential of KKKK
+    return dKKKK/dV, dr, dV, dKKKK
 
 @beartype
 def GaGs(
@@ -479,12 +482,12 @@ def plot_GaGs(
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(title, fontsize=16)
     # ax1
-    ax1.plot(r, GaGs[0], label=r"$G^a(r)$")
+    ax1.plot(r, GaGs[0], label=r"$G_A(r)$")
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
     # ax2
-    ax2.plot(r, GaGs[1], label=r"$G^s(r)$")
+    ax2.plot(r, GaGs[1], label=r"$G_S(r)$")
     ax2.legend()
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
