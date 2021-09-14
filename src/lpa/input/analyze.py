@@ -149,7 +149,10 @@ def MMMM_cp_cm(
     Mmp = M(Pm, Pp, d.w, r, r2) # M-+
     Mpm = M(Pp, Pm, d.w, r, r2) # M+-
     Mmm = M(Pm, Pm, d.w, r, r2) # M--
-    return np.stack((Mpp, Mmp, Mpm, Mmm)), len(Pp), len(Pm)
+    MMMM = np.stack((Mpp, Mmp, Mpm, Mmm))
+    cp = len(Pp)
+    cm = len(Pm)
+    return MMMM, cp, cm
 
 @beartype
 def KKKK_dp_dm(
@@ -192,11 +195,13 @@ def KKKK_dp_dm(
         O( len(MMMM) )
     """
     dp, dm = cp/v, cm/v
-    return np.concatenate((MMMM[0:2]/dp, MMMM[2:4]/dm)), dp, dm
+    KKKK = np.concatenate((MMMM[0:2]/dp, MMMM[2:4]/dm))
+    return KKKK, dp, dm
 
 @beartype
-def gggg_dr_dV_dKKKK(
+def gggg_dV_dKKKK(
     KKKK: ScalarListList,
+    dr: ScalarList,
     r: ScalarList,
     n: int,
 ) -> tuple:
@@ -211,13 +216,13 @@ def gggg_dr_dV_dKKKK(
 
     Input:
         KKKK (ScalarListList): stacked values of K++, K-+, K+-, K-- [nm^n]
+        dr (ScalarList): differentials of the radius [nm]
         r (ScalarList): neighborhood radii in ascending order [nm]
         n (int): dimension of the space of the region of interest
 
     Ouput:
         gggg (ScalarListList): stacked values of g++, g-+, g+-, g-- [1]
-        dr (ScalarList): differential of the radius [nm]
-        dV (ScalarList): differential of the neighborhood n-volume [nm^n]
+        dV (ScalarList): differentials of the neighborhood n-volumes [nm^n]
         dKKKK (ScalarList): differential of KKKK [nm^n]
 
     Output example:
@@ -227,7 +232,6 @@ def gggg_dr_dV_dKKKK(
             [g+-(r_0), g+-(r_1), g+-(r_2), ...],
             [g--(r_0), g--(r_1), g--(r_2), ...],
         ])
-        dr = np.array([r_1-r_0, (r_2-r_0)/2, (r_3-r_1)/2, ...])
         dV = np.array([pi*r_0*dr_0, pi*r_1*dr_1, ...])
         dKKKK = np.array([
             [K++(r_1)-K++(r_0), (K++(r_2)-K++(r_0))/2, ...],
@@ -239,17 +243,19 @@ def gggg_dr_dV_dKKKK(
     Complexity:
         O( len(r) )
     """
-    dr = np.gradient(r) # differential of r
-    dV = (np.pi**(n/2)/scipy.special.gamma(n/2+1))*n*R**(n-1)*dR # diff. of V
-    dKKKK = np.gradient(KKKK) # differential of KKKK
-    return dKKKK/dV, dr, dV, dKKKK
+    dV = (np.pi**(n/2)/scipy.special.gamma(n/2+1))*n*r**(n-1)*dr # diff. of V
+    dV[dV==0] = np.nan # mask zero values
+    dKKKK = np.gradient(KKKK, axis=1) # differential of KKKK
+    gggg = dKKKK/dV
+    return gggg, dV, dKKKK
 
 @beartype
-def GaGs(
+def GaGs_dMMMM(
     MMMM: ScalarListList,
+    dr: ScalarList,
     cp: Scalar,
     cm: Scalar,
-) -> ScalarListList:
+) -> tuple:
     """
     Return Ga and Gs.
 
@@ -259,31 +265,41 @@ def GaGs(
 
     Input:
         MMMM (ScalarListList): stacked values of M++, M-+, M+-, M-- [1]
+        dr (ScalarList): differentials of the radius [nm]
         cp (Scalar): number of dislocations with Burgers vector sense + [1]
         cm (Scalar): number of dislocations with Burgers vector sense - [1]
 
     Output:
-        GaGs (ScalarListList): stacked values of Ga and Gs [1]
+        GaGs (ScalarListList): stacked values of Ga and Gs [nm^-1]
+        dMMMM (ScalarList): differential of MMMM [1]
 
     Output example:
         GaGs = np.array([
             [Ga(r_0), Ga(r_1), Ga(r_2), ...],
             [Gs(r_0), Gs(r_1), Gs(r_2), ...],
         ])
+        dMMMM = np.array([
+            [M++(r_1)-M++(r_0), (M++(r_2)-M++(r_0))/2, ...],
+            [M-+(r_1)-M-+(r_0), (M-+(r_2)-M-+(r_0))/2, ...],
+            [M+-(r_1)-M+-(r_0), (M+-(r_2)-M+-(r_0))/2, ...],
+            [M--(r_1)-M--(r_0), (M--(r_2)-M--(r_0))/2, ...],
+        ])
 
     Complexity:
         O( len(MMMM) )
     """
-    Ga = cp*(MMMM[0]-MMMM[2]) + cm*(MMMM[3]-MMMM[1])
-    Gs = cp*(MMMM[0]+MMMM[2]) + cm*(MMMM[3]+MMMM[1])
-    return np.stack((Ga, Gs))
+    dMMMM = np.gradient(MMMM, axis=1)
+    dMppdr, dMmpdr, dMpmdr, dMmmdr = dMMMM/dr
+    Ga = cp*(dMppdr-dMpmdr) + cm*(dMmmdr-dMmpdr)
+    Gs = cp*(dMppdr+dMpmdr) + cm*(dMmmdr+dMmpdr)
+    return np.stack((Ga, Gs)), dMMMM
 
 @beartype
 def calculate(
     q: list,
     o: Union[sets.Distribution, sets.Sample],
     r: ScalarList,
-    r2: Optional[ScalarList] = None,
+    **kwargs,
 ) -> AnalysisOutput:
     """
     Return the values of the quantities in q calculated incrementally.
@@ -297,13 +313,16 @@ def calculate(
         'cm': number of dislocations with Burgers vector sense - [1]
         'dp': density of dislocations with Burgers vector sense + [nm^-n]
         'dm': density of dislocations with Burgers vector sense - [nm^-n]
-        'dVvdr': derivative of the neighborhood volume [nm^-(n-1)]
+        'dV': differentials of the neighborhood volume [nm^n]
+        'dKKKK': differentials of K++, K-+, K+-, K-- [nm^n]
+        'dMMMM': differentials of M++, M-+, M+-, M-- [1]
 
     Input:
         q (list): name of the quantities to calculate
         o (Distribution|Sample): distribution or sample to analyze
         r (ScalarList): neighborhood radii in ascending order [nm]
-        r2 (ScalarList): squared neighborhood radii in ascending order [nm^2]
+      **r2 (ScalarList): squared neighborhood radii [nm^2]
+      **dr (ScalarList): differentials of the neighborhood radii [nm]
 
     Output:
         v (AnalysisOutput): values of the quantities in requested order
@@ -315,8 +334,10 @@ def calculate(
         O( complexity(MMMM_Pp_Pm) ) if o is a distribution
         O( complexity(MMMM_Pp_Pm) * len(o) ) if o is a sample
     """
-    if r2 is None:
-        r2 = np.square(r)
+    # optional parameters
+    r2 = getkwa('r2', kwargs, ScalarList, np.square(r))
+    dr = getkwa('dr', kwargs, ScalarList, np.gradient(r))
+    endkwa(kwargs)
     # create an incremental analysis function to be applied to a distribution
     @beartype
     def calculate_on_distribution(
@@ -326,27 +347,34 @@ def calculate(
         Auxiliary function applied to a distribution only.
         """
         s = {}
+        clcgggg = 'gggg' in q or 'dp' in q or 'dm' in q or 'dKKKK' in q
+        clcKKKK = clcgggg or 'KKKK' in q or 'cp' in q or 'cm' in q
+        clcGaGs = 'GaGs' in q or 'dMMMM' in q
         s['MMMM'], s['cp'], s['cm'] = MMMM_cp_cm(
             d,
             r,
             r2,
         )
-        if 'gggg' in q or 'KKKK' in q:
+        if clcKKKK:
             s['KKKK'], s['dp'], s['dm'] = KKKK_dp_dm(
                 s['MMMM'],
                 s['cp'],
                 s['cm'],
                 d.v,
             )
-        if 'gggg' in q:
-            s['gggg'], s['dVvdr'] =  gggg_dVvdr(
+        if clcgggg or clcGaGs:
+            s['dr'] = np.gradient(r)
+        if clcgggg:
+            s['gggg'], s['dV'], s['dKKKK'] =  gggg_dV_dKKKK(
                 s['KKKK'],
+                s['dr'],
                 r,
                 d.n,
             )
-        if 'GaGs' in q:
-            s['GaGs'] = GaGs(
+        if clcGaGs:
+            s['GaGs'], s['dMMMM'] = GaGs_dMMMM(
                 s['MMMM'],
+                s['dr'],
                 s['cp'],
                 s['cm'],
             )
