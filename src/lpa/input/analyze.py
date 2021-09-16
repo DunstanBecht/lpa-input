@@ -460,8 +460,10 @@ def plot_gggg(
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(title, fontsize=16)
-    ymin = min(np.nanmin(gggg[gggg != -np.inf])*0.95, 0.9)
-    ymax = max(np.nanmax(gggg[gggg != np.inf])*1.05, 1.1)
+    masked = np.ma.masked_invalid(gggg)
+    margin = max(np.ptp(masked)*0.05, 0.1)
+    ymin = np.min(masked) - margin
+    ymax = np.max(masked) + margin
     # ax1
     ax1.plot(r, gggg[0], label=r"$g_{++}(r)$")
     ax1.plot(r, gggg[1], label=r"$g_{-+}(r)$")
@@ -509,16 +511,21 @@ def plot_GaGs(
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(title, fontsize=16)
+    masked = np.ma.masked_invalid(GaGs)
     # ax1
+    marg1 = max(np.ptp(masked[0])*0.05, 0.1)
     ax1.plot(r, GaGs[0], label=r"$G_A(r)$")
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
+    ax1.set_ylim(np.min(masked[0])-marg1, np.max(masked[0])+marg1)
     # ax2
+    marg2 = max(np.ptp(masked[1])*0.05, 0.1)
     ax2.plot(r, GaGs[1], label=r"$G_S(r)$")
     ax2.legend()
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
+    ax2.set_ylim(np.min(masked[1])-marg2, np.max(masked[1])+marg2)
     # export
     plt.savefig(os.path.join(expdir, expstm+"_GaGs."+expfmt), format=expfmt)
     plt.close('all')
