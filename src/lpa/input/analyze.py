@@ -244,7 +244,8 @@ def gggg_dV_dKKKK(
         O( len(r) )
     """
     dV = (np.pi**(n/2)/scipy.special.gamma(n/2+1))*n*r**(n-1)*dr # diff. of V
-    dV[dV==0] = np.nan # mask zero values
+    dV[0] = np.nan # mask first value because of zero or wrong gradient
+    dV[-1] = np.nan # mask last value because of wrong gradient
     dKKKK = np.gradient(KKKK, axis=1) # differential of KKKK
     gggg = dKKKK/dV
     return gggg, dV, dKKKK
