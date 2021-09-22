@@ -5,7 +5,25 @@
 Tools for calculating the overlapping of two geometric objects.
 """
 
+import scipy.integrate
 from . import *
+
+@beartype
+def circular_segment(
+    r: Union[Scalar, ScalarList],
+    d: Union[Scalar, ScalarList],
+) -> Union[Scalar, ScalarList]:
+    """
+    Return the circular segment area.
+
+    Input:
+        r (Scalar|ScalarList): circle radius/ii
+        d (Scalar|ScalarList): distance(s) of the chord from circle center
+
+    Output:
+        o (Scalar|ScalarList): circular segment area
+    """
+    return r**2*np.arccos(d/r) - d*np.sqrt(r**2-d**2)
 
 @beartype
 def circle_circle(
@@ -87,7 +105,7 @@ def circle_square(
     r: Union[Scalar, ScalarList],
     r2: Union[Scalar, ScalarList],
     s: Union[Scalar, ScalarList],
-) -> Union[float, ScalarList]:
+) -> Union[Scalar, ScalarList]:
     """
     Return the overlapping area of a circle and a square.
 
@@ -147,3 +165,45 @@ def circle_square(
                 where=a[0])
         e.append(eq)
     return np.pi*r2 - sum(e)
+
+@np.vectorize
+@beartype
+def mean_circle_square_analytic(
+    r: Scalar,
+    s: Scalar,
+) -> Scalar:
+    """
+    Return the expected value of overlapping area of a circle and a square.
+
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle radius/ii
+        s (Scalar|ScalarList): square side(s)
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    f12 = lambda x, phi: circular_segment(r, x*np.cos(phi))*x/(2*s**2)
+    f3a = lambda x, phi: (np.pi*r**2/4 - x*np.cos(phi)*x*np.sin(phi))*x/(s**2)
+    f3b = lambda x, y: (np.pi*r**2/4 - x*y)/s**2
+    phi1 = np.arccos(s/max(r, s))
+    phi2 = np.arctan(s/min(r, s))
+    phi3 = np.arcsin(s/max(r, s))
+    x1 = lambda phi: min(r, s)/np.cos(phi)
+    x2 = lambda phi: s/np.sin(phi)
+    x3 = lambda y: np.tan(phi1)*y
+    if r == 0:
+        return 0
+    elif r <= np.sqrt(2)*s:
+        E12 = (scipy.integrate.dblquad(f12, phi1, phi2, r, x1)[0]
+            + scipy.integrate.dblquad(f12, phi2, phi3, r, x2)[0])
+        E3 = (scipy.integrate.dblquad(f3a, phi1, phi3, 0, r)[0]
+            + 2*scipy.integrate.dblquad(f3b, 0, s, 0, x3)[0])
+        return np.pi*r**2 - 4*(2*E12+E3)
+    else:
+        return s**2
