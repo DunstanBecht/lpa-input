@@ -207,3 +207,31 @@ def mean_circle_square_analytic(
         return np.pi*r**2 - 4*(2*E12+E3)
     else:
         return s**2
+
+@beartype
+def mean_circle_square_simulation(
+    r: Union[Scalar, ScalarList],
+    s: Union[Scalar, ScalarList],
+    n: int = 1000000,
+    rng: np.random._generator.Generator = np.random.default_rng(0),
+) -> Union[Scalar, ScalarList]:
+    """
+    Return the expected value of overlapping area of a circle and a square.
+
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle radius/ii
+        s (Scalar|ScalarList): square side(s)
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    x = rng.random(n)*s
+    y = rng.random(n)*s
+    m = lambda ri, si: circle_square(x, y, ri, ri**2, si).mean()
+    return np.vectorize(m)(r, s)
