@@ -52,7 +52,7 @@ import numpy as np
 from beartype import beartype
 
 # scalar and vectors
-Scalar = Union[int, float, np.intc]
+Scalar = Union[int, np.integer, float, np.floating]
 Vector = np.ndarray # shape: (n,)
 
 # sets
