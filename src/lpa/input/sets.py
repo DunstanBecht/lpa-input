@@ -212,7 +212,7 @@ class Distribution:
         elif self.g == 'square':
             vo = overlap.circle_square(a[0], a[1], r, r2, self.s)
             vv = np.pi*r2
-        w = 1/np.divide(vo, vv, np.ones(vo.size), where=r2>0) # ratio
+        w = np.divide(vo, vv, np.ones(vo.size), where=r2>0) # ratio
         return w
 
 class Sample:

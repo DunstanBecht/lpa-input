@@ -89,10 +89,12 @@ def M(
     Complexity:
         O( len(A) * (complexity(w)+complexity(N)) )
     """
-    s = np.zeros(len(r))
+    sumN = np.zeros(len(r))
+    sumw = np.zeros(len(r))
     for i in range(len(A)):
-        s += w(A[i], r, r2) * N(A[i], B, r2)
-    return s/len(A)
+        sumN += N(A[i], B, r2)
+        sumw += w(A[i], r, r2)
+    return sumN/sumw
 
 @beartype
 def MMMM_cp_cm(
