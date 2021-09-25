@@ -112,10 +112,11 @@ def export(
         figttl = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
         kwargs['edgcon'] = edgcon
         # export
+        KKKK, gggg, GaGs = master
         KKKKstm = expstm+"_KKKK_"+edgcon
         ggggstm = expstm+"_gggg_"+edgcon
         GaGsstm = expstm+"_GaGs_"+edgcon
-        analyze.plot_KKKK(intrad, master[0], **kwargs, expstm=KKKKstm)
-        analyze.plot_gggg(intrad, master[1], **kwargs, expstm=ggggstm)
-        analyze.plot_GaGs(intrad, master[2], **kwargs, expstm=GaGsstm)
-        return intrad, *master
+        analyze.plot_KKKK(intrad, KKKK, **kwargs, expstm=KKKKstm)
+        analyze.plot_gggg(intrad, gggg, **kwargs, expstm=ggggstm)
+        analyze.plot_GaGs(intrad, GaGs, **kwargs, expstm=GaGsstm)
+        return intrad, KKKK, gggg, GaGs
