@@ -65,18 +65,26 @@ def average_on_cores(
 def export(
     o: Union[sets.Distribution, sets.Sample],
     **kwargs,
-) -> None:
+) -> tuple:
     """
     Export a complete pooled analysis of the object o of each core.
 
     Function similar to the export function of the analyze module.
 
     Input:
-        o (Distribution|Sample): distribution or sample to analyze on the core
-      **expdir (str): export directory
-      **expfmt (str): export format
-      **expstm (str): export stem
-      **title (str): figure title
+        o (Distribution|Sample): object to analyze on the core
+      **expdir (str): export directory (default: '')
+      **expfmt (str): export format (default: 'pdf')
+      **expstm (str): export stem (default: o.name(fstm, c='stm'))
+      **figttl (str): figure title (default: o.name(fttl, c='ttl'))
+      **edgcon (str): edge consideration (default: 'NEC')
+      **intrad (ScalarList): interval of radii [nm] (default: ROI size)
+
+    Output:
+        r (ScalarList): radius of the neighborhoods [nm]
+        KKKK (ScalarListList): stacked K++, K-+, K+-, K-- values [nm^n]
+        gggg (ScalarListList): stacked g++, g-+, g+-, g-- values [1]
+        GaGs (ScalarListList): stacked Ga and Gs values [m^-1]
     """
     if rank==root and not o.S is None:
         msg = ("chosen random seed detected on "+o.name('stm')+" "
@@ -85,10 +93,14 @@ def export(
             + "one core to another, the seed must not be identical "
             + "from one core to another.")
         warnings.warn(msg, Warning)
+    rmax = o.s
+    if o.g == 'circle':
+        rmax *= 2
+    edgcon = getkwa('edgcon', kwargs, str, 'NEC')
+    intrad = getkwa('intrad', kwargs, ScalarList, np.linspace(0, rmax, 200))
     i = average_on_cores(o.i, True) # averaged inter dislocation distance
-    r, iK = analyze.intervals(i, o.s) # intervals to display
-    f = ['KKKK', 'gggg', 'GaGs'] # functions to calculate
-    worker = analyze.calculate(f, o, r) # function results
+    fun = ('KKKK', 'gggg', 'GaGs') # functions to calculate
+    worker = analyze.calculate(fun, o, intrad, ec=edgcon) # function results
     master = [average_on_cores(worker[i]) for i in range(len(worker))]
     if rank == root:
         if isinstance(o, sets.Distribution):
@@ -96,13 +108,14 @@ def export(
         else:
             c = str(len(o)*size) # number of distributions analyzed
         # optional parameters
-        expdir = getkwa('expdir', kwargs, str, '')
-        expfmt = getkwa('expfmt', kwargs, str, 'pdf')
         expstm = getkwa('expstm', kwargs, str, c+"_"+o.name('dmgsS', c='stm'))
-        title = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
-        endkwa(kwargs)
+        figttl = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
+        kwargs['edgcon'] = edgcon
         # export
-        args = (expdir, expfmt, expstm, title)
-        analyze.plot_KKKK(r[:iK], master[f.index('KKKK')].T[:iK].T, *args)
-        analyze.plot_gggg(r, master[f.index('gggg')], *args)
-        analyze.plot_GaGs(r, master[f.index('GaGs')], *args)
+        KKKKstm = expstm+"_KKKK_"+edgcon
+        ggggstm = expstm+"_gggg_"+edgcon
+        GaGsstm = expstm+"_GaGs_"+edgcon
+        analyze.plot_KKKK(intrad, master[0], **kwargs, expstm=KKKKstm)
+        analyze.plot_gggg(intrad, master[1], **kwargs, expstm=ggggstm)
+        analyze.plot_GaGs(intrad, master[2], **kwargs, expstm=GaGsstm)
+        return intrad, *master

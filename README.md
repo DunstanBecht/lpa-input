@@ -124,6 +124,11 @@ Some abbreviations are used in the program:
 * `PBCR` periodic boundary conditions applied when running the simulation
 * `IDBC` image dislocations boundary conditions
 
+### Edge considerations
+* `NEC` no edge correction
+* `ECW` edge correction by weighting
+* `ECR` edge correction by replication
+
 # User guide
 
 The directory `tests/` contains several examples of package module usage. The docstrings are carefully written and it is recommended to refer to the documentation with the `help()` command.
