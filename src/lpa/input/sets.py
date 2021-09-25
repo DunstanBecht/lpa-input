@@ -72,10 +72,10 @@ class Distribution:
             t (str): dislocation type
             c (NoneType|str): boundary conditions
             S (NoneType|int): random seed
-            G (NoneType|np.random._generator.Generator): random generator
+            G (NoneType|np.random._generator.Generator): random gen.
 
         Complexity:
-            O( complexity(m) )
+            O( complexity_of(m) )
         """
         # shape
         if s <= 0:
@@ -150,7 +150,7 @@ class Distribution:
         Output:
             csl|stm|ttl (str): string describing the distribution
 
-        The format is defined by an arrangement of the following characters:
+        The format is defined by an arrangement of the characters:
             d: dislocation density [m^-2]
             g: geometry of the region of interest
             s: size of the region of interest [nm]
@@ -184,12 +184,12 @@ class Distribution:
         Return the edge correction coefficients of the shape.
 
         Input:
-            a (Vector): position around which neighborhoods are formed [nm]
+            a (Vector): position of the neighborhoods center [nm]
             r (ScalarList): radius of the neighborhoods [nm]
             r2 (ScalarList): squared radius of neighborhoods [nm^2]
 
         Output:
-            w (ScalarList): weighting coefficients for each radius value
+            w (ScalarList): weighting coefficients for each radius
 
         Input example:
             a = np.array([x, y])
@@ -264,7 +264,7 @@ class Sample:
             S (NoneType|str): random seed
 
         Complexity:
-            O( c * complexity(Distribution) )
+            O( c * complexity_of(Distribution) )
         """
 
         self.G = np.random.default_rng(S) # random generator
@@ -329,7 +329,7 @@ class Sample:
         Output:
             csl|stm|ttl (str): string describing the sample
 
-        The format is defined by an arrangement of the following characters:
+        The format is defined by an arrangement of the characters:
             d: dislocation density [m^-2]
             g: geometry of the region of interest
             s: size of the region of interest [nm]
@@ -367,14 +367,14 @@ class Sample:
         one by one according to their position in the tuple.
 
         Input:
-            f (Callable): function that can be applied to a distribution
+            f (Callable): function applied to a distribution
             *args: additional arguments to pass to function f
 
         Output:
-            r (AnalysisOutput): result of f averaged over the distributions
+            r (AnalysisOutput): result of f averaged over the distrib.
 
         Complexity:
-            O( len(self) * complexity(f) )
+            O( len(self) * complexity_of(f) )
         """
         r = f(self[0], *args) # result of f on the first distribution
         if isinstance(r, tuple):

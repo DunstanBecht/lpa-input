@@ -90,10 +90,10 @@ def export_distribution(
     Input:
         d (Distribution): distribution to be exported
         i (Scalar): inter dislocation distance [nm]
-      **g (Vector): diffraction vector direction (hkl) (default: [2, 0, 0])
-      **b (Vector): Burgers vector direction [uvw] (default: [2, 0, 0])
-      **l (Vector): line vector direction [uvw] (default: depends on d. type)
-      **L (Vector): direction along Lx [uvw] (defaut: depends on d. type)
+      **g (Vector): diffraction vector direction (hkl) (default: 2,0,0)
+      **b (Vector): Burgers vector direction [uvw] (default: 2,0,0)
+      **l (Vector): line vector direction [uvw] (default: see d. type)
+      **L (Vector): direction along Lx [uvw] (defaut: see d. type)
       **a (Scalar): cell side [nm] (default: 0.40494)
       **a3 (Scalar): step size along Lx [nm] (default: depends on i)
       **nu (Scalar): Poisson's number [1] (default: 0.345)
@@ -160,7 +160,7 @@ def export_sample(
         <see export_distribution function for keyword arguments>
 
     Complexity:
-        O( len(s) * complexity(export_distribution) )
+        O( len(s) * complexity_of(export_distribution) )
     """
     # optional parameters
     expdir = kwargs.pop('expdir', '') # export directory
@@ -195,8 +195,8 @@ def export(
         <see export_distribution function for keyword arguments>
 
     Complexity:
-        O( complexity(export_distribution) ) if o is a distribution
-        O( complexity(export_sample) ) if o is a sample
+        O( complexity_of(export_distribution) ) if o is a distribution
+        O( complexity_of(export_sample) ) if o is a sample
     """
     if isinstance(o, sets.Distribution):
         export_distribution(o, o.i,**kwargs)

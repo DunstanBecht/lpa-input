@@ -15,7 +15,7 @@ def IDBC(
     t: str,
 ) -> tuple:
     """
-    Return the image dislocations of (p, b) for a circle of radius s.
+    Return the image dislocations for a circle of radius s.
 
     Adding the image dislocations allows to simulate correctly the
     complete diffraction profile (and not only for the asymptotic
@@ -30,7 +30,7 @@ def IDBC(
 
     Output:
         cp (VectorList): image dislocation positions [nm]
-        cb (ScalarList): image dislocation Burgers vectors sense [1]
+        cb (ScalarList): image dislocation Burgers vector senses [1]
 
     Input example:
         s = 2
@@ -65,7 +65,7 @@ def PBCG(
     r: int,
 ) -> tuple:
     """
-    Return the replicated dislocations of (p, b) for a square of side s.
+    Return the replicated dislocations for a square of side s.
 
     Input:
         s (Scalar): side of the region of interest [nm]
@@ -75,7 +75,7 @@ def PBCG(
 
     Output:
         cp (VectorList): replicated dislocation positions [nm]
-        cb (ScalarList): replicated dislocation Burgers vectors sense [1]
+        cb (ScalarList): replicated dislocation senses [1]
 
     Input example:
         s = 1

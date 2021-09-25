@@ -18,7 +18,7 @@ def circular_segment(
 
     Input:
         r (Scalar|ScalarList): circle radius/ii
-        d (Scalar|ScalarList): distance(s) of the chord from circle center
+        d (Scalar|ScalarList): distance(s) of the chord from the center
 
     Output:
         o (Scalar|ScalarList): circular segment area
@@ -46,7 +46,7 @@ def circle_circle(
         d (Scalar|ScalarList): distance(s) between the circle centers
         r2A (Scalar|ScalarList): squared radius/ii of the circle A
         r2B (Scalar|ScalarList): squared radius/ii of the circle B
-        d2 (Scalar|ScalarList): squared distance(s) between the circle centers
+        d2 (Scalar|ScalarList): squared distance(s) between the centers
 
     Output:
         o (Scalar|ScalarList): overlapping area/s
@@ -173,7 +173,7 @@ def mean_circle_square_analytic(
     s: Scalar,
 ) -> Scalar:
     """
-    Return the expected value of overlapping area of a circle and a square.
+    Return the mean overlapping area of a circle and a square.
 
     All input parameters can be either an array or a scalar. If one of
     them is an array, the result will be an array of the same size.
@@ -213,10 +213,10 @@ def mean_circle_square_simulation(
     r: Union[Scalar, ScalarList],
     s: Union[Scalar, ScalarList],
     n: int = 1000000,
-    rng: np.random._generator.Generator = np.random.default_rng(0),
+    G: np.random._generator.Generator = np.random.default_rng(0),
 ) -> Union[Scalar, ScalarList]:
     """
-    Return the expected value of overlapping area of a circle and a square.
+    Return the mean overlapping area of a circle and a square.
 
     All input parameters can be either an array or a scalar. If one of
     them is an array, the result will be an array of the same size.
@@ -224,6 +224,8 @@ def mean_circle_square_simulation(
     Input:
         r (Scalar|ScalarList): circle radius/ii
         s (Scalar|ScalarList): square side(s)
+        n (int): number of tested positions
+        G (np.random._generator.Generator): random number generator
 
     Output:
         o (Scalar|ScalarList): mean overlapping area/s
@@ -231,7 +233,7 @@ def mean_circle_square_simulation(
     Complexity:
         O( r.size )
     """
-    x = rng.random(n)*s
-    y = rng.random(n)*s
+    x = G.random(n)*s
+    y = G.random(n)*s
     m = lambda ri, si: circle_square(x, y, ri, ri**2, si).mean()
     return np.vectorize(m)(r, s)
