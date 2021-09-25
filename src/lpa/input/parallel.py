@@ -65,7 +65,7 @@ def average_on_cores(
 def export(
     o: Union[sets.Distribution, sets.Sample],
     **kwargs,
-) -> tuple:
+) -> Optional[tuple]:
     """
     Export a complete pooled analysis of the object o of each core.
 
