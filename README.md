@@ -30,12 +30,12 @@ pip install -U lpa-input
 
 ### Distribution maps
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
 </div>
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0500nm_t020nm_IDBC_S0.svg" alt="RCDD-R IDBC">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/e8440e96ed40d712cf4617009e1117e86617ab48/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0500nm_t020nm_PBCG1_S0.svg" alt="RCDD-R PBCG1">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0500nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0500nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
 </div>
 
 ### Input data files
@@ -80,9 +80,9 @@ pip install -U lpa-input
 ```
 
 ### Spatial analysis
-![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/4a69a406d1e89073dbd3768c10ab3109aedce3ac/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_KKKK.svg)
-![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/4a69a406d1e89073dbd3768c10ab3109aedce3ac/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_gggg.svg)
-![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/4a69a406d1e89073dbd3768c10ab3109aedce3ac/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_circle_1000nm_S0_GaGs.svg)
+![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
+![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
+![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
 
 # Physical aspects
 
