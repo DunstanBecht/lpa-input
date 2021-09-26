@@ -630,8 +630,10 @@ def export(
     if o.g == 'circle':
         rmax *= 2
     expstm = getkwa('expstm', kwargs, str, o.name(fstm, c='stm'))
+    figttl = getkwa('figttl', kwargs, str, o.name(fttl, c='ttl'))
     edgcon = getkwa('edgcon', kwargs, str, 'NEC')
     intrad = getkwa('intrad', kwargs, ScalarList, np.linspace(0, rmax, 200))
+    kwargs['figttl'] = figttl
     kwargs['edgcon'] = edgcon
     # export
     fun = ('KKKK', 'gggg', 'GaGs') # functions to calculate

@@ -109,6 +109,7 @@ def export(
         # optional parameters
         expstm = getkwa('expstm', kwargs, str, c+"_"+o.name('dmgsS', c='stm'))
         figttl = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
+        kwargs['figttl'] = figttl
         kwargs['edgcon'] = edgcon
         # export
         KKKK, gggg, GaGs = master
