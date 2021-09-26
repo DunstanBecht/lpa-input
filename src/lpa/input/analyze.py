@@ -62,7 +62,7 @@ def M(
     r2: ScalarList,
 ) -> ScalarList:
     """
-    Return the value of N corrrected and averaged on the points of A.
+    Return the value of N(a, B, r2) averaged over the points a in A.
 
     The function does not use the notion of dislocation. It allows only
     a spatial analysis of a distribution of points in space.
@@ -122,9 +122,10 @@ def MMMM_cp_cm(
     dislocation in the center of the neighborhood is not counted.
 
     When the parameter ec equals 'NEC' no edge correction is performed.
-    When it equals 'ECW' the results are weighted by edge correction
-    coefficients. When it equals 'ECR' periodic boundary conditions are
-    applied.
+    When it equals 'WOA' the results are weighted by edge correction
+    coefficients. When it equals 'PBC' or 'GBB', corresponding boundary
+    conditions are applied with a rank of replication determined by the
+    maximum value of the neighborhood radius.
 
     Input:
         d (Distribution): distribution of dislocations to analyze
@@ -150,45 +151,42 @@ def MMMM_cp_cm(
     Complexity:
         O( complexity_of(M) )
     """
-    mskroi = geometries.mask(d.g, d.s, d.p) # keep positions in the ROI
-    mskbp = d.b>0 # keep dislocations with sense +
-    mskbm = d.b<0 # keep dislocations with sense -
-    Pp1 = d.p[mskbp & mskroi] # positions of dislocations with sense +
-    Pm1 = d.p[mskbm & mskroi] # positions of dislocations with sense -
-    # edge consideration
-    if ec == 'ECW': # edge correction by weighting
-        Pp2 = Pp1 # positions of observed dislocations with sense +
-        Pm2 = Pm1 # positions of observed dislocations with sense -
-        w = d.w # weighting function for edge correction
+    # masks
+    mskroi = geometries.mask(d.g, d.s, d.p) # the dislocation is in the ROI
+    mskbsp = d.b>0 # the dislocation has a Burgers vector sense +
+    mskbsm = d.b<0 # the dislocation has a Burgers vector sense -
+    # neighbourhood centers
+    Pp1 = d.p[mskbsp & mskroi] # positions is the ROI with sense +
+    Pm1 = d.p[mskbsm & mskroi] # positions is the ROI with sense -
+    # observed position
+    if ec == 'NEC': # no edge correction
+        Pp2 = d.p[mskbsp] # positions with sense +
+        Pm2 = d.p[mskbsm] # positions with sense +
+    elif ec == 'WOA': # weighting by overlapping area
+        Pp2 = Pp1 # observed positions with sense +
+        Pm2 = Pm1 # observed positions with sense -
+    elif ec=='PBC' or ec=='GBB': # apply boundary conditions
+        rep = int(np.ceil(np.max(r)/d.s))
+        cp, cb = d.conditions(ec+str(rep)) # outer dislocations
+        P2 = np.concatenate((d.p, cp)) # observed positions
+        B2 = np.concatenate((d.b, cb)) # observed Burgers vector senses
+        Pp2 = P2[B2>0] # observed positions with sense +
+        Pm2 = P2[B2<0] # observed positions with sense -
+        if ec=='PBC' and r[-1]>=d.s:
+            msg = ("discontinuities of M++ and M-- when using PBC "
+                + "(This is due to the periodic presence of the same "
+                + "dislocation at the same place in the replicated "
+                + "regions. The dislocation is suddenly counted "
+                + "multiple times at radius values corresponding to "
+                + "multiples of d.s, sqrt(2)*d.s etc...)")
+            warnings.warn(msg, Warning)
     else:
-        w = lambda a, r, r2: 1 # weighting function for edge correction
-        Pp2 = d.p[mskbp] # positions of observed dislocations with sense +
-        Pm2 = d.p[mskbm] # positions of observed dislocations with sense -
-        if ec == 'ECR': # edge correction by replication
-            if r[-1] >= d.s:
-                msg = ("presence of discontinuities for M++ and M-- "
-                    +"(When the observed dislocations must have the "
-                    +"same Burgers vector sense as the dislocation "
-                    +"around which the neighborhood is created, one "
-                    +"can see the appearance of discontinuities in "
-                    +"M++ or M--, or peaks in their derivatives. This "
-                    +"is due to the periodic presence of the same "
-                    +"dislocation at the same place in the replicated "
-                    +"regions. Then, the dislocation is counted 4 "
-                    +"times at radius values corresponding to "
-                    +"mulstiples of d.s, sqrt(2)*d.s etc...)")
-                warnings.warn(msg, Warning)
-            if d.g != 'square':
-                raise ValueError("cannot replicate around a circle geometry")
-            if d.c and d.c[:4]!='PBCR':
-                raise ValueError("conditions already applied: "+str(d.c))
-            reprnk = int(np.ceil(np.max(r)/d.s)) # replication rank
-            Pp2rep = boundaries.PBCG(d.s, Pp2, np.array(0), reprnk)[0]
-            Pm2rep = boundaries.PBCG(d.s, Pm2, np.array(0), reprnk)[0]
-            Pp2 = np.concatenate((Pp2, Pp2rep))
-            Pm2 = np.concatenate((Pm2, Pm2rep))
-        elif ec != 'NEC': # no edge correction
-            raise ValueError("invalid edge consideration: "+str(ec))
+        raise ValueError("invalid edge consideration: "+str(ec))
+    # weighting
+    if ec == 'WOA': # no edge correction
+        w = d.w # weighting function
+    else:
+        w = lambda a, r, r2: 1 # weighting function
     # calculate
     Mpp = M(Pp1, Pp2, w, r, r2) # M++
     Mmp = M(Pm1, Pp2, w, r, r2) # M-+
@@ -625,7 +623,7 @@ def export(
         O( complexity_of(calculate) )
     """
     # optional parameters
-    fstm, fttl = 'dmgsS', 'mgsd'
+    fstm, fttl = 'dmgscS', 'mgscd'
     if isinstance(o, sets.Sample):
         fstm, fttl = "n"+fstm, "n"+fttl
     rmax = o.s

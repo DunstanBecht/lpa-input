@@ -97,6 +97,7 @@ def export_distribution(
       **a (Scalar): cell side [nm] (default: 0.40494)
       **a3 (Scalar): step size along Lx [nm] (default: depends on i)
       **nu (Scalar): Poisson's number [1] (default: 0.345)
+      **pbc (int): replications rank (default: 0)
       **expdir (str): export directory (default: '')
       **expfmt (str): export format (default: 'dat')
       **expstm (str): export stem (default: d.name())
@@ -105,6 +106,11 @@ def export_distribution(
         O( len(d) )
     """
     # optional parameters
+    pbc = getkwa('pbc', kwargs, int, 0)
+    if pbc > 0:
+        stmpbc = '_PBC'+str(pbc)
+    else:
+        stmpbc = ''
     g = getkwa('g', kwargs, Vector, np.array([2, 0, 0]))
     b = getkwa('b', kwargs, Vector, np.array([1, 1, 0]))
     l = getkwa('l', kwargs, Vector, dft_l[d.t])
@@ -114,7 +120,7 @@ def export_distribution(
     nu = getkwa('nu', kwargs, Scalar, 0.345)
     expdir = getkwa('expdir', kwargs, str, '')
     expfmt = getkwa('expfmt', kwargs, str, 'dat')
-    expstm = getkwa('expstm', kwargs, str, d.name(c='stm'))
+    expstm = getkwa('expstm', kwargs, str, d.name(c='stm')+stmpbc)
     endkwa(kwargs)
     # parameters
     if d.t == 'screw' and np.linalg.norm(np.cross(l, b)) != 0:
@@ -125,8 +131,8 @@ def export_distribution(
     if d.g == 'circle':
         str_g = "Cylinder radius"
     if d.g == 'square':
-        if d.c and d.c[:4]=='PBCR':
-            str_g = "Square_"+d.c[4:]+" side"
+        if pbc > 0:
+            str_g = "Square_"+str(pbc)+" side"
         else:
             str_g = "Square side"
     # write
@@ -163,8 +169,13 @@ def export_sample(
         O( len(s) * complexity_of(export_distribution) )
     """
     # optional parameters
+    pbc = getkwa('pbc', kwargs, int, 0)
+    if pbc > 0:
+        stmpbc = '_PBC'+str(pbc)
+    else:
+        stmpbc = ''
     expdir = kwargs.pop('expdir', '') # export directory
-    expstm = kwargs.pop('expstm', s.name(c='stm')) # export stem
+    expstm = kwargs.pop('expstm', s.name(c='stm')+stmpbc) # export stem
     # export
     stmdir = os.path.join(expdir, expstm) # folder where to export the files
     w = len(str(len(s))) # number of characters in file names
@@ -179,6 +190,7 @@ def export_sample(
             s.i,
             expdir=stmdir,
             expstm=str(i+1).zfill(w),
+            pbc=pbc,
             **kwargs,
         )
 

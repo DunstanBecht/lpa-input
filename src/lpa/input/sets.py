@@ -15,23 +15,17 @@ class Distribution:
     """
     Represent a distribution of dislocations.
 
-    When the geometry is of type 'circle' the characteristic size is
-    its radius. When it is of type 'square' the characteristic size is
-    its side.
+    When the geometry is of type 'circle' the characteristic size s is
+    its radius. When it is of type 'square' s is its side.
 
     The dislocations can be of type 'screw' or type 'edge'. If the type
     is not specified, type 'screw' is chosen by default.
 
-    For circle geometry, if the parameter c is set to 'IDBC', image
-    dislocations are added to the distribution.
-
-    For square geometry, the parameter c can be set to 'PBCG<r>' or
-    'PBCR<r>' where <r> is the number of replicates of the region of
-    interest around the boundaries. With 'PBCG<r>' the replicated
-    dislocations are added to the distribution. With 'PBCR<r>' the
-    replicated dislocations are not added to the distribution but the
-    X-ray diffraction simulation program is warned to replicate the
-    region of interest.
+    For circle geometries, the parameter c can be set to 'ISD'. For
+    square geometries, it can be set to 'PBC<r>' or 'GBB<r>' where <r>
+    is the rank of replications of the region of interest beyond the
+    boundaries. The dislocations outside the area of ​​interest are then
+    added to the distribution.
 
     Attributes:
         g (str): geometry of the region of interest
@@ -47,7 +41,7 @@ class Distribution:
         i (Scalar): inter dislocation distance [nm]
         c (str|None): boundary conditions
         S (int|None): random seed
-        G (np.random._generator.Generator): random generator
+        G (np.random._generator.Generator): random number generator
     """
 
     @beartype
@@ -100,16 +94,11 @@ class Distribution:
             raise ValueError("the model gives a density equal to 0")
         self.i = 1/np.sqrt(self.d) # inter dislocation distance [nm]
         # boundary conditions
-        if c and (self.g!='square' or c[:4]!='PBCR'):
-            if self.g=='circle' and c=='IDBC':
-                cp, cb = boundaries.IDBC(self.s, self.p, self.b, self.t)
-            elif self.g=='square' and c[:4]=='PBCG':
-                cp, cb = boundaries.PBCG(self.s, self.p, self.b, int(c[4:]))
-            else:
-                raise Exception("invalid boundary conditions: "+str(c))
+        if c:
+            cp, cb = self.conditions(c)
             self.p = np.concatenate((self.p, cp))
             self.b = np.concatenate((self.b, cb))
-        self.c = c # boundary conditions
+        self.c = c # boundary conditions name
 
     @beartype
     def __repr__(self) -> str:
@@ -134,6 +123,41 @@ class Distribution:
     def __len__(self) -> int:
         """Return the number of dislocations in the distribution."""
         return len(self.b)
+
+    @beartype
+    def conditions(self,
+        c: str,
+    ) -> tuple:
+        """
+        Return the dislocations for boundary conditions c.
+
+        Input:
+            c (str): boundary conditions name
+
+        Output:
+            cp (VectorList): outer dislocation positions [nm]
+            cb (ScalarList): outer dislocation Burgers vectors sense [1]
+        """
+        if hasattr(self, 'c') and self.c:
+            raise ValueError("boundary conditions already applied")
+        if c=='ISD' and self.g=='circle' and self.t=='screw':
+            cp = boundaries.image_positions(self.s, self.p)
+            cb = - self.b
+        elif 'PBC' in c and self.g=='square':
+            u = boundaries.replication_displacements(int(c[3:]), self.s)
+            cp = np.concatenate([self.p + u[i] for i in range(len(u))])
+            cb = np.tile(self.b, len(u))
+        elif 'GBB' in c and self.g=='square':
+            u = boundaries.replication_displacements(int(c[3:]), self.s)
+            cp = np.empty((0,2), dtype=self.p.dtype)
+            cb = np.array([], dtype=self.b.dtype)
+            for i in range(len(u)):
+                p, b = self.m(self.g, self.s, self.v, self.r, self.G)
+                cp = np.concatenate((cp, p + u[i]))
+                cb = np.concatenate((cb, b))
+        else:
+            raise Exception("invalid boundary conditions: "+str(c))
+        return cp, cb
 
     @beartype
     def name(self,

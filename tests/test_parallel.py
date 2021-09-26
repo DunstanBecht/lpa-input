@@ -11,11 +11,26 @@ sbatch test_parallel.job
 from lpa.input import parallel
 from test_sets import *
 import warnings
+import time
 
-d = sets.Distribution('square', 2000, *rdd)
-s = sets.Sample(625, 'circle', 1000, *rrdd, S=0+parallel.rank)
+d = sets.Distribution('circle', 1000, *rdd)
+s = sets.Sample(625, 'square', 2000, *rrdd, S=0+parallel.rank)
+r = np.linspace(0, 3000, 200)
 
 # export the pooled statistical analysis of the samples s of each core
 parallel.export(d)
 warnings.filterwarnings("ignore") # (read the warning in the module parallel)
-parallel.export(s, expfmt='svg')
+t1 = time.time()
+parallel.export(s, edgcon='NEC', intrad=r)
+t2 = time.time()
+parallel.export(s, edgcon='WOA', intrad=r)
+t3 = time.time()
+parallel.export(s, edgcon='PBC', intrad=r)
+t4 = time.time()
+parallel.export(s, edgcon='GBB', intrad=r)
+t5 = time.time()
+if parallel.rank == parallel.root:
+    print('NEC', t2-t1)
+    print('WOA', t3-t2)
+    print('PBC', t4-t3)
+    print('GBB', t5-t4)

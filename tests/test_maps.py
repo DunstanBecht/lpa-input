@@ -10,9 +10,9 @@ from test_sets import *
 
 d1 = sets.Distribution('circle', 1000, *rdd, S=0)
 d2 = sets.Distribution('square', 2000, *rrdd, S=0)
-d3 = sets.Distribution('circle', 2000, *rcdd, S=0, c='IDBC')
-d4 = sets.Distribution('square', 2000, *rcdd, S=0, c='PBCG1')
-d5 = sets.Distribution('square', 2000, *rrdd, S=0, c='PBCR2')
+d3 = sets.Distribution('circle', 2000, *rcdd, S=0, c='ISD')
+d4 = sets.Distribution('square', 2000, *rcdd, S=0, c='PBC1')
+d5 = sets.Distribution('square', 2000, *rrdd, S=0, c='GBB1')
 
 # export distribution maps
 maps.export(d1, expfmt='svg')

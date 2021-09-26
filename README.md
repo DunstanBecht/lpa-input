@@ -109,25 +109,22 @@ A sample is a set of distribution and is mainly characterized by:
 
 Some abbreviations are used in the program:
 
-### Models
+### Distribution models
 * `RDD` random dislocation distribution
 * `RRDD` restrictedly random dislocation distribution
 * `RCDD` random cell dislocation distribution
 
-### Model variants
+### Distribution model variants
 * `R` randomly distributed Burgers vectors
 * `E` evenly distributed Burgers vectors
 * `D` dipolar Burgers vectors
 
-### Boundary conditions
-* `PBCG` periodic boundary conditions applied when generating the distribution
-* `PBCR` periodic boundary conditions applied when running the simulation
-* `IDBC` image dislocations boundary conditions
-
-### Edge considerations
+### Boundary conditions and considerations
+* `ISD` image screw dislocations
+* `PBC` periodic boundary conditions
+* `BGG` generation beyond boundaries
 * `NEC` no edge correction
-* `ECW` edge correction by weighting
-* `ECR` edge correction by replication
+* `WOA` weighting by overlapping area
 
 # User guide
 

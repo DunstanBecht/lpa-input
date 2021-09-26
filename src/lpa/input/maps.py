@@ -43,7 +43,7 @@ def export(
     b = d.s * 0.05 # borders width
     s, w = 100, 0.2 # marker size and line width
     # grid
-    if d.m in (models.RRDD, models.RCDD) and (d.c is None or d.c[:4]=='PBCR'):
+    if d.m in (models.RRDD, models.RCDD) and (d.c is None or 'PBCR' in d.c):
         ax.grid(True, zorder=0) # subareas or cells grid
         ticks = models.ticks(d.g, d.s, d.r['s'])
         ax.set_xticks(ticks)
@@ -59,7 +59,7 @@ def export(
         if d.c is None:
             ax.set_xlim([-d.s-b, d.s+b])
             ax.set_ylim([-d.s-b, d.s+b])
-        elif d.c == 'IDBC':
+        elif d.c == 'ISD':
             r = 1.5
             ax.set_xlim([-b-(r+0.5)*2*d.s, b+(r+0.5)*2*d.s])
             ax.set_ylim([-b-(r+0.5)*2*d.s, b+(r+0.5)*2*d.s])
@@ -68,11 +68,11 @@ def export(
             s /= k**2
     else:
         g = plt.Rectangle((0,0), d.s, d.s, color='k', fill=False, zorder=50)
-        if d.c is None:
+        if not d.c:
             ax.set_xlim([-b, d.s+b])
             ax.set_ylim([-b, d.s+b])
-        elif d.c[:4]=='PBCG':
-            r = int(d.c[4:])
+        elif 'PBC' in d.c or 'GBB' in d.c:
+            r = int(d.c[3:])
             ax.set_xlim([-b-r*d.s, d.s+b+r*d.s])
             ax.set_ylim([-b-r*d.s, d.s+b+r*d.s])
             k = 2*r + 1
