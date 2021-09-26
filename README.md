@@ -122,7 +122,7 @@ Some abbreviations are used in the program:
 ### Boundary conditions and considerations
 * `ISD` image screw dislocations
 * `PBC` periodic boundary conditions
-* `BGG` generation beyond boundaries
+* `GBB` generation beyond boundaries
 * `NEC` no edge correction
 * `WOA` weighting by overlapping area
 
