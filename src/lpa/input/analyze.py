@@ -165,6 +165,19 @@ def MMMM_cp_cm(
         Pp2 = d.p[mskbp] # positions of observed dislocations with sense +
         Pm2 = d.p[mskbm] # positions of observed dislocations with sense -
         if ec == 'ECR': # edge correction by replication
+            if r[-1] >= d.s:
+                msg = ("presence of discontinuities for M++ and M-- "
+                    +"(When the observed dislocations must have the "
+                    +"same Burgers vector sense as the dislocation "
+                    +"around which the neighborhood is created, one "
+                    +"can see the appearance of discontinuities in "
+                    +"M++ or M--, or peaks in their derivatives. This "
+                    +"is due to the periodic presence of the same "
+                    +"dislocation at the same place in the replicated "
+                    +"regions. Then, the dislocation is counted 4 "
+                    +"times at radius values corresponding to "
+                    +"mulstiples of d.s, sqrt(2)*d.s etc...)")
+                warnings.warn(msg, Warning)
             if d.g != 'square':
                 raise ValueError("cannot replicate around a circle geometry")
             if d.c and d.c[:4]!='PBCR':

@@ -11,7 +11,6 @@ comm = MPI.COMM_WORLD
 rank = comm.Get_rank() # number of the processor executing this script
 size = comm.Get_size() # number of processors
 root = 0 # master processor
-import warnings
 from . import *
 from . import sets
 from . import analyze
