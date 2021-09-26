@@ -96,7 +96,10 @@ def circle_circle(
             2,
             where=m),
         where=m)
-    return np.where(mA, np.pi*r2A, np.where(mB, np.pi*r2B, o))
+    o = np.where(mA, np.pi*r2A, o)
+    o = np.where(mB, np.pi*r2B, o)
+    o = np.where(m0, 0, o)
+    return o
 
 @beartype
 def circle_square(
