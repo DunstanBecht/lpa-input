@@ -17,7 +17,7 @@ KKKK, GaGs = analyze.calculate(['KKKK', 'GaGs'], d, r, ec='NEC')
 gggg, MMMM = analyze.calculate(['gggg', 'MMMM'], s, r)
 
 # export a complete statistical analysis of a distribution or a sample
-analyze.export(d, expdir='analyses/', expstm='stem')
+analyze.export(d, expdir='analyses/', expstm='stem', savtxt=True)
 analyze.export(s, expdir='analyses', figttl='title', intrad=r)
 analyze.export(s, expdir='analyses', figttl='title', edgcon='WOA')
 analyze.export(s, expdir='analyses', figttl='title', edgcon='PBC')

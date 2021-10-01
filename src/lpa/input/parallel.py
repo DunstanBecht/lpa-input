@@ -78,6 +78,7 @@ def export(
       **figttl (str): figure title (default: o.name(fttl, c='ttl'))
       **edgcon (str): edge consideration (default: 'NEC')
       **intrad (ScalarList): interval of radii [nm] (default: ROI size)
+      **savtxt (bool): save data to text files (default: False)
 
     Output:
         r (ScalarList): radius of the neighborhoods [nm]
@@ -109,6 +110,7 @@ def export(
         # optional parameters
         expstm = getkwa('expstm', kwargs, str, c+"_"+o.name('dmgsS', c='stm'))
         figttl = getkwa('title', kwargs, str, c+" "+o.name('mgsd', c='ttl'))
+        savtxt = getkwa('savtxt', kwargs, bool, False)
         kwargs['figttl'] = figttl
         kwargs['edgcon'] = edgcon
         # export
@@ -119,4 +121,10 @@ def export(
         analyze.plot_KKKK(intrad, KKKK, **kwargs, expstm=KKKKstm)
         analyze.plot_gggg(intrad, gggg, **kwargs, expstm=ggggstm)
         analyze.plot_GaGs(intrad, GaGs, **kwargs, expstm=GaGsstm)
+        if savtxt:
+            pth = kwargs.get('expdir', '')
+            np.savetxt(os.path.join(pth, expstm+"_radii.txt"), intrad)
+            np.savetxt(os.path.join(pth, KKKKstm+'.txt'), KKKK)
+            np.savetxt(os.path.join(pth, ggggstm+'.txt'), gggg)
+            np.savetxt(os.path.join(pth, GaGsstm+'.txt'), GaGs)
         return intrad, KKKK, gggg, GaGs

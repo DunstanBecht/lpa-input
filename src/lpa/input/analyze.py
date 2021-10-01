@@ -612,6 +612,7 @@ def export(
       **figttl (str): figure title (default: o.name(fttl, c='ttl'))
       **edgcon (str): edge consideration (default: 'NEC')
       **intrad (ScalarList): interval of radii [nm] (default: ROI size)
+      **savtxt (bool): save data to text files (default: False)
 
     Output:
         r (ScalarList): radius of the neighborhoods [nm]
@@ -633,12 +634,22 @@ def export(
     figttl = getkwa('figttl', kwargs, str, o.name(fttl, c='ttl'))
     edgcon = getkwa('edgcon', kwargs, str, 'NEC')
     intrad = getkwa('intrad', kwargs, ScalarList, np.linspace(0, rmax, 200))
+    savtxt = getkwa('savtxt', kwargs, bool, False)
     kwargs['figttl'] = figttl
     kwargs['edgcon'] = edgcon
     # export
     fun = ('KKKK', 'gggg', 'GaGs') # functions to calculate
     KKKK, gggg, GaGs = calculate(fun, o, intrad, ec=edgcon) # function results
-    plot_KKKK(intrad, KKKK, **kwargs, expstm=expstm+"_KKKK_"+edgcon)
-    plot_gggg(intrad, gggg, **kwargs, expstm=expstm+"_gggg_"+edgcon)
-    plot_GaGs(intrad, GaGs, **kwargs, expstm=expstm+"_GaGs_"+edgcon)
+    KKKKstm = expstm+"_KKKK_"+edgcon
+    ggggstm = expstm+"_gggg_"+edgcon
+    GaGsstm = expstm+"_GaGs_"+edgcon
+    plot_KKKK(intrad, KKKK, **kwargs, expstm=KKKKstm)
+    plot_gggg(intrad, gggg, **kwargs, expstm=ggggstm)
+    plot_GaGs(intrad, GaGs, **kwargs, expstm=GaGsstm)
+    if savtxt:
+        pth = kwargs.get('expdir', '')
+        np.savetxt(os.path.join(pth, expstm+"_radii.txt"), intrad)
+        np.savetxt(os.path.join(pth, KKKKstm+'.txt'), KKKK)
+        np.savetxt(os.path.join(pth, ggggstm+'.txt'), gggg)
+        np.savetxt(os.path.join(pth, GaGsstm+'.txt'), GaGs)
     return intrad, KKKK, gggg, GaGs
