@@ -8,12 +8,12 @@ Script to test the module boundaries.
 from lpa.input import boundaries
 import numpy as np
 
-# image screw dislocation positions
+print("Image screw dislocation positions")
 p = np.array([[1, 0], [0, 0]])
 print(boundaries.image_positions(2, p))
 print()
 
-# displacements for replications
+print("Displacements for replications")
 print(boundaries.replication_displacements(1, 2))
 print()
 

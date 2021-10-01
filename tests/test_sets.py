@@ -22,7 +22,7 @@ if __name__ == "__main__":
     s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='ISD', S=0)
     s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='GBB1', S=0)
 
-    # get stem string
+    print("Stem string")
     print(d_rcdd.name(c='stm', f='dgsmtcS'))
     print(d_rcdd.name(c='stm', f='dgsmtc'))
     print(d_rcdd.name(c='stm', f='dgsmt'))
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     print(d_rcdd.name(c='stm', f='d'))
     print()
 
-    # get title string
+    print("Title string")
     print(d_rdd.name(c='ttl', f='mtcS'))
     print(d_rdd.name(c='ttl', f='mtc'))
     print(d_rdd.name(c='ttl', f='mt'))
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print(d_rdd.name(c='ttl', f='d'))
     print()
 
-    # get console string
+    print("Console string")
     print(s_rcdd.name(c='csl', f='ndgsmtcS'))
     print(s_rcdd.name(c='csl', f='ndgsmtc'))
     print(s_rcdd.name(c='csl', f='ndgsmt'))
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     print(s_rcdd.name(c='csl', f='nd'))
     print()
 
-    # evaluate a representation
+    print("Evaluate a representation")
     print(repr(d_rdd))
     print(repr(eval('sets.'+repr(d_rdd).replace("RDD","models.RDD"))))
     print(repr(d_rrdd))
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print(repr(eval('sets.'+repr(s_rcdd).replace("RCDD","models.RCDD"))))
     print()
 
-    # print the object
+    print("Print object")
     print(d_rdd)
     print(d_rrdd)
     print(d_rcdd)
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     print(s_rcdd)
     print()
 
-    # average over a sample
+    print("Average over a sample")
     v = lambda dist: dist.v
     print(str(s_rdd.average(v)))
     print(str(s_rrdd.average(v)))
