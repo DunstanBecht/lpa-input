@@ -171,6 +171,33 @@ def circle_square(
 
 @np.vectorize
 @beartype
+def mean_circle_circle_analytic(
+    r: Scalar,
+    R: Scalar,
+) -> Scalar:
+    """
+    Return the mean overlapping area of two circles.
+
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle 1 radius/ii
+        R (Scalar|ScalarList): circle 2 radius/ii
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    r2 = r**2
+    R2 = R**2
+    f = lambda x: circle_circle(r, R, R*np.sqrt(x), r2, R2, R2*x)
+    return scipy.integrate.quad(f, 0, 1)[0]
+
+@np.vectorize
+@beartype
 def mean_circle_square_analytic(
     r: Scalar,
     s: Scalar,
@@ -210,6 +237,36 @@ def mean_circle_square_analytic(
         return np.pi*r**2 - 4*(2*E12+E3)
     else:
         return s**2
+
+@beartype
+def mean_circle_circle_simulation(
+    r: Union[Scalar, ScalarList],
+    R: Union[Scalar, ScalarList],
+    n: int = 1000000,
+    G: np.random._generator.Generator = np.random.default_rng(0),
+) -> Union[Scalar, ScalarList]:
+    """
+    Return the mean overlapping area of two circles.
+
+    Input parameters r and R can be either an array or a scalar. If one
+    of them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle 1 radius/ii
+        R (Scalar|ScalarList): circle 2 radius/ii
+        n (int): number of tested positions
+        G (np.random._generator.Generator): random number generator
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    d = R*np.sqrt(G.random(n))
+    d2 = d**2
+    m = lambda r, R: circle_circle(r, R, d, r**2, R**2, d2).mean()
+    return np.vectorize(m)(r, R)
 
 @beartype
 def mean_circle_square_simulation(
