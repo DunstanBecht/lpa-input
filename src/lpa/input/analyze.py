@@ -334,6 +334,8 @@ def GaGs_dMMMM(
     Complexity:
         O( len(MMMM) )
     """
+    dr[0] = np.nan # mask first value because of zero or wrong gradient
+    dr[-1] = np.nan # mask last value because of wrong gradient
     dMMMM = np.gradient(MMMM, axis=1) # differentials of MMMM
     dMppdr, dMmpdr, dMpmdr, dMmmdr = dMMMM/dr # derivatives of MMMM
     Ga = cp*(dMppdr-dMpmdr) + cm*(dMmmdr-dMmpdr) # antisymmetrical function
