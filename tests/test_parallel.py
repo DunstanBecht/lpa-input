@@ -14,7 +14,7 @@ import warnings
 import time
 
 d = sets.Distribution('circle', 1000, *rdd)
-s = sets.Sample(625, 'square', 2000, *rrdd, S=0+parallel.rank)
+s = sets.Sample(1250, 'square', 2000, *rrdd, S=0+parallel.rank)
 r = np.linspace(0, 3000, 200)
 
 # export the pooled statistical analysis of the samples s of each core
