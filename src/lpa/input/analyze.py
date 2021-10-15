@@ -46,12 +46,13 @@ def N(
     """
     d2 = np.sum(np.square(np.subtract(B, a)), axis=1) # squared distances to a
     d2 = np.sort(d2[(d2<=r2[-1]) & (d2>0)]) # sorted and filtered sqrd. dist.
-    j, dn = 0, np.zeros(len(r2), dtype=np.int64)
-    for i in range(len(d2)):
-        while d2[i]>r2[j]:
-            j += 1
-        dn[j] += 1
-    return np.cumsum(dn)
+    j = 0 # index to browse the neighborhood radii
+    dn = np.zeros(len(r2), dtype=np.int64) # differential of n
+    for i in range(len(d2)): # browse the observed points
+        while d2[i]>r2[j]: # as long as the point is beyond the current radius
+            j += 1 # take the following radius
+        dn[j] += 1 # when the point is in the neighborhood, it is counted
+    return np.cumsum(dn) # cumulative sum of differentials
 
 @beartype
 def M(
@@ -90,9 +91,9 @@ def M(
     Complexity:
         O( len(A) * (complexity_of(w)+complexity_of(N)) )
     """
-    sumN = np.zeros(len(r))
-    sumw = np.zeros(len(r))
-    for i in range(len(A)):
+    sumN = np.zeros(len(r)) # sum of the results of N
+    sumw = np.zeros(len(r)) # weight sum
+    for i in range(len(A)): # browse the center points of the neighborhoods
         sumN += N(A[i], B, r2)
         sumw += w(A[i], r, r2)
     return sumN/sumw
@@ -166,7 +167,7 @@ def MMMM_cp_cm(
         Pp2 = Pp1 # observed positions with sense +
         Pm2 = Pm1 # observed positions with sense -
     elif ec=='PBC' or ec=='GBB': # apply boundary conditions
-        rep = int(np.ceil(np.max(r)/d.s))
+        rep = int(np.ceil(np.max(r)/d.s)) # replication rank
         cp, cb = d.conditions(ec+str(rep)) # outer dislocations
         P2 = np.concatenate((d.p, cp)) # observed positions
         B2 = np.concatenate((d.b, cb)) # observed Burgers vector senses
@@ -174,14 +175,14 @@ def MMMM_cp_cm(
         Pm2 = P2[B2<0] # observed positions with sense -
         if ec=='PBC' and r[-1]>=d.s:
             msg = ("discontinuities of M++ and M-- when using PBC "
-                + "(This is due to the periodic presence of the same "
-                + "dislocation at the same place in the replicated "
-                + "regions. The dislocation is suddenly counted "
-                + "multiple times at radius values corresponding to "
-                + "multiples of d.s, sqrt(2)*d.s etc...)")
+                   "(This is due to the periodic presence of the same "
+                   "dislocation at the same place in the replicated "
+                   "regions. The dislocation is suddenly counted "
+                   "multiple times at radius values corresponding to "
+                   "multiples of d.s, sqrt(2)*d.s etc...)")
             warnings.warn(msg, Warning)
     else:
-        raise ValueError("invalid edge consideration: "+str(ec))
+        raise ValueError(f"invalid edge consideration: {ec}")
     # weighting
     if ec == 'WOA': # no edge correction
         w = d.w # weighting function
@@ -473,15 +474,16 @@ def plot_KKKK(
     fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
     fig.suptitle(figttl, fontsize=16)
     # ax1
-    ax1.plot(r, KKKK[0], label=r"$K_{++}^{"+edgcon+r"}(r)$")
-    ax1.plot(r, KKKK[1], label=r"$K_{-+}^{"+edgcon+r"}(r)$")
+    ax1.plot(r, KKKK[0], label=fr"$K_{{++}}^{{ {edgcon} }}(r)$")
+    ax1.plot(r, KKKK[1], label=fr"$K_{{-+}}^{{ {edgcon} }}(r)$")
     ax1.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $", color='black')
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
+    ax1.set_ylabel(r"$(nm^2)$")
     # ax2
-    ax2.plot(r, KKKK[3], label=r"$K_{--}^{"+edgcon+r"}(r)$")
-    ax2.plot(r, KKKK[2], label=r"$K_{+-}^{"+edgcon+r"}(r)$")
+    ax2.plot(r, KKKK[3], label=fr"$K_{{--}}^{{ {edgcon} }}(r)$")
+    ax2.plot(r, KKKK[2], label=fr"$K_{{+-}}^{{ {edgcon} }}(r)$")
     ax2.plot(r_compare, k_compare, "*", label=r"$ \pi r^2 $", color='black')
     ax2.legend()
     ax2.grid()
@@ -528,16 +530,16 @@ def plot_gggg(
     ymin = np.min(masked) - margin
     ymax = np.max(masked) + margin
     # ax1
-    ax1.plot(r, gggg[0], label=r"$g_{++}^{"+edgcon+r"}(r)$")
-    ax1.plot(r, gggg[1], label=r"$g_{-+}^{"+edgcon+r"}(r)$")
+    ax1.plot(r, gggg[0], label=fr"$g_{{++}}^{{ {edgcon} }}(r)$")
+    ax1.plot(r, gggg[1], label=fr"$g_{{-+}}^{{ {edgcon} }}(r)$")
     ax1.hlines(1, r[0], r[-1], label=r"$1$", color='black')
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
     ax1.set_ylim(ymin, ymax)
     # ax2
-    ax2.plot(r, gggg[3], label=r"$g_{--}^{"+edgcon+r"}(r)$")
-    ax2.plot(r, gggg[2], label=r"$g_{+-}^{"+edgcon+r"}(r)$")
+    ax2.plot(r, gggg[3], label=fr"$g_{{--}}^{{ {edgcon} }}(r)$")
+    ax2.plot(r, gggg[2], label=fr"$g_{{+-}}^{{ {edgcon} }}(r)$")
     ax2.hlines(1, r[0], r[-1], label=r"$1$", color='black')
     ax2.legend()
     ax2.grid()
@@ -582,17 +584,19 @@ def plot_GaGs(
     masked = np.ma.masked_invalid(GaGs)
     # ax1
     marg1 = max(np.ptp(masked[0])*0.05, 0.1)
-    ax1.plot(r, GaGs[0], label=r"$G_A^{"+edgcon+r"}(r)$")
+    ax1.plot(r, GaGs[0], label=fr"$G_A^{{ {edgcon} }}(r)$")
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel(r"$r \ (nm)$")
+    ax1.set_ylabel(r"$(nm^{-1})$")
     ax1.set_ylim(np.min(masked[0])-marg1, np.max(masked[0])+marg1)
     # ax2
     marg2 = max(np.ptp(masked[1])*0.05, 0.1)
-    ax2.plot(r, GaGs[1], label=r"$G_S^{"+edgcon+r"}(r)$")
+    ax2.plot(r, GaGs[1], label=fr"$G_S^{{ {edgcon} }}(r)$")
     ax2.legend()
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
+    ax2.set_ylabel(r"$(nm^{-1})$")
     ax2.set_ylim(np.min(masked[1])-marg2, np.max(masked[1])+marg2)
     # export
     plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)

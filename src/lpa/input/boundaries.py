@@ -42,8 +42,7 @@ def image_positions(
     v = p[m] # points different from (0, 0)
     t = np.arctan2(v[:,1], v[:,0]) # angles of the image dislocations
     r = s**2/n[m] # radii of the image dislocations
-    cp = np.stack((r*np.cos(t), r*np.sin(t)), axis=1) # image positions
-    return cp
+    return np.stack((r*np.cos(t), r*np.sin(t)), axis=1) # image positions
 
 @beartype
 def replication_displacements(

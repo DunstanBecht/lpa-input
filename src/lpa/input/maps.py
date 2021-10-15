@@ -43,7 +43,7 @@ def export(
     b = d.s * 0.05 # borders width
     s, w = 100, 0.2 # marker size and line width
     # grid
-    if d.m in (models.RRDD, models.RCDD) and (d.c is None or 'PBCR' in d.c):
+    if d.m in (models.RRDD, models.RCDD) and d.c is None:
         ax.grid(True, zorder=0) # subareas or cells grid
         ticks = models.ticks(d.g, d.s, d.r['s'])
         ax.set_xticks(ticks)

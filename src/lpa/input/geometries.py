@@ -28,7 +28,7 @@ def nvolume(
     elif g == 'square':
         return 2, s**2
     else:
-        raise ValueError("unknown geometry: "+str(g))
+        raise ValueError(f"unknown geometry: {g}")
 
 @beartype
 def mask(
@@ -52,4 +52,4 @@ def mask(
     elif g == 'square':
         return (p[:,0]<s) & (p[:,1]<s) & (p[:,0]>0) & (p[:,1]>0)
     else:
-        raise ValueError("unknown geometry: "+str(g))
+        raise ValueError(f"unknown geometry: {g}")

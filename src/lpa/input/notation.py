@@ -36,9 +36,9 @@ def number(
         elif c == 'csl':
             s = format(s, '>'+str(w)) # fill with spaces
     elif c == 'ttl': # LaTeX scientific notation
-        s = format(x, '1.'+str(max(w-6, 0))+'e')
+        s = format(x, f'1.{max(w-6, 0)}e')
         m, e = s.split("e") # separate mantissa and exponent
-        s = "$ "+m+" \\times 10^{"+str(int(e))+"} $"
+        s = fr"$ {m} \times 10^{{ {int(e)} }} $"
     elif c in ('stm', 'csl'): # scientific notation with 'e'
         s = format(x, '1.0e').replace("+", "")
         s = s.replace("e0", "e").replace("e-0", "e-")
@@ -50,11 +50,10 @@ def number(
                 else:
                     s = s.replace("e", "e0")
             else:
-                fmt = '1.'+str(d-1)+'e'
-                s = format(x, fmt)
+                s = format(x, f'1.{d-1}e')
                 s = s.replace("+", "").replace("e0", "e").replace("e-0", "e-")
     else:
-        raise ValueError("unknown context: "+str(c))
+        raise ValueError(f"unknown context: {c}")
     return s
 
 @beartype
@@ -73,7 +72,7 @@ def unit(
         s (str): notation of x
     """
     if c == 'ttl':
-        return "$ \mathrm{"+x+"} $"
+        return fr"$ \mathrm{{ {x} }} $"
     else:
         return x.replace("{", "").replace("}", "").replace("^", "")
 
@@ -101,7 +100,7 @@ def quantity(
     if c == 'ttl':
         val = val.replace(r"$", "").strip()
         uni = uni.replace(r"$", "").strip()
-        return "$ "+val+" "+uni+" $"
+        return fr"$ {val} {uni} $"
     else:
         return val+uni
 
@@ -125,7 +124,7 @@ def equality(
     if c == 'ttl':
         a = a.replace(r"$", "").strip()
         b = b.replace(r"$", "").strip()
-        return r"$ "+a+" = "+b+" $"
+        return fr"$ {a} = {b} $"
     else:
         a = a.replace("\\", "")
         if c == 'csl':
@@ -140,7 +139,7 @@ def parameters(
     s: bool = True,
 ) -> str:
     """
-    Return the notation descibing the model parameters set r.
+    Return the notation describing the model parameters set r.
 
     Input:
         r (dict): model parameters
@@ -175,11 +174,11 @@ def parameters(
             n += "_"+"_".join(p)
         elif c == 'ttl':
             p = [q.replace("$", "").strip() for q in p]
-            n += r" $ \left( "+", \ ".join(p)+r" \right) $"
+            n += r" $ \left( "+r", \ ".join(p)+r" \right) $"
         elif c == 'csl':
-            n += " ("+" ".join(p)+")"
+            n += f" ({' '.join(p)})"
         else:
-            raise ValueError("unknown context "+str(c))
+            raise ValueError(f"unknown context {c}")
     return n
 
 @beartype

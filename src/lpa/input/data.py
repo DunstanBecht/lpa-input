@@ -10,22 +10,6 @@ from . import *
 from . import sets
 
 @beartype
-def indices(
-    v: Vector
-) -> str:
-    """
-    Return the formated string of Miller indices of v.
-
-    Input:
-        v (Vector): Miller indices
-
-    Output:
-        s (str): formated string of Miller indices
-    """
-    sep, fmt = " ", '2.0f'
-    return sep.join([format(c, fmt) for c in v])
-
-@beartype
 def contrast_factor(
     t: str,
     g: Vector,
@@ -123,32 +107,33 @@ def export_distribution(
     expstm = getkwa('expstm', kwargs, str, d.name(c='stm')+stmpbc)
     endkwa(kwargs)
     # parameters
-    if d.t == 'screw' and np.linalg.norm(np.cross(l, b)) != 0:
+    if d.t=='screw' and np.linalg.norm(np.cross(l, b))!=0:
         raise ValueError("screw type but l and b not parallel")
-    elif d.t == 'edge' and np.dot(l, b) != 0:
+    elif d.t=='edge' and np.dot(l, b)!=0:
         raise ValueError("edge type but l and b not perpendicular")
     C = contrast_factor(d.t, g, l, b, nu)
     if d.g == 'circle':
         str_g = "Cylinder radius"
     if d.g == 'square':
         if pbc > 0:
-            str_g = "Square_"+str(pbc)+" side"
+            str_g = f"Square_{pbc} side"
         else:
             str_g = "Square side"
     # write
+    indices = lambda v: " ".join([format(c, '2.0f') for c in v])
     with open(os.path.join(expdir, expstm+"."+expfmt), "w") as f:
-        h = ("# please keep the structure of this file unchanged\n"
-            + indices(l)+" # z: direction of 'l' (line vector) [uvw]\n"
-            + indices(L)+" # x: direction of 'L' (Fourier variable) [uvw]\n"
-            + indices(b)+" # b: Burgers vector direction [uvw]\n"
-            + indices(g)+" # g: diffraction vector direction (hkl)\n"
-            + format(C,      '8.6f')+" # C: contrast coefficient [1]\n"
-            + format(a,      '8.6f')+" # a: cell parameter [nm]\n"
-            + format(d.s,    '8.0f')+" # s: "+str_g+" [nm]\n"
-            + format(a3,     '8.1f')+" # a3: step size of 'L' along x [nm]\n"
-            + format(nu,     '8.3f')+" # nu: Poisson's number [1]\n"
-            + format(len(d), '8.0f')+" # number of dislocations\n"
-            + "# Burgers vector and dislocation (x,y) coordinates\n")
+        h = (f"# please keep the structure of this file unchanged\n"
+             f"{indices(l)} # z: direction of 'l' (line vector) [uvw]\n"
+             f"{indices(L)} # x: direction of 'L' (Fourier variable) [uvw]\n"
+             f"{indices(b)} # b: Burgers vector direction [uvw]\n"
+             f"{indices(g)} # g: diffraction vector direction (hkl)\n"
+             f"{C:8.6f} # C: contrast coefficient [1]\n"
+             f"{a:8.6f} # a: cell parameter [nm]\n"
+             f"{d.s:8.0f} # s: {str_g} [nm]\n"
+             f"{a3:8.1f} # a3: step size of 'L' along x [nm]\n"
+             f"{nu:8.3f} # nu: Poisson's number [1]\n"
+             f"{len(d):8.0f} # number of dislocations\n"
+             f"# Burgers vector and dislocation (x,y) coordinates\n")
         f.write(h)
         fmt = "%2.0f %22.15E %22.15E"
         np.savetxt(f, np.stack((d.b, d.p[:,0], d.p[:,1])).T, fmt=fmt)
@@ -159,7 +144,7 @@ def export_sample(
     **kwargs,
 ) -> None:
     """
-    Export a standardized input data file for each distributions of s.
+    Export a standardized input data file for each distribution in s.
 
     Input:
         s (Sample): sample of distributions to be exported
@@ -174,23 +159,23 @@ def export_sample(
         stmpbc = '_PBC'+str(pbc)
     else:
         stmpbc = ''
-    expdir = kwargs.pop('expdir', '') # export directory
-    expstm = kwargs.pop('expstm', s.name(c='stm')+stmpbc) # export stem
+    expdir = getkwa('expdir', kwargs, str, '')
+    expstm = getkwa('expstm', kwargs, str, s.name(c='stm')+stmpbc)
     # export
     stmdir = os.path.join(expdir, expstm) # folder where to export the files
     w = len(str(len(s))) # number of characters in file names
-    if os.path.exists(stmdir):
-        for f in os.listdir(stmdir):
+    if os.path.exists(stmdir): # if the sample already exists
+        for f in os.listdir(stmdir): # browse the distributions
             os.remove(os.path.join(stmdir, f)) # delete the existing
-    else:
-        os.mkdir(stmdir)
-    for i in range(len(s)):
+    else: # if the sample does not exists
+        os.mkdir(stmdir) # create the folder
+    for i in range(len(s)): # export the distribution files
         export_distribution(
-            s[i],
-            s.i,
-            expdir=stmdir,
-            expstm=str(i+1).zfill(w),
-            pbc=pbc,
+            s[i], # ith distribution
+            s.i, # average interdislocation distance
+            expdir=stmdir, # export directory
+            expstm=str(i+1).zfill(w), # export stem
+            pbc=pbc, # periodic boundary conditions
             **kwargs,
         )
 

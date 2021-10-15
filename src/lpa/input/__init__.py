@@ -11,7 +11,7 @@ is a set of distributions generated with the same model.
 
 A distribution can be exported as a map showing the location of its
 dislocations. It can also be exported in a standardized form for input
-to an X-ray diffraction simulation program. Finally it is possible to
+to an X-ray diffraction simulation program. Finally, it is possible to
 make a spatial analysis of a model by means of statistical functions
 on a sample of distributions.
 
@@ -88,12 +88,12 @@ def getkwa(
     Output:
         val (Any): value of the keyword argument
     """
-    val = kwa.pop(key, dft)
-    if get_origin(typ) == Union:
-        typ = get_args(typ)
-    if not isinstance(val, typ):
-        msg = ("keyword argument '"+key+"' must be of type "+str(typ)
-            + " but "+str(type(val))+" given")
+    val = kwa.pop(key, dft) # get the argument or its default value
+    if get_origin(typ) == Union: # if the type is a union of types
+        typ = get_args(typ) # get the accepted types
+    if not isinstance(val, typ): # if the type is not correct
+        msg = (f"keyword argument {key!r} must be of type {typ.__name__!r} "
+               f"but {val!r} is of type {type(val).__name__!r}")
         raise TypeError(msg)
     return val
 
@@ -106,7 +106,6 @@ def endkwa(
     Input:
         kwa (dict): keyword arguments dictionary
     """
-    if len(kwa) > 0:
-        msg = ("unexpected keyword argument(s): "
-            + ", ".join([repr(key) for key in kwa]))
+    if len(kwa) > 0: # if there are still keyword arguments after recovery
+        msg = "unexpected keyword argument: {!r}={!r}".format(*kwa.popitem())
         raise TypeError(msg)

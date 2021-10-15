@@ -32,15 +32,15 @@ class Distribution:
         s (Scalar): size of the region of interest [nm]
         n (int): dimension of space in the region of interest
         v (Scalar): n-volume of the region of interest [nm^n]
-        m (GenerationFunction): model generation function
-        r (dict): model parameters
+        m (GenerationFunction): distribution model generation function
+        r (dict): distribution model parameters
         t (str): dislocation type
         p (VectorList): dislocation positions [nm]
         b (ScalarList): dislocation Burgers vector senses [1]
         d (Scalar): dislocation density [nm^-n]
         i (Scalar): inter dislocation distance [nm]
-        c (str|None): boundary conditions
-        S (int|None): random seed
+        c (NoneType|str): boundary conditions
+        S (NoneType|int): random seed
         G (np.random._generator.Generator): random number generator
     """
 
@@ -61,8 +61,8 @@ class Distribution:
         Input:
             g (str): geometry of the region of interest
             s (Scalar): size of the region of interest [nm]
-            m (GenerationFunction): model generation function
-            r (dict): model parameters
+            m (GenerationFunction): distribution model generation function
+            r (dict): distribution model parameters
             t (str): dislocation type
             c (NoneType|str): boundary conditions
             S (NoneType|int): random seed
@@ -73,7 +73,7 @@ class Distribution:
         """
         # shape
         if s <= 0:
-            raise ValueError("incorrect size: "+str(s))
+            raise ValueError(f"incorrect size: {s}")
         self.s = s # characteristic size of the region of interest [nm]
         self.g = g # geometry of the region of interest
         self.n, self.v = geometries.nvolume(g, s) # dimension and n-volume
@@ -112,7 +112,7 @@ class Distribution:
             repr(self.c), # bondary conditions
             repr(self.S), # random seed
         )
-        return self.__class__.__name__+"("+", ".join(args)+")"
+        return f"{self.__class__.__name__}({', '.join(args)})"
 
     @beartype
     def __str__(self) -> str:
@@ -156,7 +156,7 @@ class Distribution:
                 cp = np.concatenate((cp, p + u[i]))
                 cb = np.concatenate((cb, b))
         else:
-            raise Exception("invalid boundary conditions: "+str(c))
+            raise Exception(f"invalid boundary conditions: {c}")
         return cp, cb
 
     @beartype
@@ -184,7 +184,7 @@ class Distribution:
             n: number of dislocations
             S: random seed
         """
-        rho = notation.quantity(self.d*1e9**self.n, "m^{-"+str(self.n)+"}", c)
+        rho = notation.quantity(self.d*1e9**self.n, f"m^{{-{self.n}}}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,
@@ -248,18 +248,18 @@ class Sample:
     averaged over all the generated distributions.
 
     Attributes:
-        l (Tuple[Distribution, ...]): generated distributions
+        l (tuple): generated distributions
         g (str): geometry of the region of interest
         s (Scalar): size of the region of interest [nm]
         n (int): dimension of space in the region of interest
         v (Scalar): n-volume of the region of interest [nm^n]
-        m (GenerationFunction): model generation function
-        r (dict): model parameters
+        m (GenerationFunction): distribution model generation function
+        r (dict): distribution model parameters
         t (str): dislocation type
         d (Scalar): averaged dislocation density [nm^-n]
         i (Scalar): averaged inter dislocation distance [nm]
-        c (str|None): boundary conditions
-        S (int|None): random seed
+        c (NoneType|str): boundary conditions
+        S (NoneType|int): random seed
         G (np.random._generator.Generator): random generator
     """
 
@@ -295,7 +295,7 @@ class Sample:
         self.S = S # random seed
         args = (g, s, m, r, t, c, None, self.G) # distribution arguments
         if n <= 0:
-            raise ValueError("incorrect number of distribution: "+str(n))
+            raise ValueError(f"incorrect number of distribution: {n}")
         self.l = tuple([Distribution(*args) for i in range(n)])
         self.g = g # geometry of the region of interest
         self.s = s # size of the region of interest [nm]
@@ -321,7 +321,7 @@ class Sample:
             repr(self.c), # boundary conditions
             repr(self.S), # random seed
         )
-        return self.__class__.__name__+"("+", ".join(args)+")"
+        return f"{self.__class__.__name__}({', '.join(args)})"
 
     @beartype
     def __str__(self) -> str:
@@ -360,10 +360,10 @@ class Sample:
             m: model and its parameters
             t: dislocation type
             c: boundary conditions
-            n: number of generated distribution
+            n: number of distributions generated
             S: random seed
         """
-        rho = notation.quantity(self.d*1e9**self.n, "m^{-"+str(self.n)+"}", c)
+        rho = notation.quantity(self.d*1e9**self.n, f"m^{{-{self.n}}}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,

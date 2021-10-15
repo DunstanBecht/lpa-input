@@ -87,11 +87,11 @@ def export(
         GaGs (ScalarListList): stacked Ga and Gs values [m^-1]
     """
     if rank==root and not o.S is None:
-        msg = ("chosen random seed detected on "+o.name('stm')+" "
-            + "(The use of a seed is not recommended. In order for "
-            + "the distributions or samples not to be identical from "
-            + "one core to another, the seed must not be identical "
-            + "from one core to another.")
+        msg = (f"chosen random seed detected on {o.name('stm')} "
+               f"(The use of a seed is not recommended. In order for "
+               f"the distributions or samples not to be identical "
+               f"from one core to another, the seed must not be "
+               f"identical from one core to another.)")
         warnings.warn(msg, Warning)
     rmax = o.s
     if o.g == 'circle':
@@ -122,7 +122,7 @@ def export(
         analyze.plot_gggg(intrad, gggg, **kwargs, expstm=ggggstm)
         analyze.plot_GaGs(intrad, GaGs, **kwargs, expstm=GaGsstm)
         if savtxt:
-            pth = kwargs.get('expdir', '')
+            pth = getkwa('expdir', kwargs, str, '')
             np.savetxt(os.path.join(pth, expstm+"_radii.txt"), intrad)
             np.savetxt(os.path.join(pth, KKKKstm+'.txt'), KKKK)
             np.savetxt(os.path.join(pth, ggggstm+'.txt'), gggg)
