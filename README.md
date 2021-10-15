@@ -81,9 +81,9 @@ pip install -U lpa-input
 ```
 
 ### Spatial analysis
-![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
-![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
-![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/b9ba054411a92e9c7d6b285e634153bc40853b40/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
+![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
+![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
+![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
 
 # Physical aspects
 
