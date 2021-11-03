@@ -6,6 +6,8 @@ Tools for calculating the overlapping of two geometric objects.
 """
 
 import scipy.integrate
+import scipy.interpolate
+import pkg_resources
 from . import *
 
 @beartype
@@ -218,6 +220,10 @@ def mean_circle_square_analytic(
     Complexity:
         O( r.size )
     """
+    if r == 0:
+        return 0.0
+    elif r > np.sqrt(2)*s:
+        return s**2
     f12 = lambda x, phi: circular_segment(r, x*np.cos(phi))*x/(2*s**2)
     f3a = lambda x, phi: (np.pi*r**2/4 - x*np.cos(phi)*x*np.sin(phi))*x/(s**2)
     f3b = lambda x, y: (np.pi*r**2/4 - x*y)/s**2
@@ -227,16 +233,85 @@ def mean_circle_square_analytic(
     x1 = lambda phi: min(r, s)/np.cos(phi)
     x2 = lambda phi: s/np.sin(phi)
     x3 = lambda y: np.tan(phi1)*y
-    if r == 0:
-        return 0
-    elif r <= np.sqrt(2)*s:
-        E12 = (scipy.integrate.dblquad(f12, phi1, phi2, r, x1)[0]
-            + scipy.integrate.dblquad(f12, phi2, phi3, r, x2)[0])
-        E3 = (scipy.integrate.dblquad(f3a, phi1, phi3, 0, r)[0]
-            + 2*scipy.integrate.dblquad(f3b, 0, s, 0, x3)[0])
-        return np.pi*r**2 - 4*(2*E12+E3)
-    else:
-        return s**2
+    E12 = (scipy.integrate.dblquad(f12, phi1, phi2, r, x1)[0]
+        + scipy.integrate.dblquad(f12, phi2, phi3, r, x2)[0])
+    E3 = (scipy.integrate.dblquad(f3a, phi1, phi3, 0, r)[0]
+        + 2*scipy.integrate.dblquad(f3b, 0, s, 0, x3)[0])
+    return np.pi*r**2 - 4*(2*E12+E3)
+
+@beartype
+def mean_circle_circle_interpolation(
+    r: Union[Scalar, ScalarList],
+    R: Union[Scalar, ScalarList],
+) -> Union[Scalar, ScalarList]:
+    """
+    Return the mean overlapping area of two circles.
+
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle 1 radius/ii
+        R (Scalar|ScalarList): circle 2 radius/ii
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    global x_cc, y_cc
+    if not 'x_cc' in globals():
+        pth = pkg_resources.resource_filename('lpa.input', 'data/cc.dat')
+        if os.path.exists(pth):
+            x_cc, y_cc = np.loadtxt(pth)
+        else:
+            print('CALCULATE')
+            x_cc = np.linspace(0, 2, 10000)
+            y_cc = mean_circle_circle_analytic(x_cc, 1)
+            np.savetxt(pth, (x_cc, y_cc))
+    o = scipy.interpolate.interp1d(x_cc, y_cc,
+        fill_value=(np.nan, np.pi),
+        kind='quadratic',
+        bounds_error=False)(r/R)*R**2
+    return o
+
+@beartype
+def mean_circle_square_interpolation(
+    r: Union[Scalar, ScalarList],
+    s: Union[Scalar, ScalarList],
+) -> Union[Scalar, ScalarList]:
+    """
+    Return the mean overlapping area of a circle and a square.
+
+    All input parameters can be either an array or a scalar. If one of
+    them is an array, the result will be an array of the same size.
+
+    Input:
+        r (Scalar|ScalarList): circle radius/ii
+        s (Scalar|ScalarList): square side(s)
+
+    Output:
+        o (Scalar|ScalarList): mean overlapping area/s
+
+    Complexity:
+        O( r.size )
+    """
+    global x_cs, y_cs
+    if not 'x_cs' in globals():
+        pth = pkg_resources.resource_filename('lpa.input', 'data/cs.dat')
+        if os.path.exists(pth):
+            x_cs, y_cs = np.loadtxt(pth)
+        else:
+            print('CALCULATE')
+            x_cs = np.linspace(0, 2, 10000)
+            y_cs = mean_circle_square_analytic(x_cs, 1)
+            np.savetxt(pth, (x_cs, y_cs))
+    o = scipy.interpolate.interp1d(x_cs, y_cs,
+        fill_value=(np.nan, 1),
+        kind='quadratic',
+        bounds_error=False)(r/s)*s**2
+    return o
 
 @beartype
 def mean_circle_circle_simulation(
