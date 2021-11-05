@@ -29,32 +29,37 @@ def number(
     Output:
         s (str): notation of x
     """
-    if x<10**w and x>=1 or x == 0: # diplay x with fixed comma
-        s = str(round(x))
-        if c == 'stm':
-            s = s.zfill(w) # fill with zeros
-        elif c == 'csl':
-            s = format(s, '>'+str(w)) # fill with spaces
-    elif c == 'ttl': # LaTeX scientific notation
-        s = format(x, f'1.{max(w-6, 0)}e')
-        m, e = s.split("e") # separate mantissa and exponent
-        s = fr"$ {m} \times 10^{{ {int(e)} }} $"
-    elif c in ('stm', 'csl'): # scientific notation with 'e'
-        s = format(x, '1.0e').replace("+", "")
-        s = s.replace("e0", "e").replace("e-0", "e-")
-        d = w-len(s) # number of missing characters to reach the ideal width
-        if d>0:
-            if c=='stm' or d==1:
-                if "e-" in s:
-                    s = s.replace("e-", "e-0")
-                else:
-                    s = s.replace("e", "e0")
-            else:
-                s = format(x, f'1.{d-1}e')
-                s = s.replace("+", "").replace("e0", "e").replace("e-0", "e-")
+    S = 0 if x>=0 else 1 # 0 for + / 1 for -
+    m, e = f"{x:e}".split('e')
+    m, e = eval(m), int(e) # mantissa and exponent
+    A, B = f"{x:f}".rstrip('0').strip('-').split('.')
+    a, b = len(A), len(B) # number of digits before / after the comma
+    if isinstance(x, int) or x%1==0:
+        if a+S<=w or a<=3:
+            if c == 'stm':
+                return f"{S*'-'+A.zfill(w-S)}"
+            if c == 'ttl':
+                return f"$ {S*'-'+A} $"
+            if c == 'csl':
+                return format(S*'-'+A, f'>{w}')
     else:
-        raise ValueError(f"unknown context: {c}")
-    return s
+        if a+S<=w-2 and np.abs(x)>0.1:
+            if c == 'ttl':
+                return f"$ {S*'-'}{A}.{B[:w-S-1]} $"
+            if c == 'csl':
+                return format(f"{S*'-'}{A}.{B[:w-S-1-a]}", f'>{w}')
+    u = len(str(e))
+    if c == 'stm':
+        z = 0
+        q = len(str(m).strip('0').strip('.'))-2-S
+        while z+1<=q and w>=S+1+(z+1)+1+len(str(e-(z+1))):
+            z += 1
+        return f"{m*10**z:1.0f}e{e-z}"
+    if c == 'ttl':
+        return fr"$ {format(m, f'1.{max(0, w-S-4-u)}f')} \times 10^{{ {e} }} $"
+    if c == 'csl':
+        return format(f"{format(m, f'1.{max(0, w-S-3-u)}f')}e{e}", f'>{w}')
+    raise ValueError(f"unknown context: {c}")
 
 @beartype
 def unit(
