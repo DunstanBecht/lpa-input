@@ -7,6 +7,7 @@ Standardized files for input to an X-ray diffraction simulation program.
 
 import os
 from . import *
+from . import __version__
 from . import sets
 
 @beartype
@@ -122,7 +123,8 @@ def export_distribution(
     # write
     indices = lambda v: " ".join([format(c, '2.0f') for c in v])
     with open(os.path.join(expdir, expstm+"."+expfmt), "w") as f:
-        h = (f"# please keep the structure of this file unchanged\n"
+        h = (f"{__version__:>8} # lpa-input version\n"
+             f"{d.d*1e18:8.2E} # dislocation density [m^-2]\n"
              f"{indices(l)} # z: direction of 'l' (line vector) [uvw]\n"
              f"{indices(L)} # x: direction of 'L' (Fourier variable) [uvw]\n"
              f"{indices(b)} # b: Burgers vector direction [uvw]\n"
@@ -132,8 +134,9 @@ def export_distribution(
              f"{d.s:8.0f} # s: {str_g} [nm]\n"
              f"{a3:8.1f} # a3: step size of 'L' along x [nm]\n"
              f"{nu:8.3f} # nu: Poisson's number [1]\n"
-             f"{len(d):8.0f} # number of dislocations\n"
-             f"# Burgers vector and dislocation (x,y) coordinates\n")
+             f"{len(d):8.0f} # number of dislocations in this file\n"
+             f"# Burgers vector senses and dislocation (x,y) coordinates "
+             f"[1], [nm], [nm]\n")
         f.write(h)
         fmt = "%2.0f %22.15E %22.15E"
         np.savetxt(f, np.stack((d.b, d.p[:,0], d.p[:,1])).T, fmt=fmt)
