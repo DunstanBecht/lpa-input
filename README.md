@@ -40,8 +40,8 @@ pip install -U lpa-input
 
 ### Input data files
 ```
-   1.2.1 # lpa-input version
-5.17E+13 # dislocation density [m^-2]
+   1.2.1 # v: lpa-input version
+5.17E+13 # d: dislocation density [m^-2]
  1  1  0 # z: direction of 'l' (line vector) [uvw]
 -1  1  0 # x: direction of 'L' (Fourier variable) [uvw]
  1  1  0 # b: Burgers vector direction [uvw]

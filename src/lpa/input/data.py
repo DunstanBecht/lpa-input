@@ -123,8 +123,8 @@ def export_distribution(
     # write
     indices = lambda v: " ".join([format(c, '2.0f') for c in v])
     with open(os.path.join(expdir, expstm+"."+expfmt), "w") as f:
-        h = (f"{__version__:>8} # lpa-input version\n"
-             f"{d.d*1e18:8.2E} # dislocation density [m^-2]\n"
+        h = (f"{__version__:>8} # v: lpa-input version\n"
+             f"{d.d*1e18:8.2E} # d: dislocation density [m^-2]\n"
              f"{indices(l)} # z: direction of 'l' (line vector) [uvw]\n"
              f"{indices(L)} # x: direction of 'L' (Fourier variable) [uvw]\n"
              f"{indices(b)} # b: Burgers vector direction [uvw]\n"
