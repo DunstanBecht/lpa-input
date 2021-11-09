@@ -30,12 +30,12 @@ pip install -U lpa-input
 
 ### Distribution maps
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/1d99a7625ffc821f1dfc67acce46142758aa5919/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/1d99a7625ffc821f1dfc67acce46142758aa5919/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
 </div>
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/1d99a7625ffc821f1dfc67acce46142758aa5919/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/1d99a7625ffc821f1dfc67acce46142758aa5919/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
 </div>
 
 ### Input data files
@@ -82,9 +82,9 @@ pip install -U lpa-input
 ```
 
 ### Spatial analysis
-![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
-![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
-![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/0609d84355457ac485fd379009bce96f2d974d66/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
+![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
+![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
+![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
 
 # Physical aspects
 
@@ -130,4 +130,13 @@ Some abbreviations are used in the program:
 
 # User guide
 
-The directory `tests/` contains several examples of package module usage. The docstrings are carefully written and it is recommended to refer to the documentation with the `help()` command.
+The directory `tests/` contains several examples of package module usage. The docstrings are carefully written and it is recommended to refer to the documentation with the `help()` python command.
+
+The installation from PyPI does not allow the modification of the code. To edit the package and contribute to the development use the following commands in your working directory.
+```bash
+pip uninstall lpa-input
+git clone https://github.com/DunstanBecht/lpa-input.git
+pip install -e lpa-input
+cd lpa-input
+git branch <name_of_your_new_branch>
+```
