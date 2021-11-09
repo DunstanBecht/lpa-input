@@ -8,6 +8,7 @@ Tools for spatial analysis of dislocation distributions.
 import matplotlib.pyplot as plt
 import scipy.special
 from . import *
+from . import __version__
 from . import sets
 from . import geometries
 from . import boundaries
@@ -471,7 +472,7 @@ def plot_KKKK(
     k_compare = np.pi*r_compare**2
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
+    fig.subplots_adjust(left=0.06, right=0.95, bottom=0.1)
     fig.suptitle(figttl, fontsize=16)
     # ax1
     ax1.plot(r, KKKK[0], label=fr"$K_{{++}}^{{ {edgcon} }}(r)$")
@@ -489,6 +490,16 @@ def plot_KKKK(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^2)$")
+    ax2.text(
+        1.05,
+        0.5,
+        f"lpa-input ({__version__})",
+        rotation=90,
+        fontfamily='monospace',
+        ha='left',
+        va='center',
+        transform=ax2.transAxes,
+    )
     # export
     plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)
     plt.close('all')
@@ -523,7 +534,7 @@ def plot_gggg(
     endkwa(kwargs)
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
+    fig.subplots_adjust(left=0.06, right=0.95, bottom=0.1)
     fig.suptitle(figttl, fontsize=16)
     masked = np.ma.masked_invalid(gggg)
     margin = max(np.ptp(masked)*0.05, 0.1)
@@ -545,6 +556,16 @@ def plot_gggg(
     ax2.grid()
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylim(ymin, ymax)
+    ax2.text(
+        1.05,
+        0.5,
+        f"lpa-input ({__version__})",
+        rotation=90,
+        fontfamily='monospace',
+        ha='left',
+        va='center',
+        transform=ax2.transAxes,
+    )
     # export
     plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)
     plt.close('all')
@@ -579,7 +600,7 @@ def plot_GaGs(
     endkwa(kwargs)
     # fig
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
-    fig.subplots_adjust(left=0.06, right=0.98, bottom=0.1)
+    fig.subplots_adjust(left=0.06, right=0.95, bottom=0.1)
     fig.suptitle(figttl, fontsize=16)
     masked = np.ma.masked_invalid(GaGs)
     # ax1
@@ -598,6 +619,16 @@ def plot_GaGs(
     ax2.set_xlabel(r"$r \ (nm)$")
     ax2.set_ylabel(r"$(nm^{-1})$")
     ax2.set_ylim(np.min(masked[1])-marg2, np.max(masked[1])+marg2)
+    ax2.text(
+        1.05,
+        0.5,
+        f"lpa-input ({__version__})",
+        rotation=90,
+        fontfamily='monospace',
+        ha='left',
+        va='center',
+        transform=ax2.transAxes,
+    )
     # export
     plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)
     plt.close('all')

@@ -7,6 +7,7 @@ Tools for exporting the dislocation map of a distribution.
 
 import matplotlib.pyplot as plt
 from . import *
+from . import __version__
 from . import sets
 from . import models
 
@@ -102,6 +103,16 @@ def export(
     plt.title(subttl)
     l = plt.legend(facecolor='white', framealpha=1)
     l.set_zorder(150)
+    ax.text(
+        1.05,
+        0.5,
+        f"lpa-input ({__version__})",
+        rotation=90,
+        fontfamily='monospace',
+        ha='left',
+        va='center',
+        transform=ax.transAxes,
+    )
     # export
     plt.savefig(os.path.join(expdir, expstm+"."+expfmt), format=expfmt)
     plt.close('all')
