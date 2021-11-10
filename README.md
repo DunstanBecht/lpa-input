@@ -1,3 +1,6 @@
+[![DOI](https://zenodo.org/badge/394303793.svg)](https://zenodo.org/badge/latestdoi/394303793)
+[![License: CC0-1.0](https://img.shields.io/badge/License-CC0_1.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
+
 <div align="center">
   <img width="250" src="https://dunstan.becht.network/views/signatures/mines.svg" alt="Mines Saint-Etienne">
 </div>
