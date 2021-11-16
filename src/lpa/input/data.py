@@ -114,12 +114,11 @@ def export_distribution(
         raise ValueError("edge type but l and b not perpendicular")
     C = contrast_factor(d.t, g, l, b, nu)
     if d.g == 'circle':
-        str_g = "Cylinder radius"
+        str_s = "radius of the region of interest [nm]"
     if d.g == 'square':
+        str_s = "side of the region of interest [nm]"
         if pbc > 0:
-            str_g = f"Square_{pbc} side"
-        else:
-            str_g = "Square side"
+            str_s += f" PBC{pbc}"
     # write
     indices = lambda v: " ".join([format(c, '2.0f') for c in v])
     with open(os.path.join(expdir, expstm+"."+expfmt), "w") as f:
@@ -131,10 +130,10 @@ def export_distribution(
              f"{indices(g)} # g: diffraction vector direction (hkl)\n"
              f"{C:8.6f} # C: contrast coefficient [1]\n"
              f"{a:8.6f} # a: cell parameter [nm]\n"
-             f"{d.s:8.0f} # s: {str_g} [nm]\n"
+             f"{d.s:8.0f} # s: {str_s}\n"
              f"{a3:8.1f} # a3: step size of 'L' along x [nm]\n"
              f"{nu:8.3f} # nu: Poisson's number [1]\n"
-             f"{len(d):8.0f} # number of dislocations in this file\n"
+             f"{len(d):8.0f} # nd: number of dislocations in this file\n"
              f"# Burgers vector senses and dislocation (x,y) coordinates "
              f"[1], [nm], [nm]\n")
         f.write(h)
