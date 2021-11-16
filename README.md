@@ -33,17 +33,17 @@ pip install -U lpa-input
 
 ### Distribution maps
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
 </div>
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
 </div>
 
 ### Input data files
 ```
-   1.2.1 # v: lpa-input version
+   1.2.4 # v: lpa-input version
 5.17E+13 # d: dislocation density [m^-2]
  1  1  0 # z: direction of 'l' (line vector) [uvw]
 -1  1  0 # x: direction of 'L' (Fourier variable) [uvw]
@@ -51,10 +51,10 @@ pip install -U lpa-input
  2  0  0 # g: diffraction vector direction (hkl)
 0.250000 # C: contrast coefficient [1]
 0.404940 # a: cell parameter [nm]
-     400 # s: Cylinder radius [nm]
+     400 # s: radius of the region of interest [nm]
     11.6 # a3: step size of 'L' along x [nm]
    0.345 # nu: Poisson's number [1]
-      26 # number of dislocations in this file
+      26 # nd: number of dislocations in this file
 # Burgers vector senses and dislocation (x,y) coordinates [1], [nm], [nm]
  1 -2.604424178510505E+02 -3.028586084465366E+02
  1 -4.912383207593395E+01  3.930909606266370E+02
