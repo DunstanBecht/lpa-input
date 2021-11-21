@@ -4,8 +4,8 @@
 """
 Script to test the module parallel.
 
-This script should be submitted with the command:
-sbatch test_parallel.job
+This script should be submitted on a supercomputer with the command:
+$ sbatch test_parallel.job
 """
 
 from lpa.input import parallel
