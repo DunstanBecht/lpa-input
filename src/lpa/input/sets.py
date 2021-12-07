@@ -184,7 +184,8 @@ class Distribution:
             n: number of dislocations
             S: random seed
         """
-        rho = notation.quantity(self.d*1e9**self.n, f"m^{{-{self.n}}}", c)
+        rho = notation.number(self.d*1e9**self.n, c, 7)
+        rho += notation.unit(f"m^{{-{self.n}}}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,
@@ -363,7 +364,8 @@ class Sample:
             n: number of distributions generated
             S: random seed
         """
-        rho = notation.quantity(self.d*1e9**self.n, f"m^{{-{self.n}}}", c)
+        rho = notation.number(self.d*1e9**self.n, c, 7)
+        rho += notation.unit(f"m^{{-{self.n}}}", c)
         v = {
             'd': notation.equality(r"\rho", rho, c),
             'g': self.g,

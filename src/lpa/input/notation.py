@@ -16,7 +16,7 @@ from . import *
 def number(
     x: Scalar,
     c: str = 'csl',
-    w: int = 4,
+    w: int = 5,
 ) -> str:
     """
     Return a notation of the number x in context c.
@@ -56,7 +56,7 @@ def number(
             z += 1
         return f"{m*10**z:1.0f}e{e-z}"
     if c == 'ttl':
-        return fr"$ {format(m, f'1.{max(0, w-S-4-u)}f')} \times 10^{{ {e} }} $"
+        return fr"$ {format(m, f'1.{max(0, w-S-3-u)}f')} \times 10^{{ {e} }} $"
     if c == 'csl':
         return format(f"{format(m, f'1.{max(0, w-S-3-u)}f')}e{e}", f'>{w}')
     raise ValueError(f"unknown context: {c}")
@@ -164,15 +164,15 @@ def parameters(
     # parameter list
     p = []
     if 'd' in r:  # density
-        p.append(equality('d', quantity(r['d'], "nm^{-2}", c), c))
+        p.append(equality('d', number(r['d'], c, 7)+unit("nm^{-2}", c), c))
     if 's' in r: # subarea/cell side
         p.append(equality("s", number(r['s'], c, 4)+unit("nm", c), c))
     if 'f' in r: # filling
         p.append(equality("f", str(r['f']), c))
     if 't' in r: # wall thickness
-        p.append(equality("t", number(r['t'], c, 3)+unit("nm", c), c))
+        p.append(equality("t", number(r['t'], c, 4)+unit("nm", c), c))
     if 'l' in r: # dipole length
-        p.append(equality("l", number(r['l'], c, 3)+unit("nm", c), c))
+        p.append(equality("l", number(r['l'], c, 4)+unit("nm", c), c))
     # concatenate
     if len(p) > 0:
         if c == 'stm':
