@@ -101,7 +101,7 @@ def export_distribution(
     l = getkwa('l', kwargs, Vector, dft_l[d.t])
     L = getkwa('L', kwargs, Vector, dft_L[d.t])
     a = getkwa('a', kwargs, Scalar, 0.40494)
-    a3 = getkwa('a3', kwargs, Scalar, max(2, i/12))
+    a3 = getkwa('a3', kwargs, Scalar, min(5, max(2, i/12)))
     nu = getkwa('nu', kwargs, Scalar, 0.345)
     expdir = getkwa('expdir', kwargs, str, '')
     expfmt = getkwa('expfmt', kwargs, str, 'dat')
