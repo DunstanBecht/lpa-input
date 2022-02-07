@@ -31,7 +31,7 @@ over the cores.
 """
 
 __author__ = "Dunstan Becht"
-__version__ = "1.2.7"
+__version__ = "1.2.8"
 
 import os
 import sys
