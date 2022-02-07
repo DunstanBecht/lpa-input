@@ -43,16 +43,16 @@ pip install -U lpa-input
 
 ### Input data files
 ```
-   1.2.6 # v: lpa-input version
+   1.2.8 # v: lpa-input version
 5.17E+13 # d: dislocation density [m^-2]
  1  1  0 # z: direction of 'l' (line vector) [uvw]
 -1  1  0 # x: direction of 'L' (Fourier variable) [uvw]
  1  1  0 # b: Burgers vector direction [uvw]
  2  0  0 # g: diffraction vector direction (hkl)
 0.250000 # C: contrast coefficient [1]
-0.404940 # a: cell parameter [nm]
+0.404600 # a: cell parameter [nm]
      400 # s: radius of the region of interest [nm]
-     5.0 # a3: step size of 'L' along x [nm]
+     1.5 # a3: step size of 'L' along x [nm]
    0.345 # nu: Poisson's number [1]
       26 # nd: number of dislocations in this file
 # Burgers vector senses and dislocation (x,y) coordinates [1], [nm], [nm]
