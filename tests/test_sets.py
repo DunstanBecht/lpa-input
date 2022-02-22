@@ -8,20 +8,35 @@ Script to test the module sets.
 from lpa.input import sets
 from test_models import *
 
+"""
+The following lines define and parameterize some distribution models
+that will be used to generate the positions and Burgers vector of the
+dislocations at the time of the distribution instantiation.
+"""
 rdd = (models.RDD, prm_rdd)
 rrdd = (models.RRDD, prm_rrdd)
 rcdd = (models.RCDD, prm_rcdd)
 
 if __name__ == "__main__":
 
-    # instantiate
+    """
+    The following lines instantiate 3 dislocations distributions.
+    """
     d_rdd = sets.Distribution('circle', 1000, *rdd, S=0)
     d_rrdd = sets.Distribution('square', 2000, *rrdd, S=0)
     d_rcdd = sets.Distribution('square', 2000, *rcdd, c='PBC3', S=0)
+
+    """
+    The following lines instantiate 3 samples of 10 distributions each.
+    """
     s_rdd = sets.Sample(10, 'square', 2000, *rdd, t='edge', S=0)
     s_rrdd = sets.Sample(10, 'circle', 1000, *rrdd, c='ISD', S=0)
     s_rcdd = sets.Sample(10, 'square', 2000, *rcdd, c='GBB1', S=0)
 
+    """
+    The following lines show possible file names for one of the
+    instantiated distributions.
+    """
     print("Stem string")
     print(d_rcdd.name(c='stm', f='dgsmtcS'))
     print(d_rcdd.name(c='stm', f='dgsmtc'))
@@ -32,6 +47,10 @@ if __name__ == "__main__":
     print(d_rcdd.name(c='stm', f='d'))
     print()
 
+    """
+    The following lines show possible LaTeX titles for one of the
+    instantiated distributions.
+    """
     print("Title string")
     print(d_rdd.name(c='ttl', f='mtcS'))
     print(d_rdd.name(c='ttl', f='mtc'))
@@ -41,6 +60,10 @@ if __name__ == "__main__":
     print(d_rdd.name(c='ttl', f='d'))
     print()
 
+    """
+    The following lines show possible basic name for one of the
+    instantiated distributions.
+    """
     print("Console string")
     print(s_rcdd.name(c='csl', f='ndgsmtcS'))
     print(s_rcdd.name(c='csl', f='ndgsmtc'))
@@ -51,6 +74,10 @@ if __name__ == "__main__":
     print(s_rcdd.name(c='csl', f='nd'))
     print()
 
+    """
+    The following lines allow to check some properties of the repr and
+    eval functions.
+    """
     print("Evaluate a representation")
     print(repr(d_rdd))
     print(repr(eval('sets.'+repr(d_rdd).replace("RDD","models.RDD"))))
@@ -66,6 +93,10 @@ if __name__ == "__main__":
     print(repr(eval('sets.'+repr(s_rcdd).replace("RCDD","models.RCDD"))))
     print()
 
+    """
+    The following lines display the standard string representation of
+    the distributions and samples previously instantiated.
+    """
     print("Print object")
     print(d_rdd)
     print(d_rrdd)
@@ -75,6 +106,11 @@ if __name__ == "__main__":
     print(s_rcdd)
     print()
 
+    """
+    The following lines show how to average a custom function over a
+    sample of distributions. The function must be able to apply to a
+    distribution and return a measurement.
+    """
     print("Average over a sample")
     v = lambda dist: dist.v
     print(str(s_rdd.average(v)))
