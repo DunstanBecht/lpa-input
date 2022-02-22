@@ -33,17 +33,17 @@ pip install -U lpa-input
 
 ### Distribution maps
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/maps/rho50293e9m-2_circle_1000nm_RDD_d5e-5nm-2_S0.svg" alt="RDD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/maps/rho5e13m-2_square_2000nm_RRDD-E_s0200nm_f2_S0.svg" alt="RRDD-E">
 </div>
 <div align="center">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_ISD_S0.svg" alt="RCDD-R ISD">
-<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/0de967815844429f9d3b408f005d7032894e4ec8/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/maps/rho49418e9m-2_circle_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t0020nm_ISD_S0.svg" alt="RCDD-R ISD">
+<img width="49%" src="https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/maps/rho5e13m-2_square_2000nm_RCDD-R_d5e-5nm-2_s0200nm_t0020nm_PBC1_S0.svg" alt="RCDD-R PBC1">
 </div>
 
 ### Input data files
 ```
-   1.2.8 # v: lpa-input version
+   1.2.9 # v: lpa-input version
 5.17E+13 # d: dislocation density [m^-2]
  1  1  0 # z: direction of 'l' (line vector) [uvw]
 -1  1  0 # x: direction of 'L' (Fourier variable) [uvw]
@@ -85,9 +85,9 @@ pip install -U lpa-input
 ```
 
 ### Spatial analysis
-![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
-![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
-![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/fc3d0ca5296e33fdcc5f51d7f4c19a581c2d6714/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
+![Ripley’s K function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_KKKK_GBB.svg)
+![Pair correlation function](https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_gggg_GBB.svg)
+![Symmetric and antisymmetric functions](https://raw.githubusercontent.com/DunstanBecht/lpa-input/654e3426329da26b39da509a85af533683e5b2dd/tests/analyses/40000_rho5e13m-2_RRDD-E_s0200nm_f2_square_2000nm_S0_GaGs_GBB.svg)
 
 # Physical aspects
 
@@ -133,7 +133,18 @@ Some abbreviations are used in the program:
 
 # User guide
 
-The directory `tests/` contains several examples of package module usage. The docstrings are carefully written and it is recommended to refer to the documentation with the `help()` python command.
+The directory `tests/` contains several examples of package module usage. To become familiar with the use of these modules you should go through these scripts in the following order:
+* `test_models.py`
+* `test_sets.py`
+* `test_boundaries.py`
+* `test_notation.py`
+* `test_maps.py`
+* `test_data.py`
+* `test_overlap.py`
+* `test_analyze.py`
+* `test_parallel.py`
+
+In the sources the docstrings are carefully written and it is recommended to refer to the documentation with the `help()` python command to list the available functions, classes and parameters.
 
 The installation from PyPI does not allow the modification of the code. To edit the package and contribute to the development use the following commands in your working directory.
 ```bash
